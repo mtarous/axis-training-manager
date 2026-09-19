@@ -1,0 +1,1 @@
+window.jp=function(d){return d||'';};
