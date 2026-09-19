@@ -1,0 +1,21 @@
+/* AXIS v13 refinements */
+.top{padding-top:calc(13px + env(safe-area-inset-top))!important;min-height:calc(54px + env(safe-area-inset-top));}
+body{padding-top:0!important}
+.ax-home-head{margin-top:2px}
+.ax-remove{border:1px solid #5a2530;background:#1a0c12;color:#ff8492;border-radius:10px;padding:6px 8px;font-size:10px;font-weight:800}
+.ax-date-group{margin:14px 0 6px;color:#83a0bd;font-size:11px;font-weight:800;letter-spacing:.08em}
+.ax-schedule-actions{display:flex;align-items:center;gap:6px}
+.ax-kpi-note{font-size:9px;color:#6f839a;margin-top:3px}
+.ax-metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:8px 0}
+.ax-metric2{background:#061420;border:1px solid #123b5f;border-radius:14px;padding:10px}
+.ax-metric2 b{display:block;font-size:18px;color:#f7fbff}.ax-metric2 span{font-size:9px;color:#7991aa}
+.ax-trend{background:#040b13;border:1px solid #12395b;border-radius:15px;padding:9px;margin-top:8px}
+.ax-trend svg{width:100%;height:82px;display:block}.ax-trend-line{fill:none;stroke:#18bdff;stroke-width:3;filter:drop-shadow(0 0 4px rgba(0,156,255,.6))}
+.ax-trend-dot{fill:#7ee7ff;stroke:#008cff;stroke-width:2}.ax-axis-line{stroke:#183450;stroke-width:1}
+.ax-analysis-list{display:grid;gap:7px}.ax-analysis-item{background:#06121e;border:1px solid #123959;border-radius:13px;padding:9px 10px}.ax-analysis-item b{font-size:12px}.ax-analysis-item div{font-size:11px;color:#8da5bd;margin-top:3px}
+.muscle-wrap{min-height:205px;display:flex;flex-direction:column;justify-content:center}
+.muscle-svg{max-height:190px!important}.muscle-silhouette{fill:#071421;stroke:#2a5879;stroke-width:1.3}.muscle-line{stroke:#183955;stroke-width:1}
+.summary-shell .muscle-wrap{min-height:270px}
+.ax-confirm-row{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:8px}
+.ax-confirm-row select{padding:10px!important}
+@media(max-width:560px){.top{padding-left:15px!important;padding-right:15px!important}.ax-metric-grid{grid-template-columns:repeat(3,1fr)}.ax-home-analytics{grid-template-columns:1fr!important}.summary-shell .muscle-wrap{min-height:220px}}
