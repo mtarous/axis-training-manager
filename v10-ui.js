@@ -1,4 +1,5 @@
 (function(){
+window.jp=function(d){if(!d)return'';const x=new Date(String(d).slice(0,10)+'T00:00:00+09:00');if(Number.isNaN(x.getTime()))return String(d);const wd=['日','月','火','水','木','金','土'][x.getDay()];return `${x.getFullYear()}年${x.getMonth()+1}月${x.getDate()}日 (${wd})`};
 function ensureView(id){if(!document.querySelector("#"+id)){const s=document.createElement("section");s.id=id;s.className="view";document.querySelector(".main").appendChild(s)}}
 ensureView("analytics");ensureView("more");
 
@@ -137,3 +138,14 @@ window.axisClearSets=function(i){exs[i].done=[];drawEx();saveDraft()};
 window.showSmartRest=function(i){const e=exs[i],client=$("#fclient")?.value||"",rpe=$("#frpe")?.value||7,sec=smartRestSeconds(e,client,rpe),box=$("#smartRest");if(!box)return;box.innerHTML=`<div class="ax-rest-grid"><div class="ax-rest-ring"><div><span>推奨休憩</span><strong>${Math.floor(sec/60)}:${String(sec%60).padStart(2,"0")}</strong></div></div><div class="ax-rest-copy"><div class="ax-panel-title">スマート休憩</div><b>${isCompoundExercise(e.exercise)?"多関節種目":"補助種目"}に合わせた休憩</b><br>次のセットでパフォーマンスを保ちやすい時間です。<button class="btn primary" style="width:100%;margin-top:9px" onclick="startTimer(${sec})">▶ 休憩スタート</button></div></div>`};
 })();
 axisSetupNav();
+window.renderAll=function(){
+  const jobs=[
+    ["home",()=>renderHome()],
+    ["schedule",()=>renderSchedule()],
+    ["clients",()=>renderClients()],
+    ["history",()=>renderHistory()]
+  ];
+  for(const [id,fn] of jobs){
+    try{fn()}catch(e){console.error("AXIS render error",id,e);const el=document.querySelector("#"+id);if(el&&!el.innerHTML.trim())el.innerHTML='<div class="ax-panel"><div class="ax-panel-title">読み込みを再試行してください</div><div class="ax-muted">画面の再読み込みで復旧します。</div></div>'}
+  }
+};
