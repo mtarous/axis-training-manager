@@ -308,5 +308,5 @@ function exportExcel(scope="new"){
 function exportBackup(){const blob=new Blob([JSON.stringify({sessions:added,exported:new Date().toISOString()},null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="axis_training_backup.json";a.click();URL.revokeObjectURL(a.href)}
 function show(id,nav=true){document.querySelectorAll(".view").forEach(x=>x.classList.remove("on"));$("#"+id).classList.add("on");if(nav)document.querySelectorAll(".nav").forEach(x=>x.classList.toggle("on",x.dataset.v===id));scrollTo(0,0)}
 document.querySelectorAll(".nav").forEach(b=>b.onclick=()=>{show(b.dataset.v);if(b.dataset.v==="input")renderInput(draft||{})});function renderAll(){renderHome();renderSchedule();renderClients();renderHistory()}
-(async()=>{const saved=localStorage.getItem("axis_training_key");if(saved){$("#pass").value=saved;await unlock()}if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})})();
+</script><script src="v5.js"></script><script>(async()=>{const saved=localStorage.getItem("axis_training_key");if(saved){$("#pass").value=saved;await unlock()}if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})})();
 </script></body></html>
