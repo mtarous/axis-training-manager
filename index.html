@@ -27,6 +27,15 @@ h1{font-size:19px;margin:0}.sub{color:var(--muted);font-size:13px;line-height:1.
 .bodyweight{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center;font-weight:800;margin:6px 0}
 .exportgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.exportnote{margin-top:8px;color:var(--muted);font-size:12px;line-height:1.55}
 @media(max-width:560px){.exportgrid{grid-template-columns:1fr}}
+
+.analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.analysis-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:10px}
+.analysis-card h3{font-size:15px;margin:0 0 8px}.analysis-card ul{margin:8px 0 0;padding-left:19px}.analysis-card li{margin:5px 0;font-size:13px;line-height:1.55}
+.metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:9px 0}.metric{background:#f8fafc;border-radius:12px;padding:10px}.metric b{display:block;font-size:18px}.metric span{font-size:11px;color:var(--muted)}
+.linebox{width:100%;min-height:150px;border:1px solid var(--line);border-radius:14px;padding:12px;background:#fbfcfe;white-space:pre-wrap;line-height:1.65;font-size:14px}
+.copyok{background:#dcfce7!important;color:#166534!important}.source-note{font-size:11px;color:#9a4b00;margin-top:7px}
+.calbadge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;padding:5px 8px;border-radius:999px;background:#ecfeff;color:#0e7490}
+@media(max-width:560px){.analysis-grid{grid-template-columns:1fr}.metric-row{grid-template-columns:repeat(3,1fr)}}
 </style></head><body>
 <div id="lock" class="lock"><div class="lockbox"><h2>AXIS TRAINING</h2><div class="sub">トレーニング記録は暗号化されています。</div><input id="pass" type="password" placeholder="アクセスコード"><label class="sub"><input id="remember" type="checkbox" checked> このiPhoneでコードを記憶</label><button class="btn primary" style="width:100%;margin-top:12px" onclick="unlock()">開く</button><div id="lockmsg" class="sub" style="margin-top:10px;color:#b91c1c"></div></div></div>
 <div id="app" class="app" style="display:none"><header class="top"><h1>AXIS TRAINING</h1><div class="sub">前回メニュー → トレ中入力 → 保存</div></header><main class="main"><section id="home" class="view on"></section><section id="schedule" class="view"></section><section id="clients" class="view"></section><section id="history" class="view"></section><section id="input" class="view"></section><section id="detail" class="view"></section></main></div>
@@ -35,8 +44,22 @@ h1{font-size:19px;margin:0}.sub{color:var(--muted);font-size:13px;line-height:1.
 <script>
 let BASE=[],META={},added=JSON.parse(localStorage.getItem("axis_training_added")||"[]"),draft=JSON.parse(localStorage.getItem("axis_training_draft")||"null"),current="",timerId=null,timerLeft=0;
 const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])),today=()=>new Date().toLocaleDateString("sv-SE"),fmt=d=>d?d.slice(5).replace("-","/"):"";
-async function decryptData(p){const e=await fetch("data.enc").then(r=>r.json()),te=new TextEncoder(),td=new TextDecoder(),b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));const km=await crypto.subtle.importKey("raw",te.encode(p),"PBKDF2",false,["deriveKey"]);const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:b64(e.salt),iterations:e.iter,hash:"SHA-256"},km,{name:"AES-GCM",length:256},false,["decrypt"]);const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(e.nonce),additionalData:te.encode(e.aad)},key,b64(e.ct));return JSON.parse(td.decode(pt))}
-async function unlock(){const p=$("#pass").value;$("#lockmsg").textContent="";try{const d=await decryptData(p);BASE=d.history||[];META=d;if($("#remember").checked)localStorage.setItem("axis_training_key",p);$("#lock").style.display="none";$("#app").style.display="block";$("#bottom").style.display="grid";renderAll();renderInput(draft||{})}catch(e){$("#lockmsg").textContent="アクセスコードが違うか、データを読み込めません。"}}
+async function decryptBlob(path,p){
+  const e=await fetch(path,{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error(path);return r.json()}),te=new TextEncoder(),td=new TextDecoder(),b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+  const km=await crypto.subtle.importKey("raw",te.encode(p),"PBKDF2",false,["deriveKey"]);
+  const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:b64(e.salt),iterations:e.iter,hash:"SHA-256"},km,{name:"AES-GCM",length:256},false,["decrypt"]);
+  const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(e.nonce),additionalData:te.encode(e.aad)},key,b64(e.ct));
+  return JSON.parse(td.decode(pt))
+}
+async function decryptData(p){return decryptBlob("data.enc",p)}
+async function loadCalendar(p){
+  try{
+    const c=await decryptBlob("calendar.enc",p);
+    META.calendarEvents=Array.isArray(c.events)?c.events:[];
+    META.calendarSyncedAt=c.syncedAt||""
+  }catch(e){META.calendarEvents=[];META.calendarSyncedAt=""}
+}
+async function unlock(){const p=$("#pass").value;$("#lockmsg").textContent="";try{const d=await decryptData(p);BASE=d.history||[];META=d;await loadCalendar(p);if($("#remember").checked)localStorage.setItem("axis_training_key",p);$("#lock").style.display="none";$("#app").style.display="block";$("#bottom").style.display="grid";renderAll();renderInput(draft||{})}catch(e){$("#lockmsg").textContent="アクセスコードが違うか、データを読み込めません。"}}
 function all(){return BASE.concat(added.flatMap(s=>(s.exercises||[]).map(e=>({date:s.date,client:s.client,exercise:e.exercise,weight:e.weight,reps:e.reps,sets:e.sets,achieved:s.status,memo:`RPE:${s.rpe||"-"} 痛み:${s.pain??"-"} ${s.note||""} 次回:${s.next||""}`,source:"アプリ入力"}))))}
 
 function appRows(){
@@ -77,8 +100,27 @@ function sessions(client){const m=new Map;all().forEach(r=>{if(client&&r.client!
 function latest(c,before){return sessions(c).filter(s=>!before||s.date<before)[0]||null}
 function menu(s,n=3){return s?s.rows.slice(0,n).map(r=>`<div>・${esc(r.exercise)} ${esc(r.weight)}${typeof r.weight==="number"?"kg":""} ${esc(r.reps)}${r.reps?"回":""}${r.sets?` × ${esc(r.sets)}set`:""}</div>`).join(""):'<div class="sub">過去メニューなし</div>'}
 function clientList(){const m=new Map;all().forEach(r=>{if(!r.client)return;if(!m.has(r.client))m.set(r.client,{name:r.client,days:new Set,rows:0});const x=m.get(r.client);x.rows++;if(r.date)x.days.add(r.date)});return[...m.values()].map(x=>({...x,days:x.days.size})).sort((a,b)=>a.name.localeCompare(b.name,"ja"))}
-function card(s){const l=s.type==="パーソナル"?latest(s.client,s.date):null;return`<div class="card session" ${s.type==="パーソナル"?`onclick="openClient('${s.client.replace(/'/g,"\\'")}')"`:""}><div class="time">${s.time}</div><div><b>${esc(s.label||s.client)}</b> <span class="pill ${s.type==="ケア"?"care":""}">${s.type}</span>${META.goals?.[s.client]?`<div class="sub">${esc(META.goals[s.client])}</div>`:""}${l?`<div class="menu"><b>直近 ${fmt(l.date)}</b>${menu(l)}</div>`:""}</div></div>`}
-function renderHome(){const t=today(),sch=META.schedule||[],up=sch.filter(x=>x.date>=t).slice(0,6),cs=clientList();$("#home").innerHTML=`<div class="hero"><div>${t}</div><h2>${sch.filter(x=>x.date===t).length?`今日は ${sch.filter(x=>x.date===t).length}件`:"今日の予定はありません"}</h2><div>利用者を開いて「直近メニューで開始」でOK。</div></div><div class="kpis"><div class="kpi"><b>${sch.filter(x=>x.type==="パーソナル").length}</b><span>今週PT</span></div><div class="kpi"><b>${cs.length}</b><span>利用者</span></div><div class="kpi"><b>${all().length}</b><span>種目記録</span></div></div><div class="title"><h3>次の予定</h3></div>${up.length?up.map(card).join(""):'<div class="card empty">予定なし</div>'}<div class="title"><h3>Excel・バックアップ</h3></div><div class="card">
+
+function normalizedCalendarSchedule(){
+  return (META.calendarEvents||[]).map(e=>{
+    const title=String(e.summary||"予定").trim();
+    const known=clientList().map(x=>x.name).find(n=>title.includes(n))||"";
+    let type="予定";
+    if(title.includes("パーソナル"))type="パーソナル";
+    else if(title.includes("ケア")||title.includes("整体")||title.includes("施術"))type="ケア";
+    else if(title.includes("体験"))type="体験";
+    return {date:String(e.start||"").slice(0,10),time:String(e.start||"").slice(11,16),client:known||title,type,label:title,calendar:true,eventId:e.id||""}
+  }).filter(x=>x.date&&x.time)
+}
+function mergedSchedule(){
+  const manual=META.schedule||[], cal=normalizedCalendarSchedule(), seen=new Set;
+  return [...cal,...manual].filter(x=>{
+    const k=[x.date,x.time,x.label||x.client,x.type].join("|");
+    if(seen.has(k))return false;seen.add(k);return true
+  }).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time))
+}
+function card(s){const l=s.type==="パーソナル"?latest(s.client,s.date):null;return`<div class="card session" ${s.type==="パーソナル"?`onclick="openClient('${s.client.replace(/'/g,"\\'")}')"`:""}><div class="time">${s.time}</div><div><b>${esc(s.label||s.client)}</b> <span class="pill ${s.type==="ケア"?"care":""}">${s.type}</span>${s.calendar?` <span class="calbadge">Googleカレンダー</span>`:""}${META.goals?.[s.client]?`<div class="sub">${esc(META.goals[s.client])}</div>`:""}${l?`<div class="menu"><b>直近 ${fmt(l.date)}</b>${menu(l)}</div>`:""}</div></div>`}
+function renderHome(){const t=today(),sch=mergedSchedule(),up=sch.filter(x=>x.date>=t).slice(0,6),cs=clientList();$("#home").innerHTML=`<div class="hero"><div>${t}</div><h2>${sch.filter(x=>x.date===t).length?`今日は ${sch.filter(x=>x.date===t).length}件`:"今日の予定はありません"}</h2><div>利用者を開いて「直近メニューで開始」でOK。</div></div><div class="kpis"><div class="kpi"><b>${sch.filter(x=>x.type==="パーソナル").length}</b><span>今週PT</span></div><div class="kpi"><b>${cs.length}</b><span>利用者</span></div><div class="kpi"><b>${all().length}</b><span>種目記録</span></div></div><div class="title"><h3>次の予定</h3></div>${up.length?up.map(card).join(""):'<div class="card empty">予定なし</div>'}${META.calendarSyncedAt?`<div class="sub" style="margin:6px 4px 14px">Googleカレンダー同期：${esc(META.calendarSyncedAt)}</div>`:""}<div class="title"><h3>Excel・バックアップ</h3></div><div class="card">
 <div class="exportgrid">
 <button class="btn primary" onclick="exportExcel('new')">Excel取り込み用 (.xlsx)</button>
 <button class="btn soft" onclick="exportExcel('all')">全履歴をExcel出力</button>
@@ -86,11 +128,113 @@ function renderHome(){const t=today(),sch=META.schedule||[],up=sch.filter(x=>x.d
 </div>
 <div class="exportnote">Excel取り込み用は、元の「記録」シートと同じ9列（日付・クライアント・種目・重量kg・回数・セット・達成・メモ・区分）で出力します。</div>
 </div>`}
-function renderSchedule(){const sch=META.schedule||[],ds=[...new Set(sch.map(x=>x.date))];$("#schedule").innerHTML='<div class="title"><h3>週間予定</h3></div>'+ds.map(d=>`<div class="title"><h3>${d}</h3></div>${sch.filter(x=>x.date===d).map(card).join("")}`).join("")}
+function renderSchedule(){const sch=mergedSchedule(),ds=[...new Set(sch.map(x=>x.date))];$("#schedule").innerHTML='<div class="title"><h3>週間予定</h3></div>'+ds.map(d=>`<div class="title"><h3>${d}</h3></div>${sch.filter(x=>x.date===d).map(card).join("")}`).join("")}
 function renderClients(){$("#clients").innerHTML='<div class="title"><h3>利用者</h3></div><input id="q" class="search" placeholder="名前で検索"><div id="cgrid" class="grid" style="margin-top:10px"></div>';const draw=()=>{const q=$("#q").value||"";$("#cgrid").innerHTML=clientList().filter(c=>c.name.includes(q)).map(c=>`<button class="client" onclick="openClient('${c.name.replace(/'/g,"\\'")}')"><b>${esc(c.name)}</b><span>${c.days}日 / ${c.rows}種目</span></button>`).join("")};draw();$("#q").oninput=draw}
 function histCard(s){return`<div class="card"><div style="display:flex;justify-content:space-between"><b>${fmt(s.date)}｜${esc(s.client)}</b><span class="pill">${esc(s.source||"既存記録")}</span></div>${s.rows.map(r=>`<div class="exercise"><b>${esc(r.exercise)}</b>　${esc(r.weight)}${typeof r.weight==="number"?"kg":""}　${esc(r.reps)}${r.reps?"回":""}${r.sets?` × ${esc(r.sets)}set`:""}</div>`).join("")}</div>`}
 function renderHistory(){$("#history").innerHTML='<div class="title"><h3>全履歴</h3></div><input id="hq" class="search" placeholder="利用者・種目で検索"><div id="hlist" style="margin-top:10px"></div>';const draw=()=>{const q=$("#hq").value||"";$("#hlist").innerHTML=sessions().filter(s=>!q||s.client.includes(q)||s.rows.some(r=>r.exercise.includes(q))).slice(0,160).map(histCard).join("")||'<div class="empty">該当なし</div>'};draw();$("#hq").oninput=draw}
-function openClient(c){current=c;show("detail",false);const ss=sessions(c);$("#detail").innerHTML=`<div class="form"><div class="sub">利用者カルテ</div><h2>${esc(c)}</h2>${META.goals?.[c]?`<div class="sub"><b>目標：</b>${esc(META.goals[c])}</div>`:""}${META.attention?.[c]?`<div class="notice"><b>注意・共有</b><br>${esc(META.attention[c])}</div>`:""}<button class="btn primary" style="width:100%;margin-top:12px" onclick="prefill('${c.replace(/'/g,"\\'")}')">直近メニューで開始</button></div><div class="title"><h3>過去メニュー</h3></div>${ss.slice(0,40).map(histCard).join("")}`}
+
+function num(v){const x=parseFloat(v);return Number.isFinite(x)?x:null}
+function sessionVolume(s){
+  return s.rows.reduce((sum,r)=>{
+    const w=num(r.weight),rp=num(r.reps),st=num(r.sets);
+    return sum+(w!=null&&rp!=null&&st!=null?w*rp*st:0)
+  },0)
+}
+function latestPain(c){
+  const own=added.find(x=>x.client===c);
+  return own?num(own.pain):null
+}
+function displayClientName(c){if(c==="峰岡夫婦")return "峰岡ご夫婦";return c.endsWith("さん")?c:c+"さん"}
+function analyzeClient(c){
+  const ss=sessions(c), recent=ss.slice(0,3), latestS=recent[0]||null;
+  if(!latestS)return {summary:["記録がまだありません。"],progress:[],next:[],advice:["まずは体調とフォームを確認しながら基準となる記録を作りましょう。"],line:"",refIncluded:false,recent:[]};
+  const progress=[], next=[];
+  const refIncluded=recent.some(x=>x.source!=="既存記録"&&x.source!=="アプリ入力");
+  for(const r of latestS.rows){
+    const prev=ss.slice(1).flatMap(x=>x.rows.map(y=>({...y,_date:x.date}))).find(x=>x.exercise===r.exercise);
+    const w=num(r.weight), rp=num(r.reps), st=num(r.sets), pw=prev?num(prev.weight):null, pr=prev?num(prev.reps):null;
+    if(prev&&w!=null&&pw!=null){
+      if(w>pw)progress.push(`${r.exercise}：${pw}kg → ${w}kg`);
+      else if(w===pw&&rp!=null&&pr!=null&&rp>pr)progress.push(`${r.exercise}：${w}kgで ${pr}回 → ${rp}回`);
+    }else if(prev&&String(r.weight).includes("自重")&&rp!=null&&pr!=null&&rp>pr){
+      progress.push(`${r.exercise}：自重で ${pr}回 → ${rp}回`)
+    }
+    const pain=latestPain(c);
+    if(String(r.weight).includes("自重")){
+      const target=rp!=null?Math.min(rp+1,15):10;
+      next.push({exercise:r.exercise,text:`自重 ${target}回 × ${st||3}setを目安（フォーム優先）`,weight:"自重",reps:target,sets:st||3})
+    }else if(w!=null){
+      if(pain!=null&&pain>=4){
+        next.push({exercise:r.exercise,text:`${w}kg以下で痛みを確認しながら実施`,weight:w,reps:rp||10,sets:st||3})
+      }else if(prev&&pw===w&&rp!=null&&pr!=null&&rp>=12&&pr>=10){
+        const inc=w<=10?0.5:1;
+        const nw=Math.round((w+inc)*10)/10;
+        next.push({exercise:r.exercise,text:`${nw}kg × ${Math.max(8,Math.min(10,rp))}回 × ${st||3}setを候補`,weight:nw,reps:Math.max(8,Math.min(10,rp)),sets:st||3})
+      }else{
+        const nr=rp!=null?Math.min(rp+1,12):10;
+        next.push({exercise:r.exercise,text:`${w}kg × ${nr}回 × ${st||3}setを目安`,weight:w,reps:nr,sets:st||3})
+      }
+    }else{
+      next.push({exercise:r.exercise,text:"前回と同条件で動作の質を確認",weight:r.weight,reps:rp||10,sets:st||3})
+    }
+  }
+  const goal=String(META.goals?.[c]||"");
+  const advice=[];
+  if(/膝|痛/.test(goal))advice.push("痛みが強い日は無理に重量や可動域を上げず、動きやすい範囲で続けてください。");
+  if(/ダイエット|引き締め|腹部/.test(goal))advice.push("トレーニング以外の日も歩数と食事量を意識し、毎食たんぱく質を入れると継続しやすいです。");
+  if(/筋肥大|大き/.test(goal))advice.push("筋肉をつけるため、トレーニング後の食事と睡眠も確認していきましょう。");
+  if(/BIG3/.test(goal))advice.push("重量を急いで上げるより、同じフォームを繰り返せることを優先しましょう。");
+  if(/ゴルフ/.test(goal))advice.push("筋力だけでなく、体幹と股関節の動かしやすさも意識していきましょう。");
+  if(!advice.length)advice.push("次回もフォームを優先し、余裕があれば回数か重量のどちらか一つだけ少し上げていきましょう。");
+  const volumes=recent.map(sessionVolume).filter(x=>x>0);
+  const trend=volumes.length>=2?(volumes[0]>volumes[1]*1.05?"増加":volumes[0]<volumes[1]*.95?"低下":"ほぼ維持"):"算出対象不足";
+  const summary=[
+    `直近：${latestS.date} / ${latestS.rows.length}種目`,
+    `直近3回の数値化できる総負荷量：${trend}`,
+    progress.length?`伸びが確認できた項目：${progress.slice(0,3).join("、")}`:"重量・回数は大きな変化なし"
+  ];
+  const firstProgress=progress[0]||`${latestS.rows[0]?.exercise||"トレーニング"}を継続`;
+  const firstNext=next.slice(0,2).map(x=>x.text).join("、");
+  const line=`${displayClientName(c)}、本日もありがとうございました😊
+今回は${firstProgress}できています。
+次回は${firstNext||"今回の内容をベースに状態を見ながら調整"}していく予定です。
+
+${advice[0]}
+無理のない範囲で続けていきましょう！
+また次回もよろしくお願いします😊`;
+  return {summary,progress,next,advice,line,refIncluded,volumes,recent}
+}
+function analysisHTML(c){
+  const a=analyzeClient(c);
+  const vols=a.recent.map(x=>({date:x.date,value:Math.round(sessionVolume(x))})).filter(x=>x.value>0).reverse();
+  return `<div class="title"><h3>データ分析・次回提案</h3></div>
+  <div class="metric-row">
+    <div class="metric"><b>${a.recent.length}</b><span>直近分析回数</span></div>
+    <div class="metric"><b>${a.progress.length}</b><span>伸びた項目</span></div>
+    <div class="metric"><b>${a.next.length}</b><span>次回候補種目</span></div>
+  </div>
+  ${a.refIncluded?'<div class="source-note">※分析には「参考（補完・想定）」記録を含みます。実施済み記録とは分けて確認してください。</div>':""}
+  <div class="analysis-grid">
+    <div class="analysis-card"><h3>分析</h3><ul>${a.summary.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+    ${vols.length?`<div class="sub" style="margin-top:10px">総負荷量（重量×回数×set、数値化できる種目のみ）</div>${vols.map(v=>`<div class="sub">${fmt(v.date)}：${v.value.toLocaleString()} kg</div>`).join("")}`:""}</div>
+    <div class="analysis-card"><h3>次にした方がいいこと</h3><ul>${a.next.slice(0,8).map(x=>`<li><b>${esc(x.exercise)}</b>：${esc(x.text)}</li>`).join("")}</ul>
+    <button class="btn soft" style="width:100%;margin-top:10px" onclick="useSuggestedMenu('${c.replace(/'/g,"\\'")}')">この提案でトレ開始</button></div>
+    <div class="analysis-card"><h3>お客様へのアドバイス</h3><ul>${a.advice.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+    <div class="analysis-card"><h3>LINE文面</h3><textarea id="lineText" class="linebox">${esc(a.line)}</textarea>
+    <button id="copyLineBtn" class="btn primary" style="width:100%;margin-top:8px" onclick="copyLine()">LINE文面をコピー</button></div>
+  </div>`
+}
+function useSuggestedMenu(c){
+  const a=analyzeClient(c);
+  const ex=a.next.map(x=>({exercise:x.exercise,weight:x.weight,weightStep:inferWeightStep(x.weight),reps:x.reps,sets:x.sets,done:[]}));
+  show("input",true);renderInput({client:c,date:today(),exercises:ex,note:META.attention?.[c]||""});saveDraft()
+}
+async function copyLine(){
+  const el=$("#lineText"),btn=$("#copyLineBtn");if(!el)return;
+  try{await navigator.clipboard.writeText(el.value)}catch(e){el.select();document.execCommand("copy")}
+  if(btn){const old=btn.textContent;btn.textContent="コピーしました ✓";btn.classList.add("copyok");setTimeout(()=>{btn.textContent=old;btn.classList.remove("copyok")},1400)}
+}
+function openClient(c){current=c;show("detail",false);const ss=sessions(c);$("#detail").innerHTML=`<div class="form"><div class="sub">利用者カルテ</div><h2>${esc(c)}</h2>${META.goals?.[c]?`<div class="sub"><b>目標：</b>${esc(META.goals[c])}</div>`:""}${META.attention?.[c]?`<div class="notice"><b>注意・共有</b><br>${esc(META.attention[c])}</div>`:""}<button class="btn primary" style="width:100%;margin-top:12px" onclick="prefill('${c.replace(/'/g,"\\'")}')">直近メニューで開始</button></div>${analysisHTML(c)}<div class="title"><h3>過去メニュー</h3></div>${ss.slice(0,40).map(histCard).join("")}`}
 function n(v,d=0){const x=parseFloat(v);return Number.isFinite(x)?x:d}
 function renderInput(p={}){const cs=clientList().map(x=>x.name),ex=p.exercises||[{exercise:"",weight:0,weightStep:1,reps:10,sets:3,done:[]}];window.exs=ex.map(x=>({...x,weight:normalizeWeight(x.weight),weightStep:x.weightStep||inferWeightStep(x.weight),done:Array.isArray(x.done)?x.done:[]}));$("#input").innerHTML=`<div class="timerbar"><span id="timerText">休憩タイマー</span><span><button onclick="startTimer(60)">60秒</button> <button onclick="startTimer(90)">90秒</button></span></div><div class="title"><h3>トレ中入力</h3></div><div class="form"><div class="row"><input id="fdate" type="date" value="${p.date||today()}"><select id="fclient"><option value="">利用者</option>${cs.map(c=>`<option ${p.client===c?"selected":""}>${esc(c)}</option>`).join("")}</select><select id="fstatus"><option>完了</option><option>良好</option><option>要確認</option><option>変更</option></select><select id="frpe"><option value="">RPE</option>${[1,2,3,4,5,6,7,8,9,10].map(x=>`<option ${String(p.rpe)===String(x)?"selected":""}>${x}</option>`).join("")}</select></div></div><div class="title"><h3>メニュー</h3><button class="btn soft" onclick="addEx()">＋種目</button></div><div id="editors"></div><div class="form"><label class="sub">痛み 0〜10</label><select id="fpain">${[0,1,2,3,4,5,6,7,8,9,10].map(x=>`<option ${String(p.pain)===String(x)?"selected":""}>${x}</option>`).join("")}</select><textarea id="fnote" placeholder="気づき・注意点" style="margin-top:8px">${esc(p.note||"")}</textarea><textarea id="fnext" placeholder="次回やること" style="margin-top:8px">${esc(p.next||"")}</textarea><button class="btn primary" style="width:100%;margin-top:10px" onclick="save()">今日の記録を保存</button></div>`;drawEx();["fdate","fclient","fstatus","frpe","fpain","fnote","fnext"].forEach(id=>$("#"+id).addEventListener("input",saveDraft))}
 function drawEx(){
