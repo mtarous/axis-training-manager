@@ -9,14 +9,20 @@
     const t=clientNameKey(title);
     return clientList().map(x=>x.name).find(n=>{const k=clientNameKey(n);return k&&t.includes(k)})||""
   };
+  window.calendarCandidateName=title=>String(title||"")
+    .replace(/パーソナル体験|パーソナル|トレーニング体験|トレーニング|体験|初回|新規|ケア|整体|施術/g,"")
+    .replace(/[\[\]【】()（）:：・｜|]/g," ")
+    .replace(/\s+/g," ").trim();
   window.normalizedCalendarSchedule=()=> (META.calendarEvents||[]).map(e=>{
     const title=String(e.summary||"予定").trim(),known=matchedClientFromTitle(title);
-    if(!known)return null;
+    const isNewTraining=/パーソナル|トレーニング|体験/.test(title);
+    if(!known&&!isNewTraining)return null;
     let type="予定";
-    if(title.includes("パーソナル"))type="パーソナル";
+    if(title.includes("体験"))type="体験";
+    else if(title.includes("パーソナル")||title.includes("トレーニング"))type="パーソナル";
     else if(title.includes("ケア")||title.includes("整体")||title.includes("施術"))type="ケア";
-    else if(title.includes("体験"))type="体験";
-    return {date:String(e.start||"").slice(0,10),time:String(e.start||"").slice(11,16),client:known,type,label:title,calendar:true,eventId:e.id||""}
+    const candidate=known||calendarCandidateName(title)||title;
+    return {date:String(e.start||"").slice(0,10),time:String(e.start||"").slice(11,16),client:candidate,type,label:title,calendar:true,eventId:e.id||"",newClient:!known}
   }).filter(Boolean).filter(x=>x.date&&x.time);
 
   window.nextTrainingDate=c=>{
