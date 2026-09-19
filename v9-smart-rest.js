@@ -21,3 +21,5 @@ window.renderInput=function(p){oldRender(p);const input=$("#input"),timer=input.
 const oldToggle=window.toggleSet;
 window.toggleSet=function(i,j){oldToggle(i,j);if(!sessionStartedAt)startSession40();showSmartRest(i)};
 })();
+window.jp=function(d){if(!d)return "";const x=new Date(String(d).slice(0,10)+"T00:00:00+09:00");if(Number.isNaN(x.getTime()))return String(d);const w=["日","月","火","水","木","金","土"][x.getDay()];return x.getFullYear()+"年"+(x.getMonth()+1)+"月"+x.getDate()+"日 ("+w+")"};
+window.renderAll=function(){for(const f of [renderHome,renderSchedule,renderClients,renderHistory]){try{f()}catch(e){console.error("AXIS render",e)}}};
