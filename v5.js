@@ -15,7 +15,7 @@
     .replace(/\s+/g," ").trim();
   window.normalizedCalendarSchedule=()=> (META.calendarEvents||[]).map(e=>{
     const title=String(e.summary||"予定").trim(),known=matchedClientFromTitle(title);
-    const isNewTraining=/パーソナル|トレーニング|体験/.test(title);
+    const isNewTraining=/パーソナル|トレーニング|ジム体験|パーソナル体験/.test(title);
     if(!known&&!isNewTraining)return null;
     let type="予定";
     if(title.includes("体験"))type="体験";
