@@ -1,1 +1,7 @@
 .muscle-figures{display:grid;grid-template-columns:1fr 1fr;gap:7px;width:100%}.muscle-figure{background:#020912;border:1px solid #123b5f;border-radius:14px;padding:6px}.muscle-figure-label{text-align:center;font-size:9px;letter-spacing:.14em;color:#6f8aa5;margin:3px 0}.muscle-figure svg{width:100%;height:190px;display:block}.muscle-body{fill:#091827;stroke:#346b93;stroke-width:1.2}.muscle-on{fill:#0b91ff!important;stroke:#7be5ff!important;filter:drop-shadow(0 0 8px rgba(0,166,255,.95))!important}.muscle-off{fill:#102233!important;stroke:#31536d!important}.ax-memo details[open] summary{margin-bottom:8px}.ax-visible-notegrid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.ax-visible-notegrid textarea{min-height:82px}.ax-restore-box{margin-top:14px}.ax-top-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:8px 0}@media(max-width:560px){.muscle-figure svg{height:160px}.ax-visible-notegrid{grid-template-columns:1fr}.ax-top-actions{grid-template-columns:1fr 1fr}}
+/* v15: 週間ボリューム棒グラフの高さが 0px になる問題の修正。
+   .ax-chart-col に高さが無く .ax-chart-bar の height:% が解決できなかった */
+.ax-chart{position:relative;margin-bottom:18px}
+.ax-chart-col{position:relative;height:100%;display:flex;flex-direction:column;justify-content:flex-end}
+.ax-chart-bar{flex:0 0 auto}
+.ax-chart-label{position:absolute;top:100%;left:0;right:0;margin-top:5px}
