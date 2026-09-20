@@ -1,5 +1,7 @@
 (function(){
 let sessionStartedAt=0,sessionTicker=null,lastSuggested=90;
+window.getSession40State=()=>({startedAt:sessionStartedAt});
+window.resetSession40=function(){clearInterval(sessionTicker);sessionTicker=null;sessionStartedAt=0;updateSessionClock()};
 window.isCompoundExercise=function(name){return /スクワット|ベンチ|デッド|rdl|プレス|ラット|プルダウン|ロー|ブルガリアン|ランジ|ヒップスラスト|懸垂/i.test(String(name||""))};
 window.isPowerExercise=function(name){return /ジャンプ|ホップ|スプリント|クリーン|スナッチ|jump|hop/i.test(String(name||""))};
 window.smartRestSeconds=function(e,client,rpe){
