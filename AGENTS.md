@@ -1,33 +1,48 @@
-# AGENTS.md — このフォルダで作業するエージェントへ
+# AGENTS.md — AXIS TRAINING
 
-## 最初に読むもの
+パーソナルトレーニング記録用の PWA。GitHub Pages で公開。
+本番: https://mtarous.github.io/axis-training-manager/
 
-`/Users/sugishimamaho/クロード/docs/handoff/2026-09-20_0800_引継ぎ_3アプリ保守とAXIS_v16デザイン刷新.md`
+## 構成
 
-このリポジトリは AXIS TRAINING。3アプリ（つなぐアプリ / AXIS TRAINING / 日報V3）の現状・決定事項・未完了・全パス・ハマり所が
-このファイル1つに入っている。作業前に必ず全文読むこと。
+単一の `index.html` にデータ層と中核処理があり、その上に `v5` → `v6` → `v7` → `v9` →
+`v10` → `v13` → `v14` → `v16` の順でスクリプトを読み込み、後から読むファイルが
+`window.xxx` を上書きしていく積層方式。テーマ CSS も同じ順で重ねる。
 
-## 環境
-
-- macOS (Darwin 21.6.0)。引き継ぎ書に出てくる `C:\Users\...` は別PCのパスで、ここには存在しない
-- Node は PATH に無い。毎回 `export PATH=$HOME/.local/node/bin:$PATH`
-- `gh` は GitHub アカウント mtarous で認証済み
-- `clasp` 3.4.1 導入済み。`tunagu.fukuoka@gmail.com` でログイン済み（資格情報は `~/.clasprc.json`）
-
-## 3つのプロジェクト
-
-| 名前 | 種別 | 場所 |
-|---|---|---|
-| AXIS TRAINING | PWA / GitHub Pages | `/Users/sugishimamaho/クロード/axis-training-manager` |
-| つなぐアプリ | Google Apps Script | scriptId `1RY4rMoIr82MO3mGZ5KiPbdtUMaaDxH3qU_-DJ4nfu5i8WS8zXjuMEqEp` |
-| 日報V3 | Google Apps Script | scriptId `1utEPPp71Ty_df-1tDMWPDv1ZKdpTG9hLcnKrpd0CcYiy-s13fGBb3H5S` |
+| ファイル | 役割 |
+|---|---|
+| `index.html` | データ層（`BASE` / `added` / `all()` / `sessions()`）・`renderInput`・`save()` |
+| `data.enc` | 過去記録（PBKDF2 + AES-GCM）。**再生成禁止** |
+| `calendar.enc` | Google カレンダー同期データ |
+| `sw.js` | Service Worker。変更時はキャッシュ名を必ず上げる |
+| `v7-summary-muscle.js` | `musclesForExercise` / 共有レポート |
+| `v9-smart-rest.js` | スマート休憩の秒数算出 / 40分セッション |
+| `v10-ui.js` | 旧デザイン層 |
+| `v13-refine.js` | 暦週集計・スパークライン・分析画面 |
+| `v14-ux.js` | 人体図（旧）・スケジュール復元 |
+| `v16-design.js` / `theme-v16.css` | 現行デザイン層（ホーム・人体図・グラフ・ナビ） |
 
 ## 作業の原則
 
 1. 本番を壊さない。1回の変更範囲を小さく。原因が明確な不具合だけ直す
-2. 確認していないことを「正常」「修正済み」と報告しない。実画面かDOM実測で裏を取る
-3. 古いバージョンのコードで本番を上書きしない。Version は必ず実測する
-4. Apps Script を触る前に、必ず現行ソースを取得してバックアップする
-5. 秘密情報（APIキー・トークン・パスワード）をリポジトリやプロンプトに書かない
+2. 確認していないことを「正常」「修正済み」と報告しない。実画面か DOM 実測で裏を取る
+3. `data.enc` / `calendar.enc` を再生成しない。既存の記録を消さない
+4. 旧 UI に戻さない。Excel 出力の仕様を削らない
+5. 「今週の総ボリューム」は月曜〜日曜の暦週。直近7トレーニング日に戻さない
+6. 予定の非表示は `axis_hidden_schedule_v1`。Google Calendar 本体の予定は削除しない
+7. 個人情報（利用者名・写真・メールアドレス）をこのリポジトリに入れない。**公開リポジトリです**
 
-詳細な禁止事項は引き継ぎ書の末尾「絶対に守ること」を参照。
+## 変更したら
+
+```
+node --check <変更したJS>
+git add -A && git commit && git pull --rebase && git push
+gh api repos/mtarous/axis-training-manager/pages/builds/latest   # status が built になるまで
+```
+
+そのうえで本番 URL を実際に開いて画面を確認する。ここまでやって初めて「完了」。
+
+## 詳細な引き継ぎ
+
+作業端末のローカルに引継書がある。Codex など端末上で動くエージェントは
+`docs/handoff/` 配下の最新の引継書を読むこと（このリポジトリには含めない）。
