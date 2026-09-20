@@ -32,15 +32,19 @@ function rawAnnotated(){
   for(let i=rows.length-1;i>=0;i--){
     const row=rows[i];
     if(row.source!=="アプリ入力")continue;
-    const group=[row.date||"",row.client||"",row.exercise||"",row.source||""].join("\u241f");
+    const stamp=String(row._axisSessionStamp||"");
+    const group=[row.date||"",row.client||"",row.exercise||"",row.source||"",stamp].join("\u241f");
     const n=reverse.get(group)||0;reverse.set(group,n+1);reverseOrdinal[i]=n;
   }
   return rows.map((row,i)=>{
-    const group=[row.date||"",row.client||"",row.exercise||"",row.source||""].join("\u241f");
+    const stamp=String(row._axisSessionStamp||"");
+    const group=[row.date||"",row.client||"",row.exercise||"",row.source||"",stamp].join("\u241f");
     let n;
     if(row.source==="アプリ入力")n=reverseOrdinal[i]??0;
     else{n=forward.get(group)||0;forward.set(group,n+1)}
-    const key=JSON.stringify([row.date||"",row.client||"",row.exercise||"",row.source||"",n]);
+    const key=(row.source==="アプリ入力"&&stamp)
+      ?JSON.stringify(["app-v2",stamp,Number(row._axisExerciseIndex)||0])
+      :JSON.stringify([row.date||"",row.client||"",row.exercise||"",row.source||"",n]);
     return {key,row};
   });
 }
