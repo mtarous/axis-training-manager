@@ -25,10 +25,21 @@ function saveEdits(x){
   else localStorage.removeItem(EDIT_KEY);
 }
 function rawAnnotated(){
-  const rows=baseAll(),counts=new Map();
-  return rows.map(row=>{
+  const rows=baseAll(),forward=new Map(),reverseOrdinal=new Array(rows.length);
+  // App sessions are added with unshift(). Count duplicate app rows from oldest
+  // to newest so a newly saved same-day exercise cannot move an existing key.
+  const reverse=new Map();
+  for(let i=rows.length-1;i>=0;i--){
+    const row=rows[i];
+    if(row.source!=="アプリ入力")continue;
     const group=[row.date||"",row.client||"",row.exercise||"",row.source||""].join("\u241f");
-    const n=counts.get(group)||0;counts.set(group,n+1);
+    const n=reverse.get(group)||0;reverse.set(group,n+1);reverseOrdinal[i]=n;
+  }
+  return rows.map((row,i)=>{
+    const group=[row.date||"",row.client||"",row.exercise||"",row.source||""].join("\u241f");
+    let n;
+    if(row.source==="アプリ入力")n=reverseOrdinal[i]??0;
+    else{n=forward.get(group)||0;forward.set(group,n+1)}
     const key=JSON.stringify([row.date||"",row.client||"",row.exercise||"",row.source||"",n]);
     return {key,row};
   });
