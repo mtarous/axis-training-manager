@@ -238,6 +238,7 @@ window.drawEx=function(){
         ${total>1?`<button class="ax16-btn ghost" onclick="removeEx(${i});v16SetActive(Math.max(0,${i}-1))">この種目を削除</button>`:""}
       </div>
     </section>`;
+  renderRest(i);
 };
 
 })();
