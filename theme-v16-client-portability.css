@@ -40,3 +40,7 @@
  .axis-share-mode .axu-many .axu-menu{grid-template-columns:1fr 1fr}
  .axis-share-mode .axu-mini-anatomy .ax16-figs{max-width:168px}
 }
+
+/* v10 has !important bottom padding; remove it only while preparing a screenshot. */
+.axis-share-mode .main{padding:0 10px 4px!important}
+.axis-share-mode .app{min-height:0!important}
