@@ -73,7 +73,7 @@
 .ax16t-restcopy{color:var(--v16-mut);font-size:12px;line-height:1.7}
 .ax16t-memo textarea{margin-top:8px;background:#061322;border-color:var(--v16-line2);color:var(--v16-ink);min-height:92px}
 .ax16t-chips{margin:0 0 5px}
-.ax16t-chips button{cursor:pointer}
+.ax16t-chips button{cursor:pointer}\n.ax16t-chips button.on{background:linear-gradient(180deg,#178fff,#0758c9);color:#fff;border-color:#2acbff;box-shadow:0 0 12px rgba(24,205,255,.22)}
 @media(max-width:560px){
   .ax16t-clientline{grid-template-columns:1fr}
   .ax16t-date{width:100%}
