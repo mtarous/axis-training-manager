@@ -340,20 +340,52 @@ function setScheduleState(key,hidden){
 }
 
 const hSave=window.axisSaveHistoryEdit;
-if(typeof hSave==="function")window.axisSaveHistoryEdit=function(...a){const key=S("#axheKey")?.value,r=hSave.apply(this,a);clearHistoryTomb(key);scheduleSync();return r};
+if(typeof hSave==="function")window.axisSaveHistoryEdit=function(...a){
+  const key=S("#axheKey")?.value,before=readMap("axis_training_edits_v1"),r=hSave.apply(this,a),after=readMap("axis_training_edits_v1");
+  if(key&&after[key])clearHistoryTomb(key);
+  else if(key&&before[key]&&!after[key])markHistoryTomb(key);
+  if(JSON.stringify(before)!==JSON.stringify(after))scheduleSync();
+  return r
+};
 const hDelete=window.axisDeleteHistoryRow;
-if(typeof hDelete==="function")window.axisDeleteHistoryRow=function(key,...a){const r=hDelete.call(this,key,...a);clearHistoryTomb(key);scheduleSync();return r};
+if(typeof hDelete==="function")window.axisDeleteHistoryRow=function(key,...a){
+  const before=readMap("axis_training_edits_v1"),r=hDelete.call(this,key,...a),after=readMap("axis_training_edits_v1");
+  if(key&&after[key])clearHistoryTomb(key);
+  if(JSON.stringify(before)!==JSON.stringify(after))scheduleSync();
+  return r
+};
 const hRestore=window.axisRestoreHistoryEdit;
-if(typeof hRestore==="function")window.axisRestoreHistoryEdit=function(key,...a){const r=hRestore.call(this,key,...a);markHistoryTomb(key);scheduleSync();return r};
+if(typeof hRestore==="function")window.axisRestoreHistoryEdit=function(key,...a){
+  const before=readMap("axis_training_edits_v1"),r=hRestore.call(this,key,...a),after=readMap("axis_training_edits_v1");
+  if(key&&before[key]&&!after[key]){markHistoryTomb(key);scheduleSync()}
+  return r
+};
 const hReset=window.axisResetAllHistoryEdits;
-if(typeof hReset==="function")window.axisResetAllHistoryEdits=function(...a){const keys=Object.keys(readMap("axis_training_edits_v1"));const r=hReset.apply(this,a);keys.forEach(markHistoryTomb);scheduleSync();return r};
+if(typeof hReset==="function")window.axisResetAllHistoryEdits=function(...a){
+  const before=readMap("axis_training_edits_v1"),r=hReset.apply(this,a),after=readMap("axis_training_edits_v1");
+  let changed=false;for(const key of Object.keys(before))if(!after[key]){markHistoryTomb(key);changed=true}
+  if(changed)scheduleSync();return r
+};
 
+function hiddenSet(){return new Set(parseJSON(localStorage.getItem("axis_hidden_schedule_v1")||"[]",[]))}
 const sHide=window.hideScheduleItem;
-if(typeof sHide==="function")window.hideScheduleItem=function(key,...a){const r=sHide.call(this,key,...a);setScheduleState(key,true);scheduleSync();return r};
+if(typeof sHide==="function")window.hideScheduleItem=function(key,...a){
+  const before=hiddenSet(),r=sHide.call(this,key,...a),after=hiddenSet();
+  if(before.has(key)!==after.has(key)){setScheduleState(key,after.has(key));scheduleSync()}
+  return r
+};
 const sRestore=window.restoreScheduleItem;
-if(typeof sRestore==="function")window.restoreScheduleItem=function(key,...a){const r=sRestore.call(this,key,...a);setScheduleState(key,false);scheduleSync();return r};
+if(typeof sRestore==="function")window.restoreScheduleItem=function(key,...a){
+  const before=hiddenSet(),r=sRestore.call(this,key,...a),after=hiddenSet();
+  if(before.has(key)!==after.has(key)){setScheduleState(key,after.has(key));scheduleSync()}
+  return r
+};
 const sRestoreAll=window.restoreAllScheduleItems;
-if(typeof sRestoreAll==="function")window.restoreAllScheduleItems=function(...a){const keys=parseJSON(localStorage.getItem("axis_hidden_schedule_v1")||"[]",[]);const r=sRestoreAll.apply(this,a);for(const k of keys)setScheduleState(k,false);scheduleSync();return r};
+if(typeof sRestoreAll==="function")window.restoreAllScheduleItems=function(...a){
+  const before=hiddenSet(),r=sRestoreAll.apply(this,a),after=hiddenSet();let changed=false;
+  for(const key of before)if(!after.has(key)){setScheduleState(key,false);changed=true}
+  if(changed)scheduleSync();return r
+};
 
 ["save","axisAddClient","axisSaveClientProfileToken","axisSetClientActiveToken"].forEach(n=>wrapAfter(n,()=>scheduleSync()));
 const importBackup=window.axisImportBackupData;
