@@ -130,6 +130,9 @@
 - hiddenSchedule: `axis_hidden_schedule_state_v2` に `{hidden, updatedAt}` を保持し、legacyの `axis_hidden_schedule_v1` 配列へ反映。
 - 予定の「戻す」「すべて戻す」もvisible tombstoneとして同期可能。
 - セッション配列順は実データでは維持する。同期差分比較用hashだけ集合として正規化し、端末ごとの配列順差で無限pushしない。
+- 新規保存セッションには `savedAt` を付与する。
+- 新規アプリ入力の履歴編集キーは `["app-v2", savedAt, exerciseIndex]` を使用し、端末ごとのsessions配列順に依存させない。
+- 既存のsavedAtなし履歴は従来キーを維持し、既存編集を壊さない。
 
 ### UI検証
 ダミーデータのみの独立ブラウザ環境で同期カードを実測。
