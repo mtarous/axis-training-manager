@@ -44,3 +44,25 @@
 /* v10 has !important bottom padding; remove it only while preparing a screenshot. */
 .axis-share-mode .main{padding:0 10px 4px!important}
 .axis-share-mode .app{min-height:0!important}
+
+/* Extra compaction only for long (5-8 exercise) share reports. */
+.axis-share-mode .axu-many .ax16-logo{font-size:18px}
+.axis-share-mode .axu-many .axp-reporthero>div:first-child>span{margin-top:2px;font-size:6.5px}
+.axis-share-mode .axu-many .axu-hero{padding-bottom:4px}
+.axis-share-mode .axu-many .axu-client{padding:4px 0}
+.axis-share-mode .axu-many .axu-client h2{font-size:16px;margin:1px 0}
+.axis-share-mode .axu-many .axu-client p{font-size:7px}
+.axis-share-mode .axu-many .axp-check{width:28px;height:28px;font-size:15px}
+.axis-share-mode .axu-many .axu-kpi{gap:4px}
+.axis-share-mode .axu-many .axu-kpi>div{padding:5px}
+.axis-share-mode .axu-many .axu-kpi b{font-size:13px}
+.axis-share-mode .axu-many .axu-kpi span{font-size:6.5px}
+.axis-share-mode .axu-many .axu-menu .axp-menurow{padding:2px 0}
+.axis-share-mode .axu-many .axu-mini-anatomy .ax16-fig svg{max-height:50px}
+.axis-share-mode .axu-many .axu-mini-anatomy .ax16-fig .cap{font-size:5px}
+.axis-share-mode .axu-many .axu-muscle-summary{gap:3px}
+.axis-share-mode .axu-many .axu-musclechips{gap:2px}
+.axis-share-mode .axu-many .axu-advice p{line-height:1.25}
+.axis-share-mode .axu-many .axu-next{gap:4px}
+.axis-share-mode .axu-many .axu-next p{-webkit-line-clamp:1;line-height:1.25}
+.axis-share-mode .axu-many .axp-reportfoot{margin-top:1px}
