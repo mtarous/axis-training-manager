@@ -90,6 +90,20 @@ function axisHistCard(s){
 }
 window.histCard=axisHistCard;
 
+const baseOpenClient=window.openClient;
+window.openClient=function(c){
+  if(typeof baseOpenClient==="function")baseOpenClient(c);
+  const detail=S("#detail");if(!detail)return;
+  const heading=[...detail.querySelectorAll(".title h3")].find(x=>x.textContent.trim()==="過去メニュー");
+  const title=heading?.closest(".title");if(!title)return;
+  let node=title.nextSibling;
+  while(node){const next=node.nextSibling;node.remove();node=next}
+  const holder=document.createElement("div");holder.className="axhe-detail-history";
+  const list=sessions(c).slice(0,40);
+  holder.innerHTML=list.length?list.map(axisHistCard).join(""):'<div class="axhe-empty">過去メニューなし</div>';
+  title.after(holder);
+};
+
 function changesPanel(){
   const edits=loadEdits(),items=Object.entries(edits);
   if(!items.length)return '<div class="axhe-none">変更された過去記録はありません</div>';
