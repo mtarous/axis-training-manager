@@ -283,6 +283,12 @@ window.axisRequestPersistentStorage=requestPersistentStorage;
 window.renderMore=function(){
  if(typeof baseRenderMore==="function")baseRenderMore();
  const root=S("#more");if(!root||root.querySelector(".axport-card"))return;
+ const oldBackup=[...root.querySelectorAll("button")].find(b=>String(b.getAttribute("onclick")||"").includes("exportBackup"));
+ if(oldBackup){
+   const panel=oldBackup.closest(".ax-panel"),title=panel?.querySelector(".ax-panel-title");
+   oldBackup.remove();
+   if(title&&title.textContent.includes("Excel"))title.textContent="Excel出力";
+ }
  const card=document.createElement("div");card.className="ax16-panel axport-card";
  card.innerHTML='<div class="ax16-head"><div class="ax16-h"><span class="ic">'+v16Icon("download")+'</span>端末引き継ぎ・バックアップ</div><span id="axisStorageStatus" class="ax16-mut">確認中</span></div>'+
   '<p>トレーニング記録・顧客管理・履歴編集・非表示予定をまとめて保存できます。別端末では同じJSONを読み込んで引き継げます。</p>'+
