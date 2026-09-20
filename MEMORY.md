@@ -6,7 +6,7 @@ AXIS TRAINING の再利用知見インデックス。
 - 自動同期・顧客台帳・バックアップ:
   - `docs/memory/axis-sync.md`
 - 最新引継ぎ:
-  - `docs/handoff/2026-09-20_1324_引継ぎ_AXIS自動同期準備.md`
+  - `docs/handoff/2026-09-20_1404_引継ぎ_AXIS自動同期実装済み_Google側未デプロイ.md`
 
 ## 共通ルール
 - 本番を壊さない。1回の変更範囲は小さくする。
