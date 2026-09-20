@@ -9,6 +9,14 @@ let editOrigin={view:"history",client:""};
 
 function S(s){return document.querySelector(s)}
 function jsq(s){return String(s||"").replace(/\\/g,"\\\\").replace(/'/g,"\\'")}
+function keyToken(key){
+  return btoa(unescape(encodeURIComponent(String(key||"")))).replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+}
+function tokenKey(token){
+  let s=String(token||"").replace(/-/g,"+").replace(/_/g,"/");
+  while(s.length%4)s+="=";
+  return decodeURIComponent(escape(atob(s)));
+}
 function loadEdits(){
   try{const x=JSON.parse(localStorage.getItem(EDIT_KEY)||"{}");return x&&typeof x==="object"&&!Array.isArray(x)?x:{}}catch(e){return{}}
 }
@@ -66,7 +74,7 @@ function axisHistCard(s){
         '<div class="axhe-values">'+esc(r.weight)+(typeof r.weight==="number"?"kg":"")+'　'+esc(r.reps)+(r.reps!==""&&r.reps!=null?"回":"")+(r.sets?(' × '+esc(r.sets)+'set'):"")+'</div>'+
         (r.achieved?'<div class="axhe-meta">'+esc(r.achieved)+'</div>':"")+
         (r.memo?'<div class="axhe-memo">'+esc(r.memo)+'</div>':"")+'</div>'+
-        '<button class="axhe-edit" onclick="axisOpenHistoryEdit(\''+jsq(r._axisKey)+'\')">編集</button>'+
+        '<button class="axhe-edit" onclick="axisOpenHistoryEditToken(\''+keyToken(r._axisKey)+'\')">編集</button>'+
       '</div>').join("")+'</div></div>';
 }
 window.histCard=axisHistCard;
@@ -77,10 +85,10 @@ function changesPanel(){
   return '<details class="axhe-changes"><summary>変更・非表示した記録 <b>'+items.length+'件</b></summary>'+
     '<div class="axhe-changebody">'+items.map(([key,e])=>{
       const r=rawByKey(key);
-      if(!r)return '<div class="axhe-change missing"><div>元記録を特定できません</div><button onclick="axisRestoreHistoryEdit(\''+jsq(key)+'\')">設定を削除</button></div>';
+      if(!r)return '<div class="axhe-change missing"><div>元記録を特定できません</div><button onclick="axisRestoreHistoryEditToken(\''+keyToken(key)+'\')">設定を削除</button></div>';
       const fields=e.deleted?["非表示"]:changedFields(r,e.patch||{});
       return '<div class="axhe-change"><div><b>'+esc(r.date)+'｜'+esc(r.client)+'</b><span>'+esc(r.exercise)+'</span><small>'+(e.deleted?"非表示":("変更: "+fields.join(" / ")))+'</small></div>'+
-        '<button onclick="axisRestoreHistoryEdit(\''+jsq(key)+'\')">元に戻す</button></div>';
+        '<button onclick="axisRestoreHistoryEditToken(\''+keyToken(key)+'\')">元に戻す</button></div>';
     }).join("")+
     '<button class="axhe-resetall" onclick="axisResetAllHistoryEdits()">すべての変更を元に戻す</button></div></details>';
 }
@@ -106,6 +114,7 @@ function ensureModal(){
 }
 function currentView(){return document.querySelector(".view.on")?.id||"history"}
 
+window.axisOpenHistoryEditToken=function(token){return axisOpenHistoryEdit(tokenKey(token))};
 window.axisOpenHistoryEdit=function(key){
   ensureModal();
   const raw=rawByKey(key),edits=loadEdits(),e=edits[key]||{};
@@ -127,7 +136,7 @@ window.axisOpenHistoryEdit=function(key){
       '<label>達成・状態<input id="axheAchieved" value="'+esc(row.achieved||"")+'"></label>'+
       '<label class="wide">メモ<textarea id="axheMemo">'+esc(row.memo||"")+'</textarea></label>'+
     '</div>'+
-    '<div class="axhe-actions"><button class="ax16-btn pri" onclick="axisSaveHistoryEdit()">変更を保存</button><button class="ax16-btn soft" onclick="axisRestoreHistoryEdit(\''+jsq(key)+'\')">元に戻す</button><button class="ax16-btn ghost danger" onclick="axisDeleteHistoryRow(\''+jsq(key)+'\')">この記録を非表示</button></div>';
+    '<div class="axhe-actions"><button class="ax16-btn pri" onclick="axisSaveHistoryEdit()">変更を保存</button><button class="ax16-btn soft" onclick="axisRestoreHistoryEditToken(\''+keyToken(key)+'\')">元に戻す</button><button class="ax16-btn ghost danger" onclick="axisDeleteHistoryRowToken(\''+keyToken(key)+'\')">この記録を非表示</button></div>';
   S("#axisHistoryEditModal").classList.add("on");
 };
 
@@ -159,6 +168,7 @@ window.axisSaveHistoryEdit=function(){
   saveEdits(edits);afterChange(patch.client);
 };
 
+window.axisDeleteHistoryRowToken=function(token){return axisDeleteHistoryRow(tokenKey(token))};
 window.axisDeleteHistoryRow=function(key){
   const raw=rawByKey(key);if(!raw)return;
   if(!confirm("この記録をAXIS上で非表示にしますか？\n\n元データは削除されず、いつでも元に戻せます。"))return;
@@ -166,6 +176,7 @@ window.axisDeleteHistoryRow=function(key){
   afterChange(editOrigin.client||raw.client);
 };
 
+window.axisRestoreHistoryEditToken=function(token){return axisRestoreHistoryEdit(tokenKey(token))};
 window.axisRestoreHistoryEdit=function(key){
   const edits=loadEdits();delete edits[key];saveEdits(edits);
   afterChange(editOrigin.client);
