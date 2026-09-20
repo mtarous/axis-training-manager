@@ -5,6 +5,7 @@
 const REG_KEY="axis_client_registry_v1";
 const EDIT_KEY="axis_training_edits_v1";
 const HIDE_KEY="axis_hidden_schedule_v1";
+const SCHED_STATE_KEY="axis_hidden_schedule_state_v2";
 const S=s=>document.querySelector(s);
 const baseAll=window.all;
 const baseAppRows=window.appRows;
@@ -217,6 +218,7 @@ function backupPayload(){
   clients:readRegistry(),
   historyEdits:parseJSON(localStorage.getItem(EDIT_KEY)||"{}",{}),
   hiddenSchedule:parseJSON(localStorage.getItem(HIDE_KEY)||"[]",[]),
+  hiddenScheduleState:parseJSON(localStorage.getItem(SCHED_STATE_KEY)||"{}",{}),
   draft:parseJSON(localStorage.getItem("axis_training_draft")||"null",null)
  };
 }
@@ -230,15 +232,34 @@ function sessionSig(s){return JSON.stringify([s?.date||"",s?.client||"",s?.saved
 function mergeSessions(current,incoming){
  const out=[],seen=new Set();[...(current||[]),...(incoming||[])].forEach(s=>{const k=sessionSig(s);if(!seen.has(k)){seen.add(k);out.push(s)}});return out;
 }
+function versionTime(v){return Date.parse(v?.updatedAt||v?.createdAt||0)||0}
+function stableJSON(v){
+ if(v===null||typeof v!=="object")return JSON.stringify(v);
+ if(Array.isArray(v))return "["+v.map(stableJSON).join(",")+"]";
+ return "{"+Object.keys(v).sort().map(k=>JSON.stringify(k)+":"+stableJSON(v[k])).join(",")+"}";
+}
+function newerValue(cur,inc){
+ const ct=versionTime(cur),it=versionTime(inc);
+ if(it!==ct)return it>ct?inc:cur;
+ return stableJSON(inc)>stableJSON(cur)?inc:cur;
+}
 function mergeRegistry(current,incoming){
  const out={...current};
  Object.entries(incoming||{}).forEach(([k,v])=>{
    const inc=normalizeRecord(k,v),cur=out[k]?normalizeRecord(k,out[k]):null;
    if(!cur){out[k]=inc;return}
-   const it=Date.parse(inc.updatedAt||inc.createdAt||0)||0,ct=Date.parse(cur.updatedAt||cur.createdAt||0)||0;
-   out[k]=it>ct?inc:cur;
+   const win=newerValue(cur,inc);
+   out[k]={...win,aliases:uniq([...(cur.aliases||[]),...(inc.aliases||[])])};
  });
  return out;
+}
+function mergeVersionedMap(current,incoming){
+ const out={...current};
+ Object.entries(incoming||{}).forEach(([k,v])=>{out[k]=out[k]?newerValue(out[k],v):v});
+ return out;
+}
+function legacyScheduleState(keys,at){
+ const out={};(Array.isArray(keys)?keys:[]).forEach(k=>out[k]={hidden:true,updatedAt:at||"1970-01-01T00:00:00.000Z"});return out;
 }
 window.axisImportBackupData=function(data){
  if(!data||typeof data!=="object")throw new Error("バックアップ形式が正しくありません");
@@ -246,13 +267,21 @@ window.axisImportBackupData=function(data){
  const clients=data.clients&&typeof data.clients==="object"&&!Array.isArray(data.clients)?data.clients:{};
  const edits=data.historyEdits&&typeof data.historyEdits==="object"?data.historyEdits:{};
  const hidden=Array.isArray(data.hiddenSchedule)?data.hiddenSchedule:[];
+ const incomingScheduleState=data.hiddenScheduleState&&typeof data.hiddenScheduleState==="object"&&!Array.isArray(data.hiddenScheduleState)
+   ?data.hiddenScheduleState:legacyScheduleState(hidden,data.exported);
  added=mergeSessions(Array.isArray(added)?added:[],sessions);
  localStorage.setItem("axis_training_added",JSON.stringify(added));
  writeRegistry(mergeRegistry(readRegistry(),clients));
  const curEdits=parseJSON(localStorage.getItem(EDIT_KEY)||"{}",{});
- localStorage.setItem(EDIT_KEY,JSON.stringify({...edits,...curEdits}));
+ localStorage.setItem(EDIT_KEY,JSON.stringify(mergeVersionedMap(curEdits,edits)));
  const curHidden=parseJSON(localStorage.getItem(HIDE_KEY)||"[]",[]);
- localStorage.setItem(HIDE_KEY,JSON.stringify(uniq([...(curHidden||[]),...hidden])));
+ const curScheduleState=parseJSON(localStorage.getItem(SCHED_STATE_KEY)||"{}",{});
+ const mergedScheduleState=mergeVersionedMap(
+   mergeVersionedMap(legacyScheduleState(curHidden),curScheduleState),
+   incomingScheduleState
+ );
+ localStorage.setItem(SCHED_STATE_KEY,JSON.stringify(mergedScheduleState));
+ localStorage.setItem(HIDE_KEY,JSON.stringify(Object.entries(mergedScheduleState).filter(([,v])=>v&&v.hidden===true).map(([k])=>k)));
  if(!localStorage.getItem("axis_training_draft")&&data.draft)localStorage.setItem("axis_training_draft",JSON.stringify(data.draft));
  syncMetaAliases();if(typeof renderAll==="function")renderAll();refresh();
  return {sessions:added.length,clients:Object.keys(readRegistry()).length};
