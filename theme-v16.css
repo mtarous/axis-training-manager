@@ -1,0 +1,156 @@
+/* ===== AXIS v16 : premium dark design layer =====
+   既存 theme-v7/v10/v13/v14 の上に重ねる。新規コンポーネントは ax16- 接頭辞。 */
+:root{
+  --v16-bg:#03060d; --v16-bg2:#061020; --v16-panel:#08111f; --v16-panel2:#0b1828;
+  --v16-line:#12304e; --v16-line2:#0e2339;
+  --v16-ink:#e9f2fc; --v16-mut:#7d93ad; --v16-dim:#556b84;
+  --v16-blue:#0b8cff; --v16-blue2:#18cdff; --v16-deep:#0044a8;
+  --v16-glow:0 0 22px rgba(11,140,255,.38);
+  --v16-r:20px;
+}
+body{background:var(--v16-bg);color:var(--v16-ink)}
+.app{max-width:900px}
+.main{padding:0 14px 8px}
+
+/* --- 共通パネル --- */
+.ax16-panel{background:linear-gradient(168deg,var(--v16-panel2),var(--v16-panel));border:1px solid var(--v16-line2);border-radius:var(--v16-r);padding:15px;margin-bottom:11px;position:relative;overflow:hidden}
+.ax16-panel::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;background:linear-gradient(90deg,transparent,rgba(24,205,255,.35),transparent)}
+.ax16-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:11px}
+.ax16-h{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;letter-spacing:.01em}
+.ax16-h .ic{width:24px;height:24px;display:grid;place-items:center;border-radius:8px;background:rgba(11,140,255,.14);border:1px solid rgba(24,205,255,.28);color:var(--v16-blue2);flex:none}
+.ax16-h .ic svg{width:14px;height:14px;display:block}
+.ax16-more{color:var(--v16-blue2);font-size:12px;font-weight:700;background:none;border:0;padding:4px 2px;display:inline-flex;align-items:center;gap:3px}
+.ax16-eyebrow{font-size:9.5px;letter-spacing:.2em;color:var(--v16-dim);font-weight:800}
+.ax16-mut{color:var(--v16-mut);font-size:12.5px;line-height:1.7}
+
+/* --- ヒーロー --- */
+.ax16-hero{position:relative;border-radius:24px;overflow:hidden;padding:20px 18px 22px;margin:10px 0 12px;
+  background:radial-gradient(120% 120% at 82% 8%,rgba(11,140,255,.32),transparent 58%),linear-gradient(160deg,#071528,#03070f 72%);
+  border:1px solid var(--v16-line)}
+.ax16-hero::after{content:"";position:absolute;right:-60px;top:-70px;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle,rgba(24,205,255,.26),transparent 62%);pointer-events:none}
+.ax16-herotop{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.ax16-logo{font-size:29px;font-weight:900;letter-spacing:.06em;line-height:1}
+.ax16-logo i{font-style:normal;color:var(--v16-blue2);text-shadow:0 0 16px rgba(24,205,255,.75)}
+.ax16-logo small{display:block;font-size:9.5px;letter-spacing:.42em;color:#9ab6d4;font-weight:700;margin-top:5px}
+.ax16-tpcl{font-size:9.5px;letter-spacing:.2em;line-height:1.85;color:#6e93b8;font-weight:800;text-align:right}
+.ax16-date{display:inline-flex;align-items:center;gap:6px;margin-top:16px;font-size:12.5px;color:#9fb8d2}
+.ax16-date svg{width:13px;height:13px;color:var(--v16-blue2)}
+.ax16-lead{font-size:24px;font-weight:900;line-height:1.36;margin-top:9px;letter-spacing:.01em}
+.ax16-lead span{display:block;font-size:12px;font-weight:600;color:var(--v16-mut);margin-top:7px;letter-spacing:0}
+
+/* --- 統計カード --- */
+.ax16-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:11px}
+.ax16-stat{background:linear-gradient(168deg,var(--v16-panel2),var(--v16-panel));border:1px solid var(--v16-line2);border-radius:17px;padding:13px 12px;position:relative;overflow:hidden}
+.ax16-stat .ic{width:27px;height:27px;display:grid;place-items:center;border-radius:9px;background:rgba(11,140,255,.15);border:1px solid rgba(24,205,255,.3);color:var(--v16-blue2);margin-bottom:9px}
+.ax16-stat .ic svg{width:15px;height:15px}
+.ax16-stat label{display:block;font-size:11px;color:var(--v16-mut);font-weight:700}
+.ax16-statrow{display:flex;align-items:flex-end;justify-content:space-between;gap:7px;margin-top:3px}
+.ax16-stat strong{font-size:27px;font-weight:900;line-height:1.05;letter-spacing:-.02em}
+.ax16-stat strong u{text-decoration:none;font-size:12px;font-weight:800;margin-left:2px;color:var(--v16-mut)}
+.ax16-delta{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:800;margin-top:7px}
+.ax16-delta.up{color:#2fd4ff}.ax16-delta.dn{color:#ff7d8a}.ax16-delta.flat{color:var(--v16-dim)}
+.ax16-spark{display:flex;align-items:flex-end;gap:2px;height:26px;flex:none}
+.ax16-spark i{width:4px;border-radius:2px 2px 0 0;background:linear-gradient(180deg,var(--v16-blue2),var(--v16-deep));display:block;min-height:3px}
+.ax16-ring{flex:none}
+.ax16-ring svg{display:block;width:52px;height:52px;transform:rotate(-90deg)}
+.ax16-ring .bg{fill:none;stroke:#10263c;stroke-width:6}
+.ax16-ring .fg{fill:none;stroke:url(#v16ring);stroke-width:6;stroke-linecap:round;filter:drop-shadow(0 0 6px rgba(24,205,255,.8))}
+
+/* --- セグメント切替 --- */
+.ax16-seg{display:inline-flex;gap:3px;background:#081625;border:1px solid var(--v16-line2);border-radius:999px;padding:3px;margin-bottom:12px}
+.ax16-seg button{border:0;background:none;color:var(--v16-mut);font-size:11.5px;font-weight:800;padding:6px 12px;border-radius:999px;min-height:0}
+.ax16-seg button.on{background:linear-gradient(180deg,var(--v16-blue),var(--v16-deep));color:#fff;box-shadow:var(--v16-glow)}
+
+/* --- 棒グラフ（目盛り付き） --- */
+.ax16-chartwrap{position:relative;padding-left:34px}
+.ax16-grid{position:absolute;left:0;right:0;top:0;height:150px}
+.ax16-grid i{position:absolute;left:34px;right:0;border-top:1px dashed rgba(29,68,102,.6);display:block}
+.ax16-grid b{position:absolute;left:0;transform:translateY(-50%);font-size:8.5px;color:var(--v16-dim);font-weight:700}
+.ax16-bars{position:relative;height:150px;display:flex;align-items:flex-end;gap:7px;margin-bottom:20px;border-bottom:1px solid var(--v16-line)}
+.ax16-col{position:relative;flex:1;height:100%;display:flex;flex-direction:column;justify-content:flex-end;min-width:0}
+.ax16-bar{width:100%;border-radius:5px 5px 0 0;background:linear-gradient(180deg,var(--v16-blue2),var(--v16-blue) 52%,var(--v16-deep));box-shadow:0 0 12px rgba(11,140,255,.3);flex:0 0 auto}
+.ax16-col.peak .ax16-bar{box-shadow:0 0 20px rgba(24,205,255,.75)}
+.ax16-xl{position:absolute;top:100%;left:0;right:0;margin-top:6px;text-align:center;font-size:9.5px;color:var(--v16-dim);font-weight:700}
+.ax16-col.peak .ax16-xl{color:var(--v16-blue2)}
+.ax16-tip{position:absolute;bottom:100%;left:50%;transform:translate(-50%,-7px);background:#0d2338;border:1px solid var(--v16-line);color:var(--v16-ink);font-size:10.5px;font-weight:800;padding:4px 8px;border-radius:8px;white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,.5)}
+.ax16-big{font-size:30px;font-weight:900;letter-spacing:-.02em}
+.ax16-big u{text-decoration:none;font-size:12px;color:var(--v16-mut);margin-left:3px}
+
+/* --- 予定カード --- */
+.ax16-sch{display:flex;gap:12px;align-items:center;background:#07131f;border:1px solid var(--v16-line2);border-radius:15px;padding:12px;margin-top:8px}
+.ax16-sch:first-of-type{margin-top:0}
+.ax16-schtime{flex:none;padding-left:11px;border-left:3px solid var(--v16-blue);line-height:1.5}
+.ax16-schtime b{display:block;font-size:16px;font-weight:900}
+.ax16-schtime span{display:block;font-size:11px;color:var(--v16-mut)}
+.ax16-schmain{flex:1;min-width:0}
+.ax16-schmain b{font-size:14.5px;font-weight:800;display:block}
+.ax16-schmain .sub{font-size:11.5px;color:var(--v16-mut);margin-top:2px}
+.ax16-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.ax16-tag{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:#a9c6e2;background:rgba(11,140,255,.1);border:1px solid rgba(24,205,255,.22);border-radius:8px;padding:3px 7px}
+.ax16-chev{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:rgba(11,140,255,.13);border:1px solid rgba(24,205,255,.26);color:var(--v16-blue2)}
+
+/* --- 人体図 --- */
+.ax16-figs{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ax16-fig{background:radial-gradient(90% 70% at 50% 18%,#0a1b2d,#030910);border:1px solid var(--v16-line2);border-radius:15px;padding:8px 5px 6px}
+.ax16-fig .cap{text-align:center;font-size:9px;letter-spacing:.2em;color:var(--v16-dim);font-weight:800;margin-bottom:3px}
+.ax16-fig svg{width:100%;height:auto;display:block}
+.v16-skin{fill:#0b1a2a;stroke:#1d4a70;stroke-width:0}
+.v16-body{fill:#0a1928;stroke:#23557f;stroke-width:1.1;stroke-linejoin:round}
+.v16-sep{fill:none;stroke:#1d4a70;stroke-width:.7;opacity:.55}
+.v16-m{fill:#102a41;stroke:#2b638f;stroke-width:.8;transition:fill .25s}
+.v16-m.on{fill:#0d93ff;stroke:#7ae6ff;filter:drop-shadow(0 0 7px rgba(13,147,255,.95))}
+.ax16-chips{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-top:9px}
+.ax16-chip{font-size:10.5px;font-weight:700;color:#bcd8f2;background:rgba(11,140,255,.13);border:1px solid rgba(24,205,255,.28);border-radius:999px;padding:4px 9px}
+
+/* --- ボタン --- */
+.ax16-btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:0;border-radius:13px;font-weight:800;font-size:14px;padding:13px 15px;min-height:46px}
+.ax16-btn.pri{background:linear-gradient(180deg,#1a9bff,#0056cc);color:#fff;box-shadow:0 6px 20px rgba(11,140,255,.32)}
+.ax16-btn.soft{background:rgba(11,140,255,.12);border:1px solid rgba(24,205,255,.26);color:#a9d6ff}
+.ax16-btn.ghost{background:#0b1b2b;border:1px solid var(--v16-line2);color:#cfe3f7}
+.ax16-btn.full{width:100%}
+.ax16-2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+/* --- 下部ナビ --- */
+.bottom{background:rgba(4,10,18,.93);border-top:1px solid var(--v16-line2);backdrop-filter:blur(14px)}
+.bottom .nav{color:var(--v16-dim);font-size:10px;font-weight:700;display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 0}
+.bottom .nav b{font-size:0;line-height:0;display:block}
+.bottom .nav svg{width:21px;height:21px;display:block}
+.bottom .nav.on{color:var(--v16-blue2)}
+.bottom .nav.on svg{filter:drop-shadow(0 0 7px rgba(24,205,255,.85))}
+
+@media(max-width:560px){
+  .ax16-stats{grid-template-columns:1fr 1fr}
+  .ax16-stats>:nth-child(3){grid-column:1/-1}
+  .ax16-lead{font-size:21px}
+  .ax16-logo{font-size:25px}
+  .main{padding:0 10px 8px}
+}
+
+/* --- v16 調整 --- */
+.top{display:none}
+.app{padding-bottom:92px}
+.ax16-stat strong{display:block}
+.ax16-stat .ax16-delta{display:flex}
+.ax16-more{white-space:nowrap}
+.ax16-statrow{align-items:center}
+@media(max-width:560px){
+  .ax16-stats{grid-template-columns:repeat(3,1fr);gap:7px}
+  .ax16-stats>:nth-child(3){grid-column:auto}
+  .ax16-stat{padding:11px 9px;border-radius:15px}
+  .ax16-stat .ic{width:23px;height:23px;margin-bottom:7px}
+  .ax16-stat .ic svg{width:13px;height:13px}
+  .ax16-stat label{font-size:9.5px;letter-spacing:-.02em}
+  .ax16-stat strong{font-size:21px}
+  .ax16-stat strong u{font-size:10px}
+  .ax16-delta{font-size:10px;margin-top:4px}
+  .ax16-statrow{flex-direction:column;align-items:flex-start;gap:4px}
+  .ax16-spark{height:18px;gap:1.5px}
+  .ax16-spark i{width:3px}
+  .ax16-ring svg{width:40px;height:40px}
+  .ax16-ring{align-self:flex-end;margin-top:-22px}
+}
+.ax16-chartwrap{padding-top:28px}
+.ax16-grid{top:28px}
+.ax16-more svg,.ax16-chev svg{width:13px;height:13px;display:block}
+.ax16-tag svg{width:11px;height:11px}
+.ax16-btn svg{width:17px;height:17px;flex:none}
