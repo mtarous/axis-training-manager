@@ -173,3 +173,18 @@
 - WebアプリURL・同期トークンをAXIS端末へ設定。
 - 実APIを介した端末A/B E2E。
 - 本番main反映後のGitHub Pages確認。
+
+
+## 2026-09-20 14:04 JST main反映後の状態
+- 最新mainでは端末間自動同期クライアントを実装済み。
+- 本番HTMLから `v16-sync.js?v=1` / `theme-v16-sync.css?v=1` を読み込む。
+- Service Worker cache: `axis-training-v16-sync1`。
+- 新規アプリ入力セッションは `savedAt` を持ち、履歴編集キーは `["app-v2", savedAt, exerciseIndex]`。
+- `data.enc` blob SHAは `5b414d0f175d8daf2d27930387d8c2687028b8b8` を維持。
+- `calendar.enc` は途中で誤再生成されたため、開始時の元blobへ復元済み。
+  - blob SHA: `1e7a078bce1347cd08736d040e053e0eeecd67c5`
+  - 本番配信側でも元saltを確認済み。
+- 個人Drive `AXIS_SYNC_PRIVATE` は非公開。
+- Apps Script `AXIS_SYNC_PRIVATE.gs` 生成済み。
+  - SHA-256: `bba574184fbeed09ba1eee89b1ea4ffb0f65bb8d6498dd4ca6fa6c66fa955dab`
+- 未完: Apps Script Webアプリの実デプロイ、URL/トークン登録、実API経由の端末A/BダミーE2E。
