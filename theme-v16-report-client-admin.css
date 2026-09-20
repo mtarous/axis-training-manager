@@ -53,7 +53,7 @@
 .axis-share-mode .axu-advice p{font-size:8px;line-height:1.55}
 .axis-share-mode .axu-next{grid-template-columns:.9fr 1.1fr;gap:7px}.axis-share-mode .axu-next small{font-size:7px}.axis-share-mode .axu-next b{font-size:9px;margin-top:2px}.axis-share-mode .axu-next p{font-size:7.5px;line-height:1.45;margin-top:2px}
 .axis-share-mode .axp-reportfoot{font-size:7px;margin-top:5px;letter-spacing:.16em}
-.axis-share-mode .axu-share-exit{display:block;width:calc(100% - 24px);max-width:720px;margin:8px auto 18px;border:1px solid var(--v16-line2);background:#071523;color:#a9cce5;border-radius:11px;padding:9px;font-size:9px;font-weight:800}
+.axis-share-mode .axu-share-exit{display:block;width:auto;margin:5px auto 12px;border:0;background:transparent;color:#6f94ae;padding:5px 10px;font-size:8px;font-weight:800}
 
 @media(max-width:560px){
   .axcm-newgrid{grid-template-columns:1fr}.axcm-newgrid .ax16-btn{width:100%}
