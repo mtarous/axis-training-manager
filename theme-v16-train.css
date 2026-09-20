@@ -1,0 +1,51 @@
+/* Scoped to training: do not change home, history, reports or exports. */
+#input.ax16-training {padding-top:14px;color:#edf6ff}
+#input.ax16-training .ax16t-header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0 24px}
+#input.ax16-training .ax16t-btn{min-height:44px;padding:9px 13px;border-radius:14px;border:1px solid #17517a;background:linear-gradient(150deg,#0b2439,#050d19);color:#dfeeff;font-weight:700}
+#input.ax16-training .ax16t-btn.primary{background:linear-gradient(120deg,#00afff,#0057ff);border-color:#23cbff;color:white;box-shadow:0 0 18px #008cff44}
+#input.ax16-training button:focus-visible,#input.ax16-training select:focus-visible,#input.ax16-training summary:focus-visible{outline:2px solid #38d9ff;outline-offset:3px}
+#input.ax16-training [hidden]{display:none!important}
+#input.ax16-training .ax16t-panel,#input.ax16-training .ax-memo{background:radial-gradient(ellipse at top left,#08233b,#050b14 70%);border:1px solid #145078;border-radius:22px;padding:18px;margin:16px 0}
+#input.ax16-training .ax16t-row{display:flex;align-items:center;gap:14px;justify-content:space-between}
+#input.ax16-training h2,#input.ax16-training h3{font-size:16px;margin:0 0 10px}
+#input.ax16-training .ax16t-row h2{margin:0;flex:1}
+#input.ax16-training .ax16t-row button{font-size:25px;padding:0 15px;margin-left:5px}
+#input.ax16-training .ax16t-exercise{display:grid;grid-template-columns:1.5fr 1fr;align-items:center;gap:18px;margin:18px 0}
+#input.ax16-training select,#input.ax16-training textarea{background:#061321;color:#eaf6ff;border-color:#1b4869;font-size:16px}
+#input.ax16-training .ax16t-exercise select{min-height:58px;font-size:20px;font-weight:800}
+#input.ax16-training .ax16t-anatomy .ax16-figs{justify-content:center;gap:12px}
+#input.ax16-training .ax16t-anatomy .ax16-fig svg{height:155px;width:74px}
+#input.ax16-training .ax16t-controls{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:10px}
+#input.ax16-training .ax16t-control{border:1px solid #164565;border-radius:17px;background:#071423;padding:12px;min-width:0}
+#input.ax16-training .ax16t-control label{font-size:12px;color:#a9c7df}
+#input.ax16-training .ax16t-step{display:flex;align-items:center;justify-content:space-between;gap:4px;margin:10px 0}
+#input.ax16-training .ax16t-step strong{font-size:24px;white-space:nowrap}
+#input.ax16-training .ax16t-step button{padding:4px;min-width:36px;border-radius:50%;font-size:22px}
+#input.ax16-training .ax16t-chips{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-bottom:8px}
+#input.ax16-training .ax16t-chips button{padding:5px 2px;font-size:12px;border-radius:8px}
+#input.ax16-training .ax16t-previous{border:1px solid #15517a;border-radius:16px;padding:14px;margin:14px 0}
+#input.ax16-training .ax16t-previous>span{font-size:12px;color:#8ebadd}
+#input.ax16-training .ax16t-previous strong{display:block;font-size:20px;margin:8px 0}
+#input.ax16-training summary{cursor:pointer;min-height:44px;padding:12px 0;color:#93d9ff}
+#input.ax16-training .ax16t-actions{display:flex;gap:10px;margin:14px 0}
+#input.ax16-training .ax16t-actions>button{flex:1}
+#input.ax16-training .ax16t-lower{display:grid;grid-template-columns:1.4fr 1fr;gap:12px}
+#input.ax16-training #v16Rest,#input.ax16-training .ax16t-setlist{border:1px solid #164565;border-radius:18px;padding:14px;min-width:0}
+#input.ax16-training .ax16t-rest{display:flex;align-items:center;gap:12px}
+#input.ax16-training .ax16t-rest button{display:block;width:100%;margin:6px 0}
+#input.ax16-training .ax16t-ring{position:relative;flex:0 0 135px;height:135px}
+#input.ax16-training .ax16t-ring svg{width:100%;height:100%;transform:rotate(-90deg)}
+#input.ax16-training .ax16t-ring circle{fill:none;stroke:#12314b;stroke-width:8}
+#input.ax16-training #v16RestArc{stroke:#0ec9ff;stroke-dasharray:100;stroke-linecap:round;filter:drop-shadow(0 0 3px #008cff)}
+#input.ax16-training .ax16t-ring>div{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:12px;color:#9cdcff}
+#input.ax16-training .ax16t-ring strong{font-size:34px;color:white}
+#input.ax16-training .ax16t-muted{font-size:12px;color:#9eb9d0;line-height:1.6}
+#input.ax16-training .ax16t-set{width:100%;display:flex;justify-content:space-between;margin:6px 0}
+#input.ax16-training .ax16t-set.done{border-color:#04bfff;background:#043255}
+#input.ax16-training .ax16t-clock{display:flex;flex-direction:column;gap:8px;color:#a4c7e3;font-size:12px}
+#input.ax16-training .ax16t-clock strong{font-size:24px;color:#f0f9ff}
+#input.ax16-training progress{width:100%;height:10px;accent-color:#00baff}
+#input.ax16-training .ax-memo textarea{margin-top:10px;min-height:90px}
+@media(max-width:650px){#input.ax16-training .ax16t-controls{grid-template-columns:repeat(2,minmax(0,1fr))}#input.ax16-training .ax16t-lower{grid-template-columns:1fr}#input.ax16-training .ax16t-header .ax16-logo{font-size:23px}#input.ax16-training .ax16t-header button{padding:8px;font-size:12px}#input.ax16-training .ax16t-panel{padding:12px}#input.ax16-training .ax16t-exercise{gap:8px;grid-template-columns:minmax(0,1fr) 115px}#input.ax16-training .ax16t-anatomy .ax16-fig svg{height:125px;width:52px}#input.ax16-training .ax16t-anatomy .ax16-figs{gap:2px}#input.ax16-training .ax16t-exercise select{font-size:16px}#input.ax16-training .ax16t-actions{flex-direction:column}#input.ax16-training .ax16t-rest{justify-content:space-around}}
+
+body:has(#input.ax16-training.on){background:#03060d}
