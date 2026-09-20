@@ -61,9 +61,12 @@ window.axisRawHistoryRows=()=>rawAnnotated().map(x=>({...x.row,_axisKey:x.key}))
 
 window.all=function(){
   const edits=loadEdits();
-  return rawAnnotated().filter(x=>!edits[x.key]?.deleted).map(x=>{
-    const e=edits[x.key],patch=e?.patch||{};
-    return {...x.row,...patch,_axisKey:x.key,_axisEdited:!!e};
+  return rawAnnotated().filter(x=>{
+    const e=edits[x.key];
+    return !(e&&!e.restored&&e.deleted);
+  }).map(x=>{
+    const e=edits[x.key],active=!!(e&&!e.restored),patch=active?(e.patch||{}):{};
+    return {...x.row,...patch,_axisKey:x.key,_axisEdited:active};
   });
 };
 window.appRows=function(){
@@ -91,7 +94,7 @@ function axisHistCard(s){
 window.histCard=axisHistCard;
 
 function changesPanel(){
-  const edits=loadEdits(),items=Object.entries(edits);
+  const edits=loadEdits(),items=Object.entries(edits).filter(([,e])=>e&&!e.restored);
   if(!items.length)return '<div class="axhe-none">変更された過去記録はありません</div>';
   return '<details class="axhe-changes"><summary>変更・非表示した記録 <b>'+items.length+'件</b></summary>'+
     '<div class="axhe-changebody">'+items.map(([key,e])=>{
@@ -128,7 +131,7 @@ function currentView(){return document.querySelector(".view.on")?.id||"history"}
 window.axisOpenHistoryEditToken=function(token){return axisOpenHistoryEdit(tokenKey(token))};
 window.axisOpenHistoryEdit=function(key){
   ensureModal();
-  const raw=rawByKey(key),edits=loadEdits(),e=edits[key]||{};
+  const raw=rawByKey(key),edits=loadEdits(),stored=edits[key]||{},e=stored.restored?{}:stored;
   if(!raw){alert("元の記録を特定できませんでした。");return}
   const row={...raw,...(e.patch||{})};
   editOrigin={view:currentView(),client:row.client||raw.client||""};
@@ -179,7 +182,7 @@ window.axisSaveHistoryEdit=function(){
   if(!patch.date||!patch.client||!patch.exercise){alert("日付・利用者・種目は必須です。");return}
   const fields=changedFields(raw,patch),edits=loadEdits();
   if(fields.length)edits[key]={patch,updatedAt:new Date().toISOString()};
-  else delete edits[key];
+  else edits[key]={restored:true,updatedAt:new Date().toISOString()};
   saveEdits(edits);afterChange(patch.client);
 };
 
@@ -187,18 +190,20 @@ window.axisDeleteHistoryRowToken=function(token){return axisDeleteHistoryRow(tok
 window.axisDeleteHistoryRow=function(key){
   const raw=rawByKey(key);if(!raw)return;
   if(!confirm("この記録をAXIS上で非表示にしますか？\n\n元データは削除されず、いつでも元に戻せます。"))return;
-  const edits=loadEdits();edits[key]={...(edits[key]||{}),deleted:true,updatedAt:new Date().toISOString()};saveEdits(edits);
+  const edits=loadEdits();edits[key]={deleted:true,updatedAt:new Date().toISOString()};saveEdits(edits);
   afterChange(editOrigin.client||raw.client);
 };
 
 window.axisRestoreHistoryEditToken=function(token){return axisRestoreHistoryEdit(tokenKey(token))};
 window.axisRestoreHistoryEdit=function(key){
-  const edits=loadEdits();delete edits[key];saveEdits(edits);
+  const edits=loadEdits();edits[key]={restored:true,updatedAt:new Date().toISOString()};saveEdits(edits);
   afterChange(editOrigin.client);
 };
 window.axisResetAllHistoryEdits=function(){
   if(!confirm("過去記録への編集・非表示をすべて元に戻しますか？\n\n元データ自体は変更されません。"))return;
-  localStorage.removeItem(EDIT_KEY);afterChange(editOrigin.client);
+  const edits=loadEdits(),now=new Date().toISOString();
+  Object.keys(edits).forEach(key=>{if(edits[key]&&!edits[key].restored)edits[key]={restored:true,updatedAt:now}});
+  saveEdits(edits);afterChange(editOrigin.client);
 };
 
 ensureModal();
