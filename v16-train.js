@@ -175,7 +175,7 @@ window.renderInput=function(p={}){
           <button type="button" data-mode="share" onclick="v16QuickMemo('share')">共有事項</button>
         </div>
         <input id="finsight" type="hidden" value="${esc(p.insight??p.note??"")}">
-        <input id="fcaution" type="hidden" value="${esc(p.caution??"")}">
+        <input id="fcaution" type="hidden" value="${esc(p.caution??(p.client?META.attention?.[p.client]||"":""))}">
         <input id="fshare" type="hidden" value="${esc(p.share??"")}">
         <textarea id="fnote" placeholder="気づきを入力">${esc(p.insight??p.note??"")}</textarea>
         <textarea id="fnext" placeholder="次回やること">${esc(p.next||"")}</textarea>
@@ -187,6 +187,11 @@ window.renderInput=function(p={}){
     if(x) x.addEventListener("input",()=>{ saveDraft(); if(id==="fclient"||id==="frpe"){drawEx();renderRest(activeIndex);} });
   });
   el("#fnote")?.addEventListener("input",syncMemo);
+  el("#fclient")?.addEventListener("change",()=>{
+    const caution=el("#fcaution");
+    if(caution&&!caution.value) caution.value=META.attention?.[currentClient()]||"";
+    saveDraft(); drawEx(); renderRest(activeIndex);
+  });
   renderRest(activeIndex);
 };
 
