@@ -137,10 +137,14 @@ window.axisOpenHistoryEdit=function(key){
       '<label class="wide">メモ<textarea id="axheMemo">'+esc(row.memo||"")+'</textarea></label>'+
     '</div>'+
     '<div class="axhe-actions"><button class="ax16-btn pri" onclick="axisSaveHistoryEdit()">変更を保存</button><button class="ax16-btn soft" onclick="axisRestoreHistoryEditToken(\''+keyToken(key)+'\')">元に戻す</button><button class="ax16-btn ghost danger" onclick="axisDeleteHistoryRowToken(\''+keyToken(key)+'\')">この記録を非表示</button></div>';
+  document.body.classList.add("axis-history-modal-open");
   S("#axisHistoryEditModal").classList.add("on");
 };
 
-window.axisCloseHistoryEdit=function(){S("#axisHistoryEditModal")?.classList.remove("on")};
+window.axisCloseHistoryEdit=function(){
+  S("#axisHistoryEditModal")?.classList.remove("on");
+  document.body.classList.remove("axis-history-modal-open");
+};
 
 function afterChange(preferredClient){
   axisCloseHistoryEdit();
