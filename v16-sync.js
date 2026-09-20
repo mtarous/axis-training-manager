@@ -112,7 +112,7 @@ function mergeClients(a,b){
     const cur=out[k];
     if(!cur){out[k]=inc;return}
     const win=deterministicWinner(cur,inc);
-    const aliases=uniq([...(cur?.aliases||[]),...(inc?.aliases||[])]);
+    const aliases=uniq([...(cur?.aliases||[]),...(inc?.aliases||[])]).sort((a,b)=>a.localeCompare(b,"ja"));
     out[k]={...win,aliases};
   });
   return out;
@@ -156,6 +156,15 @@ function mergeData(a,b){
     clients:mergeClients(x.clients,y.clients),
     historyEdits:mergeVersionedMap(x.historyEdits,y.historyEdits),
     hiddenScheduleState:mergeVersionedMap(x.hiddenScheduleState,y.hiddenScheduleState)
+  };
+}
+function hashableData(data){
+  const x=normalizeSyncData(data);
+  return {
+    sessions:[...x.sessions].sort((a,b)=>sessionSig(a).localeCompare(sessionSig(b))),
+    clients:x.clients,
+    historyEdits:x.historyEdits,
+    hiddenScheduleState:x.hiddenScheduleState
   };
 }
 function applySyncData(data){
@@ -288,8 +297,8 @@ async function syncNow(options={}){
     }
 
     applySyncData(merged);
-    const mergedHash=await sha256Text(stableStringify(normalizeSyncData(merged)));
-    const latestHash=latest?await sha256Text(stableStringify(normalizeSyncData(latest))):"";
+    const mergedHash=await sha256Text(stableStringify(hashableData(merged)));
+    const latestHash=latest?await sha256Text(stableStringify(hashableData(latest))):"";
     let revision=latestRevision;
     if(!latest||mergedHash!==latestHash){
       const enc=await encryptSnapshot(snapshotFor(merged),pass);
@@ -411,6 +420,6 @@ document.addEventListener("visibilitychange",()=>{
 });
 installMutationHooks();
 migrateScheduleState();
-if(window.__AXIS_SYNC_TEST__)window.axisSyncTestApi={mergeData,mergeSessions,mergeClients,mergeVersionedMap,normalizeSyncData,legacyScheduleState,stableStringify};
+if(window.__AXIS_SYNC_TEST__)window.axisSyncTestApi={mergeData,mergeSessions,mergeClients,mergeVersionedMap,normalizeSyncData,legacyScheduleState,stableStringify,hashableData};
 
 })();
