@@ -1,0 +1,12 @@
+/* AXIS v16 anatomy refinement */
+.ax16-anatomy-v2 .ax16-fig{padding:8px 7px 7px;overflow:hidden}
+.ax16-anatomy-v2 .ax16-fig svg{max-height:330px;margin:0 auto}
+.ax16-anatomy-v2 .v16-silhouette{fill:#081725;stroke:#245b86;stroke-width:1.15;stroke-linejoin:round;stroke-linecap:round}
+.ax16-anatomy-v2 .v16-anatomy-line{fill:none;stroke:#1c4668;stroke-width:.8;opacity:.52;stroke-linecap:round}
+.ax16-anatomy-v2 .v16-m{fill:#102a41;stroke:#326e9e;stroke-width:.85;stroke-linejoin:round}
+.ax16-anatomy-v2 .v16-m.on{fill:#0d93ff;stroke:#89ebff;filter:drop-shadow(0 0 7px rgba(13,147,255,.92))}
+.ax16-anatomy-v2 .v16-sep{stroke:#2a608a;stroke-width:.72;opacity:.58}
+@media(max-width:560px){
+  .ax16-anatomy-v2 .ax16-fig{padding:7px 5px 6px}
+  .ax16-anatomy-v2 .ax16-fig svg{max-height:285px}
+}
