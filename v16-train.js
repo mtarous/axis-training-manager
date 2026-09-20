@@ -5,6 +5,7 @@
 
 let activeIndex = 0;
 let restTotal = 0;
+let memoMode = "insight";
 
 function el(s){ return document.querySelector(s); }
 function clamp(n,min,max){ return Math.max(min,Math.min(max,n)); }
@@ -60,12 +61,20 @@ function recordSet(i){
   if(next===undefined) return;
   toggleSet(i,next);
 }
-function quickMemo(text){
-  const t=el("#fnote"); if(!t) return;
-  const cur=t.value.trim();
-  if(!cur.includes(text)) t.value=cur ? `${cur}\n${text}` : text;
-  saveDraft();
+function memoFieldId(mode){ return mode==="caution"?"fcaution":mode==="share"?"fshare":"finsight"; }
+function memoLabel(mode){ return mode==="caution"?"注意点":mode==="share"?"共有事項":"気づき"; }
+function quickMemo(mode){
+  memoMode=mode;
+  const t=el("#fnote"), src=el("#"+memoFieldId(mode)); if(!t||!src) return;
+  t.value=src.value||"";
+  t.placeholder=memoLabel(mode)+"を入力";
+  document.querySelectorAll(".ax16t-chips button").forEach(b=>b.classList.toggle("on",b.dataset.mode===mode));
   t.focus();
+}
+function syncMemo(){
+  const t=el("#fnote"), dst=el("#"+memoFieldId(memoMode)); if(!t||!dst) return;
+  dst.value=t.value;
+  saveDraft();
 }
 function openHistory(){
   const c=currentClient();
@@ -161,19 +170,23 @@ window.renderInput=function(p={}){
       <section class="ax16-panel ax16t-memo">
         <div class="ax16-head"><div class="ax16-h"><span class="ic">${typeof v16Icon==="function"?v16Icon("note"):""}</span>クイックメモ</div></div>
         <div class="ax16t-chips">
-          <button type="button" onclick="v16QuickMemo('気づき：')">気づき</button>
-          <button type="button" onclick="v16QuickMemo('注意点：')">注意点</button>
-          <button type="button" onclick="v16QuickMemo('共有事項：')">共有事項</button>
+          <button type="button" data-mode="insight" class="on" onclick="v16QuickMemo('insight')">気づき</button>
+          <button type="button" data-mode="caution" onclick="v16QuickMemo('caution')">注意点</button>
+          <button type="button" data-mode="share" onclick="v16QuickMemo('share')">共有事項</button>
         </div>
-        <textarea id="fnote" placeholder="気づき・注意点・共有事項">${esc(p.note||"")}</textarea>
+        <input id="finsight" type="hidden" value="${esc(p.insight??p.note??"")}">
+        <input id="fcaution" type="hidden" value="${esc(p.caution??"")}">
+        <input id="fshare" type="hidden" value="${esc(p.share??"")}">
+        <textarea id="fnote" placeholder="気づきを入力">${esc(p.insight??p.note??"")}</textarea>
         <textarea id="fnext" placeholder="次回やること">${esc(p.next||"")}</textarea>
       </section>
     </div>`;
   drawEx();
-  ["fdate","fclient","fstatus","frpe","fpain","fnote","fnext"].forEach(id=>{
+  ["fdate","fclient","fstatus","frpe","fpain","fnext"].forEach(id=>{
     const x=el("#"+id);
     if(x) x.addEventListener("input",()=>{ saveDraft(); if(id==="fclient"||id==="frpe"){drawEx();renderRest(activeIndex);} });
   });
+  el("#fnote")?.addEventListener("input",syncMemo);
   renderRest(activeIndex);
 };
 
