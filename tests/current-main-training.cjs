@@ -21,7 +21,8 @@ const BASE = [
   await page.evaluate((base)=>{
     localStorage.removeItem("axis_training_draft");
     localStorage.removeItem("axis_training_added");
-    window.BASE=base;
+    window.clientList=()=>[{name:"DUMMY_TEST"}];
+    window.latest=()=>({rows:[{exercise:"ベンチプレス",weight:40,reps:10,sets:3}]});
     window.META={goals:{},attention:{},schedule:[],calendarEvents:[]};
     window.added=[];
     document.querySelector("#lock").style.display="none";
