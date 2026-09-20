@@ -195,7 +195,6 @@ window.openSummary=function(c){
       '<details class="axu-card axu-fold axu-analysis-fold"><summary><span>ボリューム推移を見る</span><small>RECENT</small></summary><div class="axu-foldbody">'+axisSparkline(m.vols)+'</div></details>'+
       '<div class="axp-reportfoot">SMALL STEPS MAKE BIG CHANGES.</div>'+
     '</div>'+
-    '<div class="axu-bottom-actions"><button class="ax16-btn soft" onclick="axisBackFromReport(\''+String(c).replace(/'/g,"\\'")+'\')">利用者画面へ戻る</button><button class="ax16-btn pri" onclick="axisSetReportShareMode(true)">スクショ用表示</button></div>'+
     '<button class="axu-share-exit" onclick="axisSetReportShareMode(false)">通常表示へ戻す</button>';
 };
 
