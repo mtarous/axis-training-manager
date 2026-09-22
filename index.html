@@ -3,7 +3,7 @@
 <meta name="theme-color" content="#05070b"><meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="AXIS Training">
-<link rel="apple-touch-icon" href="icon-192.png"><link rel="manifest" href="manifest.json"><link rel="stylesheet" href="theme-v7.css?v=12"><link rel="stylesheet" href="theme-v10.css?v=12"><link rel="stylesheet" href="theme-v13.css?v=13"><link rel="stylesheet" href="theme-v14.css?v=15"><link rel="stylesheet" href="theme-v16.css?v=16"><link rel="stylesheet" href="theme-v16-train.css?v=2"><link rel="stylesheet" href="theme-v16-guide.css?v=1"><link rel="stylesheet" href="theme-v16-history-edit.css?v=1"><link rel="stylesheet" href="theme-v16-pages.css?v=1"><link rel="stylesheet" href="theme-v16-anatomy.css?v=1"><link rel="stylesheet" href="theme-v16-report-client-admin.css?v=1"><link rel="stylesheet" href="theme-v16-client-portability.css?v=1"><link rel="stylesheet" href="theme-v16-sync.css?v=1">
+<link rel="apple-touch-icon" href="icon-192.png"><link rel="manifest" href="manifest.json"><link rel="stylesheet" href="theme-v7.css?v=12"><link rel="stylesheet" href="theme-v10.css?v=12"><link rel="stylesheet" href="theme-v13.css?v=13"><link rel="stylesheet" href="theme-v14.css?v=15"><link rel="stylesheet" href="theme-v16.css?v=17"><link rel="stylesheet" href="theme-v16-train.css?v=2"><link rel="stylesheet" href="theme-v16-guide.css?v=1"><link rel="stylesheet" href="theme-v16-history-edit.css?v=1"><link rel="stylesheet" href="theme-v16-pages.css?v=1"><link rel="stylesheet" href="theme-v16-anatomy.css?v=1"><link rel="stylesheet" href="theme-v16-report-client-admin.css?v=1"><link rel="stylesheet" href="theme-v16-client-portability.css?v=1"><link rel="stylesheet" href="theme-v16-sync.css?v=1">
 <title>AXIS TRAINING</title><style>
 :root{--bg:#f4f7fb;--card:#fff;--ink:#172033;--muted:#718096;--line:#e5e7eb;--blue:#2563eb;--green:#16a34a;--orange:#ea580c;--blue2:#eaf1ff}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif}
@@ -38,7 +38,7 @@ h1{font-size:19px;margin:0}.sub{color:var(--muted);font-size:13px;line-height:1.
 @media(max-width:560px){.analysis-grid{grid-template-columns:1fr}.metric-row{grid-template-columns:repeat(3,1fr)}}
 </style></head><body>
 <div id="lock" class="lock"><div class="lockbox"><h2>AXIS TRAINING</h2><div class="sub">トレーニング記録は暗号化されています。</div><input id="pass" type="password" placeholder="アクセスコード"><label class="sub"><input id="remember" type="checkbox" checked> このiPhoneでコードを記憶</label><button class="btn primary" style="width:100%;margin-top:12px" onclick="unlock()">開く</button><div id="lockmsg" class="sub" style="margin-top:10px;color:#b91c1c"></div></div></div>
-<div id="app" class="app" style="display:none"><header class="top"><h1>AXIS TRAINING</h1><div class="sub">前回メニュー → トレ中入力 → 保存</div></header><main class="main"><section id="home" class="view on"></section><section id="schedule" class="view"></section><section id="clients" class="view"></section><section id="history" class="view"></section><section id="input" class="view"></section><section id="detail" class="view"></section></main></div>
+<div id="app" class="app" style="display:none"><header class="top"><h1>AXIS TRAINING</h1></header><main class="main"><section id="home" class="view on"></section><section id="schedule" class="view"></section><section id="clients" class="view"></section><section id="history" class="view"></section><section id="input" class="view"></section><section id="detail" class="view"></section></main></div>
 <script src="xlsx.full.min.js"></script>
 <nav id="bottom" class="bottom" style="display:none"><button class="nav on" data-v="home"><b>⌂</b>ホーム</button><button class="nav" data-v="schedule"><b>◷</b>予定</button><button class="nav" data-v="clients"><b>◎</b>利用者</button><button class="nav" data-v="history"><b>≡</b>履歴</button><button class="nav" data-v="input"><b>＋</b>トレ中</button></nav>
 <script>
@@ -54,10 +54,21 @@ async function decryptBlob(path,p){
 async function decryptData(p){return decryptBlob("data.enc",p)}
 async function loadCalendar(p){
   try{
-    const c=await decryptBlob("calendar.enc",p);
+    const c=await decryptBlob("calendar-current.enc",p);
     META.calendarEvents=Array.isArray(c.events)?c.events:[];
-    META.calendarSyncedAt=c.syncedAt||""
-  }catch(e){META.calendarEvents=[];META.calendarSyncedAt=""}
+    META.calendarSyncedAt=c.syncedAt||"";
+    META.calendarLoadError=false
+  }catch(e){META.calendarEvents=[];META.calendarSyncedAt="";META.calendarLoadError=true}
+}
+function calendarSyncNotice(){
+  const stamp=String(META.calendarSyncedAt||"").trim();
+  const iso=stamp.replace(" ","T");
+  const when=Date.parse(/(Z|[+-]\d\d:?\d\d)$/i.test(iso)?iso:iso+"+09:00");
+  const stale=!Number.isFinite(when)||Date.now()-when>12*60*60*1000;
+  const message=META.calendarLoadError?"カレンダー予定を読み込めませんでした":
+    stale?`カレンダー予定は古い可能性があります${stamp?`（最終取込 ${esc(stamp)}）`:""}`:
+    `カレンダー最終取込 ${esc(stamp)}`;
+  return `<div class="ax16-calendar-status${stale||META.calendarLoadError?" warning":""}">${message}。予定の追加は自動では反映されません。</div>`
 }
 async function unlock(){const p=$("#pass").value;$("#lockmsg").textContent="";try{const d=await decryptData(p);BASE=d.history||[];META=d;await loadCalendar(p);if($("#remember").checked)localStorage.setItem("axis_training_key",p);if(window.axisSetUnlockedPassphrase)window.axisSetUnlockedPassphrase(p);$("#lock").style.display="none";$("#app").style.display="block";$("#bottom").style.display="grid";renderAll();renderInput(draft||{});if(window.axisAfterUnlock)window.axisAfterUnlock()}catch(e){$("#lockmsg").textContent="アクセスコードが違うか、データを読み込めません。"}}
 function all(){return BASE.concat(added.flatMap(s=>(s.exercises||[]).map((e,axisExerciseIndex)=>({date:s.date,client:s.client,exercise:e.exercise,weight:e.weight,reps:e.reps,sets:e.sets,achieved:s.status,memo:`RPE:${s.rpe||"-"} 痛み:${s.pain??"-"} ${s.note||""} 次回:${s.next||""}`,source:"アプリ入力",_axisSessionStamp:s.savedAt||"",_axisExerciseIndex:axisExerciseIndex}))))}
@@ -308,5 +319,5 @@ function exportExcel(scope="new"){
 function exportBackup(){const blob=new Blob([JSON.stringify({sessions:added,exported:new Date().toISOString()},null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="axis_training_backup.json";a.click();URL.revokeObjectURL(a.href)}
 function show(id,nav=true){document.querySelectorAll(".view").forEach(x=>x.classList.remove("on"));$("#"+id).classList.add("on");if(nav)document.querySelectorAll(".nav").forEach(x=>x.classList.toggle("on",x.dataset.v===id));scrollTo(0,0)}
 document.querySelectorAll(".nav").forEach(b=>b.onclick=()=>{show(b.dataset.v);if(b.dataset.v==="input")renderInput(draft||{})});function renderAll(){renderHome();renderSchedule();renderClients();renderHistory()}
-</script><script src="v5.js?v=12"></script><script src="v6.js?v=12"></script><script src="v7-summary-muscle.js?v=12"></script><script src="v9-smart-rest.js?v=12"></script><script src="v10-ui.js?v=12"></script><script src="v13-refine.js?v=13"></script><script src="v14-ux.js?v=14"></script><script src="v16-design.js?v=16"></script><script src="v16-train.js?v=2"></script><script src="v16-guide.js?v=1"></script><script src="v16-history-edit.js?v=1"></script><script src="v16-pages.js?v=1"></script><script src="v16-anatomy.js?v=1"></script><script src="v16-report-client-admin.js?v=1"></script><script src="v16-client-portability.js?v=1"></script><script src="v16-sync.js?v=1"></script><script>(async()=>{const saved=localStorage.getItem("axis_training_key");if(saved){$("#pass").value=saved;await unlock()}if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})})();
+</script><script src="v5.js?v=12"></script><script src="v6.js?v=12"></script><script src="v7-summary-muscle.js?v=12"></script><script src="v9-smart-rest.js?v=12"></script><script src="v10-ui.js?v=12"></script><script src="v13-refine.js?v=13"></script><script src="v14-ux.js?v=14"></script><script src="v16-design.js?v=17"></script><script src="v16-train.js?v=2"></script><script src="v16-guide.js?v=1"></script><script src="v16-history-edit.js?v=1"></script><script src="v16-pages.js?v=2"></script><script src="v16-anatomy.js?v=1"></script><script src="v16-report-client-admin.js?v=1"></script><script src="v16-client-portability.js?v=1"></script><script src="v16-sync.js?v=1"></script><script>(async()=>{const saved=localStorage.getItem("axis_training_key");if(saved){$("#pass").value=saved;await unlock()}if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})})();
 </script></body></html>

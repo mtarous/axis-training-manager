@@ -156,9 +156,10 @@ window.renderHome=function(){
  S("#home").innerHTML=`
  <div class="ax16-hero"><div class="ax16-herotop">
    <div class="ax16-logo">A<i>X</i>IS<small>TRAINING</small></div>
-   <div class="ax16-tpcl">TRAIN PEOPLE<br>CHANGE LIVES</div></div>
+   </div>
    <div class="ax16-date">${v16Icon("cal")}${jp(t)}</div>
-   <div class="ax16-lead">継続が、<br>理想の自分をつくる。<span>今日の積み重ねが、未来を変える。</span></div></div>
+   <div class="ax16-lead">今日の予定 ${todays.length}件</div></div>
+ ${calendarSyncNotice()}
 
  <div class="ax16-stats">
   <div class="ax16-stat"><div class="ic">${v16Icon("dumbbell")}</div><label>今月のセッション</label>

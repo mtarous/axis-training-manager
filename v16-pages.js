@@ -6,7 +6,7 @@ const S=s=>document.querySelector(s);
 const jsq=s=>String(s||"").replace(/\\/g,"\\\\").replace(/'/g,"\\'");
 const metric=c=>typeof axisClientMetrics==="function"?axisClientMetrics(c):{hist:[],last:null,prev:null,lastVol:0,delta:0,vols:[],parts:[]};
 const change=m=>m.prev?((m.delta>0?"+":"")+m.delta+"%"):"比較なし";
-const header=(ey,title,sub)=>'<div class="axp-head"><span class="ax16-eyebrow">'+ey+'</span><h2>'+title+'</h2><p>'+sub+'</p></div>';
+const header=(ey,title,sub)=>'<div class="axp-head"><span class="ax16-eyebrow">'+ey+'</span><h2>'+title+'</h2>'+(sub?'<p>'+sub+'</p>':'')+'</div>';
 
 function clientCard(x){
  const c=x.name,m=metric(c),last=m.last,goal=META.goals?.[c]||"目標未登録";
@@ -43,7 +43,7 @@ window.renderSchedule=function(){
  let hiddenKeys=[];try{hiddenKeys=JSON.parse(localStorage.getItem("axis_hidden_schedule_v1")||"[]")}catch(e){}
  const hiddenSet=new Set(Array.isArray(hiddenKeys)?hiddenKeys:[]),hidden=raw.filter(x=>hiddenSet.has(scheduleKey(x)));
  const groups=new Map();items.forEach(x=>{if(!groups.has(x.date))groups.set(x.date,[]);groups.get(x.date).push(x)});
- root.innerHTML=header("SCHEDULE","スケジュール","Googleカレンダー連携。×はAXIS上だけ非表示にし、元予定は削除しません。")+
+ root.innerHTML=header("SCHEDULE","スケジュール","")+calendarSyncNotice()+
   ([...groups.entries()].map(([date,list])=>'<section class="axp-day"><div class="axp-dayhead"><b>'+esc(jp(date))+'</b><span>'+list.length+'件</span></div><div class="axp-schedulelist">'+list.map(scheduleCard).join("")+'</div></section>').join("")||'<div class="axp-empty">予定はありません</div>')+
   '<details class="axp-hidden"><summary>非表示予定を管理 <b>'+hidden.length+'</b></summary><div class="axp-hiddenbody">'+
    (hidden.length?hidden.map(x=>'<div class="axp-hiddenrow"><div><b>'+esc(x.time||"--:--")+' '+esc(x.label||x.client||"予定")+'</b><span>'+esc(x.date)+'</span></div><button onclick="restoreScheduleItem(\''+jsq(scheduleKey(x))+'\')">戻す</button></div>').join(""):'<div class="axp-muted">非表示の予定はありません。</div>')+

@@ -37,6 +37,9 @@ body{background:var(--v16-bg);color:var(--v16-ink)}
 .ax16-date svg{width:13px;height:13px;color:var(--v16-blue2)}
 .ax16-lead{font-size:24px;font-weight:900;line-height:1.36;margin-top:9px;letter-spacing:.01em}
 .ax16-lead span{display:block;font-size:12px;font-weight:600;color:var(--v16-mut);margin-top:7px;letter-spacing:0}
+.ax16-calendar-status{margin:0 0 11px;padding:9px 11px;border:1px solid var(--v16-line2);border-radius:12px;color:var(--v16-mut);font-size:12px;line-height:1.45}
+.ax16-calendar-status.warning{color:#ffd59b;border-color:rgba(255,187,93,.35);background:rgba(255,187,93,.08)}
+@media(max-width:560px){.ax16-hero{padding:11px 14px;margin:4px 0 8px}.ax16-logo{font-size:22px}.ax16-logo small{font-size:8px}.ax16-date{margin-top:7px}.ax16-lead{font-size:18px;margin-top:4px}}
 
 /* --- 統計カード --- */
 .ax16-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:11px}
