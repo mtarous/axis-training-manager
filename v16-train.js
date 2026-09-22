@@ -44,6 +44,11 @@ function bumpWeight(i,delta){
   e.weight=Math.max(0,Math.round((Number(e.weight||0)+Number(delta))*10)/10);
   drawEx(); saveDraft();
 }
+function setWeightStep(i,step){
+  const e=window.exs?.[i]; if(!e||![0.5,1,5,10].includes(Number(step))) return;
+  e.weightStep=Number(step);
+  drawEx(); saveDraft();
+}
 function stepRpe(d){
   const s=el("#frpe"); if(!s) return;
   s.value=String(clamp(Number(s.value||0)+d,1,10));
@@ -131,6 +136,7 @@ window.tick=function(){
 
 window.v16SetActive=function(i){ focusIndex(i); drawEx(); renderRest(activeIndex); };
 window.v16BumpWeight=bumpWeight;
+window.v16SetWeightStep=setWeightStep;
 window.v16StepRpe=stepRpe;
 window.v16ClearSets=clearSets;
 window.v16RecordSet=recordSet;
@@ -200,6 +206,7 @@ window.drawEx=function(){
   if(!window.exs?.length){ root.innerHTML=""; return; }
   const i=focusIndex(activeIndex), e=window.exs[i], total=window.exs.length;
   const isBody=String(e.weight)==="自重", prev=previousRow(i), tags=exTags(e.exercise);
+  const weightStep=[0.5,1,5,10].includes(Number(e.weightStep))?Number(e.weightStep):1;
   const muscles=typeof muscleMap==="function"?muscleMap([e],{chips:false}):"";
   const doneCount=e.done.filter(j=>j<Number(e.sets||0)).length;
   root.innerHTML=`
@@ -224,10 +231,13 @@ window.drawEx=function(){
         <div class="ax16t-metric">
           <span>重量</span>
           ${isBody?`<b>自重</b><div class="ax16t-weightchips"><button onclick="setWeightDirect(${i},0)">数値に戻す</button></div>`:
-          `<b>${esc(e.weight)}<small>kg</small></b>
-           <div class="ax16t-weightchips">
-            <button onclick="v16BumpWeight(${i},-1)">−1</button><button onclick="v16BumpWeight(${i},-0.5)">−0.5</button>
-            <button onclick="v16BumpWeight(${i},0.5)">＋0.5</button><button onclick="v16BumpWeight(${i},1)">＋1</button>
+          `<div class="ax16t-weightcontrol">
+             <button type="button" class="ax16t-weightbump" aria-label="重量を${weightStep}キロ減らす" onclick="v16BumpWeight(${i},-${weightStep})">−</button>
+             <b>${esc(e.weight)}<small>kg</small></b>
+             <button type="button" class="ax16t-weightbump" aria-label="重量を${weightStep}キロ増やす" onclick="v16BumpWeight(${i},${weightStep})">＋</button>
+           </div>
+           <div class="ax16t-weightchips" role="group" aria-label="重量の変更幅">
+             ${[0.5,1,5,10].map(step=>`<button type="button" class="${weightStep===step?"on":""}" aria-pressed="${weightStep===step}" onclick="v16SetWeightStep(${i},${step})">${step}kg</button>`).join("")}
            </div>`}
           <button class="ax16t-bodybtn" onclick="setBodyWeight(${i})">自重</button>
         </div>

@@ -42,6 +42,11 @@
 .ax16t-step b{font-size:22px}
 .ax16t-weightchips{display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:7px}
 .ax16t-weightchips button{font-size:10px;padding:7px 2px}
+.ax16t-weightchips button.on{background:#12558a;border-color:var(--v16-blue2);color:#fff}
+.ax16t-weightcontrol{display:grid;grid-template-columns:38px minmax(0,1fr) 38px;gap:5px;align-items:center;margin-top:6px}
+.ax16t-weightcontrol b{font-size:26px;white-space:nowrap}
+.ax16t-weightcontrol b small{font-size:11px;color:var(--v16-mut);margin-left:2px}
+.ax16t-weightbump{height:40px;border:1px solid #286696;background:#123656;color:#fff;border-radius:10px;font-size:22px;font-weight:800}
 .ax16t-bodybtn{width:100%;margin-top:6px;padding:7px;font-size:10px;color:#8fcfff}
 .ax16t-prev{background:linear-gradient(160deg,#071726,#08111c);border:1px solid var(--v16-line2);border-radius:14px;padding:11px;margin-top:11px}
 .ax16t-prev b{display:block;font-size:12px;margin-top:2px}
@@ -75,19 +80,40 @@
 .ax16t-chips{margin:0 0 5px}
 .ax16t-chips button{cursor:pointer}\n.ax16t-chips button.on{background:linear-gradient(180deg,#178fff,#0758c9);color:#fff;border-color:#2acbff;box-shadow:0 0 12px rgba(24,205,255,.22)}
 @media(max-width:560px){
-  .ax16t-clientline{grid-template-columns:1fr}
-  .ax16t-date{width:100%}
-  .ax16t-statusrow{grid-template-columns:1fr 1fr}
-  .ax16t-statusrow>select{grid-column:1/-1}
+  .ax16t-shell{padding-top:2px}
+  .ax16t-topbar{margin-bottom:7px}
+  .ax16t-clientline{grid-template-columns:minmax(0,1fr) 132px}
+  .ax16t-client{min-width:0}
+  .ax16t-date{width:100%;min-width:0;padding-inline:5px;font-size:13px}
+  .ax16t-statusrow{grid-template-columns:minmax(0,1fr) minmax(0,1.6fr) minmax(0,.9fr)}
+  .ax16t-statusrow>select{grid-column:auto;min-width:0;padding:6px 2px;font-size:12px}
+  .ax16t-rpe,.ax16t-pain{min-width:0;padding:3px;gap:2px}
+  .ax16t-rpe button{width:24px;min-width:24px}
+  .ax16t-exhead{margin-top:8px}
   .ax16t-exhead{display:block}
-  .ax16t-mini{width:128px;margin:10px auto 0}
-  .ax16t-metrics{grid-template-columns:1.35fr 1fr 1fr;gap:6px}
+  .ax16t-mini{display:none}
+  .ax16t-tags{margin-top:4px}
+  .ax16t-metrics{grid-template-columns:minmax(0,1.6fr) repeat(2,minmax(0,1fr));gap:6px;margin-top:8px}
   .ax16t-metric{padding:9px 6px}
   .ax16t-metric>b{font-size:24px}
-  .ax16t-step{grid-template-columns:31px 1fr 31px}
-  .ax16t-weightchips{grid-template-columns:repeat(2,1fr)}
-  .ax16t-recordrow,.ax16t-exactions{grid-template-columns:1fr}
-  .ax16t-prev{display:grid;grid-template-columns:1fr auto}
-  .ax16t-prev button{grid-column:1/-1;text-align:right}
-  .ax16t-restbody{grid-template-columns:110px 1fr}
+  .ax16t-step{grid-template-columns:28px minmax(0,1fr) 28px;gap:2px}
+  .ax16t-step button{height:40px}
+  .ax16t-weightcontrol{grid-template-columns:30px minmax(0,1fr) 30px;gap:2px}
+  .ax16t-weightcontrol b{font-size:21px}
+  .ax16t-weightbump{height:40px}
+  .ax16t-weightchips button{min-height:34px}
+  .ax16t-prev{padding:7px;margin-top:7px;gap:5px}
+  .ax16t-prevval{font-size:11px}
+  .ax16t-recordrow,.ax16t-exactions{grid-template-columns:1fr 1fr;gap:5px;margin-top:7px}
+  .ax16t-recordrow .ax16-btn,.ax16t-exactions .ax16-btn{font-size:12px;padding:9px 4px}
+  .ax16t-setstatus{margin-top:8px}
+  .ax16t-setlist{gap:4px;margin-top:4px}
+  .ax16t-setlist button{padding:7px}
+  .ax16t-restcard{padding:10px}
+  .ax16t-restbody{display:flex;justify-content:center;margin:4px 0 7px}
+  .ax16t-restcopy{display:none}
+  .ax16t-ring,.ax16t-ring svg{width:62px;height:62px}
+  .ax16t-ringtext b{font-size:15px}
+  .ax16t-ringtext span{font-size:7px}
+  .ax16t-resthead{margin-bottom:7px}
 }
