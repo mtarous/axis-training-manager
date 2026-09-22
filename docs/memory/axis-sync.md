@@ -1,6 +1,6 @@
 # AXIS 同期・顧客管理メモ
 
-更新: 2026-09-20 13:24 JST
+更新: 2026-09-23 07:23 JST
 
 ## 現在の永続化
 - `axis_training_added`: 端末入力セッション
@@ -188,3 +188,30 @@
 - Apps Script `AXIS_SYNC_PRIVATE.gs` 生成済み。
   - SHA-256: `bba574184fbeed09ba1eee89b1ea4ffb0f65bb8d6498dd4ca6fa6c66fa955dab`
 - 未完: Apps Script Webアプリの実デプロイ、URL/トークン登録、実API経由の端末A/BダミーE2E。
+
+
+## 2026-09-23 07:23 JST Google実デプロイ済み状態
+- 個人Driveの非公開 `AXIS_SYNC_PRIVATE` に紐づくApps Scriptを実作成・保存済み。
+- Apps Scriptサーバーは `AXIS_SYNC_PRIVATE.gs` と同一内容で保存済み。
+- `axisSetup` 実行・Google権限承認済み。
+- Webアプリとして実デプロイ済み。
+  - 実行ユーザー: 個人Googleアカウント本人
+  - アクセス: 全員
+- Webアプリの実API確認済み。
+  - 正しいtokenで health 成功
+  - pull 成功
+  - 不正tokenは unauthorized
+- 初期bootstrap空行を削除後、healthの `snapshotCount=0` を確認。
+- `config.web_app_url` は実運用の `/exec` URLへ修正済み。
+- `config` シートに同期tokenの平文は保存していない。
+- 本番 `v16-sync.js` から専用Chromeプロファイルで実サーバーhealth接続成功。
+- 実顧客データのpushは未実施。
+- 普段使いWindows AXIS / iPhone / MacへのURL・token登録は未確認。
+- 次手は普段使いWindows AXISへ設定 → 完全JSONバックアップ → 初回push → Drive側暗号化確認 → 2端末実API E2E → 自動同期ON。
+
+### 追加ハマり所
+- SheetsのApps Script起動はDOM clickより `Alt + /` → `Apps Script` → Enter が安定した。
+- Monacoへの通常pasteは自動インデントでコードが壊れた。モデルへ直接 `setValue()` する方法で完全一致保存できた。
+- `ScriptApp.getService().getUrl()` が `/dev` を返す場合がある。実運用はデプロイ管理画面の `/exec` URLを使う。
+- `axisSetup` 再実行後は `config.web_app_url` が `/dev` に戻っていないか確認する。
+- WebアプリURL・同期token・Sheet IDは公開GitHubやhandoffへ書かない。
