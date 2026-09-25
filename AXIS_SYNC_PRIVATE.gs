@@ -7,7 +7,8 @@
  * Client protocol:
  *   GET  ?op=health&token=...&callback=...
  *   GET  ?op=pull&token=...&callback=...
- *   GET  ?op=calendar&token=...&back=14&days=60&callback=...
+ *   GET  ?op=calendar&token=...&back=14&days=60&calendarId=...&callback=...
+ *   GET  ?op=calendars&token=...&callback=...
  *   POST form fields:
  *     op=push
  *     token
@@ -44,6 +45,8 @@ function doGet(e) {
       out = pull_();
     } else if (op === "calendar") {
       out = calendar_(p);
+    } else if (op === "calendars") {
+      out = calendars_();
     } else {
       throw new Error("unsupported op");
     }
@@ -122,12 +125,29 @@ function health_() {
  * どの予定をAXISに取り込むかの判定はクライアント側で行うため、
  * このスクリプトには利用者名などの顧客情報を持たせない。
  */
+/** このアカウントから見えるカレンダーの一覧。AXIS側でどれを使うか選ぶために使う。 */
+function calendars_() {
+  const list = CalendarApp.getAllCalendars().map(function (c) {
+    return { id: String(c.getId() || ""), name: String(c.getName() || ""), owned: c.isOwnedByMe() };
+  });
+  const def = CalendarApp.getDefaultCalendar();
+  return { ok: true, defaultId: def ? String(def.getId() || "") : "", calendars: list };
+}
+
 function calendar_(p) {
   const back = Math.min(90, Math.max(0, Number(p.back || 14) || 14));
   const days = Math.min(365, Math.max(1, Number(p.days || 90) || 90));
   const id = String(p.calendarId || "").trim();
-  const cal = id ? CalendarApp.getCalendarById(id) : CalendarApp.getDefaultCalendar();
-  if (!cal) throw new Error("calendar not found");
+  let cal;
+  if (id) {
+    cal = CalendarApp.getCalendarById(id);
+    if (!cal) {
+      throw new Error("カレンダー「" + id + "」を開けません。このスクリプトを実行しているGoogleアカウントに、そのカレンダーが共有されているか確認してください。");
+    }
+  } else {
+    cal = CalendarApp.getDefaultCalendar();
+    if (!cal) throw new Error("既定のカレンダーを開けません");
+  }
   const tz = Session.getScriptTimeZone() || "Asia/Tokyo";
   const now = new Date();
   const from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - back);

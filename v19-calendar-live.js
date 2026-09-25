@@ -7,6 +7,7 @@
 
 const SETTINGS_KEY="axis_sync_settings_v1";
 const CACHE_KEY="axis_calendar_live_v1";
+const CAL_KEY="axis_calendar_id_v1";   /* 読み取り対象のカレンダーID（空ならスクリプト実行者の既定） */
 const MAX_AGE_MS=10*60*1000;   /* この時間内に取得済みなら再取得しない */
 let inFlight=null;
 
@@ -18,6 +19,12 @@ function settings(){
     return endpoint&&token?{endpoint,token}:null;
   }catch(e){return null}
 }
+function calendarId(){ return String(localStorage.getItem(CAL_KEY)||"").trim() }
+function setCalendarId(v){
+  const x=String(v||"").trim();
+  if(x) localStorage.setItem(CAL_KEY,x); else localStorage.removeItem(CAL_KEY);
+}
+window.axisCalendarId=calendarId;
 function cache(){
   try{const x=JSON.parse(localStorage.getItem(CACHE_KEY)||"null");return x&&Array.isArray(x.events)?x:null}catch(e){return null}
 }
@@ -61,7 +68,9 @@ async function refresh(opts){
   if(!s) throw new Error("「その他 → 端末間の自動同期」で同期先URLとトークンを設定すると、カレンダーを直接読み込めます。");
   if(inFlight) return inFlight;
   inFlight=(async()=>{
-    const r=await jsonp(s.endpoint,{op:"calendar",token:s.token,back:String(o.back??14),days:String(o.days??90)});
+    const params={op:"calendar",token:s.token,back:String(o.back??14),days:String(o.days??90)};
+    const cid=calendarId(); if(cid) params.calendarId=cid;
+    const r=await jsonp(s.endpoint,params);
     if(!r||r.ok===false) throw new Error(String(r&&r.error||"カレンダーを取得できませんでした"));
     const events=Array.isArray(r.events)?r.events:[];
     const syncedAt=String(r.syncedAt||new Date().toISOString());
@@ -92,6 +101,28 @@ window.axisRefreshCalendar=async function(){
   }
 };
 
+/* 同期先から、使えるカレンダーの一覧を取り出して選ばせる */
+window.axisChooseCalendar=async function(){
+  const s=settings();
+  if(!s){ alert("先に「その他 → 端末間の自動同期」で同期先URLとトークンを設定してください。"); return }
+  let r;
+  try{ r=await jsonp(s.endpoint,{op:"calendars",token:s.token}); }
+  catch(e){ alert(String(e.message||e)); return }
+  if(!r||r.ok===false){ alert(String(r&&r.error||"カレンダー一覧を取得できませんでした")); return }
+  const list=Array.isArray(r.calendars)?r.calendars:[];
+  if(!list.length){ alert("このアカウントから見えるカレンダーがありませんでした。"); return }
+  const cur=calendarId()||r.defaultId||"";
+  const lines=list.map((c,i)=>`${i+1}. ${c.name}（${c.id}）${c.id===cur?" ←いま選択中":""}`).join("\n");
+  const ans=prompt("読み込むカレンダーの番号を入力してください。\n\n"+lines,String(Math.max(1,list.findIndex(c=>c.id===cur)+1)));
+  if(ans===null) return;
+  const n=Number(ans);
+  if(!Number.isFinite(n)||n<1||n>list.length){ alert("番号が正しくありません。"); return }
+  setCalendarId(list[n-1].id);
+  localStorage.removeItem(CACHE_KEY);
+  alert(`「${list[n-1].name}」を読み込みます。`);
+  window.axisRefreshCalendar();
+};
+
 /* スケジュール画面に更新ボタンを出す */
 function injectButton(){
   if(document.querySelector("#axisCalRefresh")) return;
@@ -104,6 +135,13 @@ function injectButton(){
   b.textContent="カレンダーを更新";
   b.onclick=()=>window.axisRefreshCalendar();
   status.appendChild(b);
+  const c=document.createElement("button");
+  c.id="axisCalChoose";
+  c.type="button";
+  c.className="ax19-calrefresh";
+  c.textContent="カレンダーを選ぶ";
+  c.onclick=()=>window.axisChooseCalendar();
+  status.appendChild(c);
 }
 window.axisInjectCalendarButton=injectButton;
 
