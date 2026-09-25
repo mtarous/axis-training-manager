@@ -98,6 +98,53 @@ function axisSetup() {
   return "token already exists";
 }
 
+/**
+ * 同期トークンを再発行し、AXISの設定リンクを自分宛てにメールで送る。
+ * iPhoneでそのリンクを開くだけで同期先が設定されるため、43文字の手入力が要らない。
+ *
+ * 事前に一度だけ、スクリプトプロパティ AXIS_EXEC_URL へ
+ * デプロイ画面の /exec URL を入れておくこと（axisSetExecUrl を使う）。
+ * 実行するたびに古いトークンは無効になる。
+ */
+function axisSendSetupLink() {
+  ensureLayout_();
+  ensureBlobFolder_();
+  const props = PropertiesService.getScriptProperties();
+  const exec = String(props.getProperty("AXIS_EXEC_URL") || "").trim();
+  if (!/^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec$/.test(exec)) {
+    throw new Error("AXIS_EXEC_URL が未設定です。デプロイ画面の /exec URL を axisSetExecUrl で設定してください。");
+  }
+  const appUrl = String(props.getProperty("AXIS_APP_URL") || "https://mtarous.github.io/axis-training-manager/").trim();
+
+  const token = newToken_();
+  props.setProperty("AXIS_SYNC_TOKEN_SHA256", sha256_(token));
+  setConfig_("web_app_url", exec, "Web app deployment URL");
+
+  const payload = Utilities.base64EncodeWebSafe(
+    Utilities.newBlob(JSON.stringify({ e: exec, t: token })).getBytes()
+  ).replace(/=+$/, "");
+  const link = appUrl + "#axissync=" + payload;
+
+  const to = Session.getEffectiveUser().getEmail();
+  MailApp.sendEmail({
+    to: to,
+    subject: "AXIS TRAINING 同期設定リンク",
+    body: [
+      "AXISを使う端末（iPhoneなど）で、このメールを開いて下のリンクをタップしてください。",
+      "同期先URLとトークンが自動で設定されます。",
+      "",
+      link,
+      "",
+      "設定後、AXISの「その他 → 端末間の自動同期」で「今すぐ同期」を押してください。",
+      "",
+      "※このリンクには同期トークンが含まれます。設定が終わったらこのメールは削除してください。",
+      "※このリンクを発行すると、以前のトークンは無効になります。"
+    ].join("\n")
+  });
+  Logger.log("設定リンクを " + to + " へ送信しました。");
+  return "sent to " + to;
+}
+
 function axisRotateToken() {
   ensureLayout_();
   const token = newToken_();
