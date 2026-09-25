@@ -2,14 +2,18 @@
 window.musclesForExercise=function(name){
   const n=String(name||"").toLowerCase(),m=new Set(),add=(...xs)=>xs.forEach(x=>m.add(x));
   if(/ベンチ|チェスト|胸|push.?up|プッシュアップ|ダンベルプレス/.test(n))add("胸","肩","三頭");
-  if(/ラット|ロー|背中|row|pull.?down|プルダウン|懸垂/.test(n))add("広背筋","二頭");
+  if(/ラット|ロー|ロウ|背中|row|pull.?down|プルダウン|懸垂/.test(n))add("広背筋","二頭");
   if(/スクワット|レッグプレス|ブルガリアン|ランジ|lunge/.test(n))add("大腿四頭筋","臀筋","ハム");
-  if(/デッド|rdl|ルーマニアン|ヒップヒンジ|ヒップスラスト/.test(n))add("臀筋","ハム","脊柱起立筋");
+  if(/デッド|rdl|ルーマニアン|ヒップヒンジ|ヒップスラスト|ヒップリフト/.test(n))add("臀筋","ハム","脊柱起立筋");
   if(/レッグエクステンション/.test(n))add("大腿四頭筋"); if(/レッグカール/.test(n))add("ハム");
   if(/ショルダー|サイドレイズ|ラテラル|shoulder|raise/.test(n))add("肩");
-  if(/カール|curl/.test(n))add("二頭"); if(/トライセプ|三頭/.test(n))add("三頭");
-  if(/クランチ|腹|abs|プランク|plank/.test(n))add("腹筋"); if(/バックエクステンション/.test(n))add("脊柱起立筋","臀筋");
-  if(/カーフ|calf/.test(n))add("ふくらはぎ"); if(/ジャンプ|ホップ|jump|hop/.test(n))add("大腿四頭筋","臀筋","ふくらはぎ");
+  if(/カール|curl/.test(n)&&!/レッグカール|leg.?curl/.test(n))add("二頭"); if(/トライセプ|三頭|キックバック|プレスダウン/.test(n))add("三頭");
+  if(/クランチ|腹|abs|プランク|plank|アブ|マウンテンクライマー/.test(n))add("腹筋"); if(/バックエクステンション/.test(n))add("脊柱起立筋","臀筋");
+  if(/カーフ|calf/.test(n))add("ふくらはぎ"); if(/ジャンプ|ホップ|jump|hop|バウンディング/.test(n))add("大腿四頭筋","臀筋","ふくらはぎ");
+  if(/マーチ|腿上げ|ニードライブ|ステップアップ|バーピー|マウンテンクライマー/.test(n))add("大腿四頭筋","臀筋");
+  if(/バックキック|シングルレッグバランス|片脚バランス/.test(n))add("臀筋","ハム");
+  if(/バードドッグ|ベアマーチ|体幹/.test(n))add("腹筋","脊柱起立筋","臀筋");
+  if(/バーピー/.test(n))add("胸","肩");
   if(!m.size)add("全身"); return [...m]
 };
 window.muscleMap=function(rows){

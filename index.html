@@ -65,9 +65,10 @@ function calendarSyncNotice(){
   const iso=stamp.replace(" ","T");
   const when=Date.parse(/(Z|[+-]\d\d:?\d\d)$/i.test(iso)?iso:iso+"+09:00");
   const stale=!Number.isFinite(when)||Date.now()-when>12*60*60*1000;
+  const shown=Number.isFinite(when)?new Date(when).toLocaleString("ja-JP",{month:"long",day:"numeric",hour:"2-digit",minute:"2-digit"}):stamp;
   const message=META.calendarLoadError?"カレンダー予定を読み込めませんでした":
-    stale?`カレンダー予定は古い可能性があります${stamp?`（最終取込 ${esc(stamp)}）`:""}`:
-    `カレンダー最終取込 ${esc(stamp)}`;
+    stale?`カレンダー予定は古い可能性があります${shown?`（最終取込 ${esc(shown)}）`:""}`:
+    `カレンダー最終取込 ${esc(shown)}`;
   return `<div class="ax16-calendar-status${stale||META.calendarLoadError?" warning":""}">${message}。予定の追加は自動では反映されません。</div>`
 }
 async function unlock(){const p=$("#pass").value;$("#lockmsg").textContent="";try{const d=await decryptData(p);BASE=d.history||[];META=d;await loadCalendar(p);if($("#remember").checked)localStorage.setItem("axis_training_key",p);if(window.axisSetUnlockedPassphrase)window.axisSetUnlockedPassphrase(p);$("#lock").style.display="none";$("#app").style.display="block";$("#bottom").style.display="grid";renderAll();renderInput(draft||{});if(window.axisAfterUnlock)window.axisAfterUnlock()}catch(e){$("#lockmsg").textContent="アクセスコードが違うか、データを読み込めません。"}}
@@ -319,5 +320,5 @@ function exportExcel(scope="new"){
 function exportBackup(){const blob=new Blob([JSON.stringify({sessions:added,exported:new Date().toISOString()},null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="axis_training_backup.json";a.click();URL.revokeObjectURL(a.href)}
 function show(id,nav=true){document.querySelectorAll(".view").forEach(x=>x.classList.remove("on"));$("#"+id).classList.add("on");if(nav)document.querySelectorAll(".nav").forEach(x=>x.classList.toggle("on",x.dataset.v===id));scrollTo(0,0)}
 document.querySelectorAll(".nav").forEach(b=>b.onclick=()=>{show(b.dataset.v);if(b.dataset.v==="input")renderInput(draft||{})});function renderAll(){renderHome();renderSchedule();renderClients();renderHistory()}
-</script><script src="v5.js?v=12"></script><script src="v6.js?v=12"></script><script src="v7-summary-muscle.js?v=12"></script><script src="v9-smart-rest.js?v=12"></script><script src="v10-ui.js?v=12"></script><script src="v13-refine.js?v=13"></script><script src="v14-ux.js?v=14"></script><script src="v16-design.js?v=17"></script><script src="v16-train.js?v=2"></script><script src="v16-guide.js?v=1"></script><script src="v16-history-edit.js?v=1"></script><script src="v16-pages.js?v=2"></script><script src="v16-anatomy.js?v=1"></script><script src="v16-report-client-admin.js?v=1"></script><script src="v16-client-portability.js?v=1"></script><script src="v16-sync.js?v=1"></script><script>(async()=>{const saved=localStorage.getItem("axis_training_key");if(saved){$("#pass").value=saved;await unlock()}if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})})();
+</script><script src="v5.js?v=12"></script><script src="v6.js?v=12"></script><script src="v7-summary-muscle.js?v=18"></script><script src="v9-smart-rest.js?v=12"></script><script src="v10-ui.js?v=12"></script><script src="v13-refine.js?v=13"></script><script src="v14-ux.js?v=14"></script><script src="v16-design.js?v=18"></script><script src="v16-train.js?v=2"></script><script src="v16-guide.js?v=1"></script><script src="v16-history-edit.js?v=1"></script><script src="v16-pages.js?v=2"></script><script src="v16-anatomy.js?v=2"></script><script src="v16-report-client-admin.js?v=1"></script><script src="v16-client-portability.js?v=1"></script><script src="v16-sync.js?v=1"></script><script>(async()=>{const saved=localStorage.getItem("axis_training_key");if(saved){$("#pass").value=saved;await unlock()}if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})})();
 </script></body></html>

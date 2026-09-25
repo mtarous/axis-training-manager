@@ -56,8 +56,11 @@ function back(cl){
 
 window.muscleMap=function(rows,opts){
  const o=opts||{},on=new Set((rows||[]).flatMap(r=>musclesForExercise(r.exercise||r)));
- const cl=x=>(on.has(x)||on.has("全身"))?"on":"";
- const chips=o.chips===false?"":'<div class="ax16-chips">'+[...on].filter(x=>x!=="全身").slice(0,6).map(x=>'<span class="ax16-chip">'+esc(x)+'</span>').join("")+'</div>';
+ const named=[...on].filter(x=>x!=="全身");
+ /* 「全身」は分類できなかった種目のフォールバック。特定部位が1つでもあればそちらを優先し、全点灯させない */
+ const wholeBody=on.has("全身")&&!named.length;
+ const cl=x=>(named.includes(x)||wholeBody)?"on":"";
+ const chips=o.chips===false?"":'<div class="ax16-chips">'+named.slice(0,12).map(x=>'<span class="ax16-chip">'+esc(x)+'</span>').join("")+'</div>';
  return '<div class="ax16-figs ax16-anatomy-v2"><div class="ax16-fig"><div class="cap">FRONT</div>'+front(cl)+'</div><div class="ax16-fig"><div class="cap">BACK</div>'+back(cl)+'</div></div>'+chips;
 };
 })();
