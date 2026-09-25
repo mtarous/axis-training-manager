@@ -45,8 +45,8 @@
     s?.rpe?`RPE:${s.rpe}`:"",
     s?.pain!==undefined&&s?.pain!==""?`痛み:${s.pain}`:""
   ].filter(Boolean).join(" | ");
-  window.all=()=>BASE.concat(added.flatMap(s=>(s.exercises||[]).map(e=>({date:s.date,client:s.client,exercise:e.exercise,weight:e.weight,reps:e.reps,sets:e.sets,achieved:s.status,memo:sessionMemo(s),source:"アプリ入力"}))));
-  window.appRows=()=>added.flatMap(s=>(s.exercises||[]).map(e=>({date:s.date,client:s.client,exercise:e.exercise,weight:e.weight,reps:e.reps,sets:e.sets,achieved:s.status||"完了",memo:sessionMemo(s),source:"アプリ入力"})));
+  window.all=()=>BASE.concat(added.flatMap(s=>{let axisExerciseIndex=0;return (s.exercises||[]).flatMap(e=>(typeof axisExpandSteps==="function"?axisExpandSteps(e):[{exercise:e.exercise,weight:e.weight,reps:e.reps,sets:e.sets}]).map(p=>({date:s.date,client:s.client,exercise:p.exercise,weight:p.weight,reps:p.reps,sets:p.sets,achieved:s.status,memo:sessionMemo(s),source:"アプリ入力",_axisSessionStamp:s.savedAt||"",_axisExerciseIndex:axisExerciseIndex++})))}));
+  window.appRows=()=>added.flatMap(s=>(s.exercises||[]).flatMap(e=>(typeof axisExpandSteps==="function"?axisExpandSteps(e):[{exercise:e.exercise,weight:e.weight,reps:e.reps,sets:e.sets}]).map(p=>({date:s.date,client:s.client,exercise:p.exercise,weight:p.weight,reps:p.reps,sets:p.sets,achieved:s.status||"完了",memo:sessionMemo(s),source:"アプリ入力"}))));
 
   window.professionalAdvice=c=>{
     const goal=String(META.goals?.[c]||""),out=[];

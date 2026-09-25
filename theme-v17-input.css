@@ -1,0 +1,109 @@
+/* ===== AXIS v17 : トレーニング入力画面 =====
+   iPhoneでスクロールせずに記録できるよう、保存と記録ボタンを常時見える位置に置く。 */
+
+.ax17-shell{padding-bottom:18px}
+
+/* --- 常時表示の上部バー（利用者・日付・保存） --- */
+.ax17-bar{position:sticky;top:0;z-index:30;display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;
+  padding:10px 0 9px;margin-bottom:6px;
+  background:linear-gradient(180deg,var(--v16-bg) 72%,rgba(3,6,13,0));}
+.ax17-bar select,.ax17-bar input[type=date]{
+  background:var(--v16-panel2);border:1px solid var(--v16-line);color:var(--v16-ink);
+  border-radius:12px;padding:10px 11px;font-size:15px;font-weight:700;min-width:0;width:100%;
+  -webkit-appearance:none;appearance:none}
+.ax17-bar input[type=date]{width:auto;font-size:13.5px;padding:10px 9px}
+#ax17-save{border:0;border-radius:12px;padding:11px 18px;font-size:15px;font-weight:800;color:#02101f;
+  background:linear-gradient(135deg,var(--v16-blue2),var(--v16-blue));box-shadow:var(--v16-glow);white-space:nowrap}
+#ax17-save:active{transform:translateY(1px)}
+
+/* --- 種目の進捗ドット --- */
+.ax17-progress{display:flex;gap:6px;flex-wrap:wrap;margin:0 2px 9px}
+.ax17-progress button{width:100%;max-width:38px;flex:1 1 20px;height:5px;border:0;border-radius:3px;padding:0;
+  background:var(--v16-line2)}
+.ax17-progress button.part{background:linear-gradient(90deg,var(--v16-blue),var(--v16-line2))}
+.ax17-progress button.done{background:var(--v16-blue)}
+.ax17-progress button.on{height:7px;box-shadow:var(--v16-glow)}
+
+/* --- 入力カード --- */
+.ax17-card{background:linear-gradient(168deg,var(--v16-panel2),var(--v16-panel));
+  border:1px solid var(--v16-line2);border-radius:var(--v16-r);padding:13px;margin-bottom:11px}
+.ax17-exnav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+.ax17-exnav button{width:38px;height:38px;border-radius:11px;border:1px solid var(--v16-line);
+  background:var(--v16-panel);color:var(--v16-ink);font-size:20px;line-height:1;flex:none}
+.ax17-exnav button:disabled{opacity:.3}
+.ax17-exmeta{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:var(--v16-mut)}
+.ax17-drop{font-size:10.5px;font-weight:800;letter-spacing:.06em;color:#02101f;background:var(--v16-blue2);
+  border-radius:999px;padding:3px 9px}
+
+.ax17-exinput{width:100%;background:var(--v16-bg2);border:1px solid var(--v16-line);color:var(--v16-ink);
+  border-radius:13px;padding:13px 12px;font-size:16px;font-weight:700;margin-bottom:8px}
+.ax17-exinput::placeholder{color:var(--v16-dim);font-weight:600;font-size:14px}
+
+.ax17-prevline{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;
+  font-size:12.5px;color:var(--v16-mut);margin-bottom:10px}
+.ax17-prevline button{background:none;border:1px solid var(--v16-line);color:var(--v16-blue2);
+  border-radius:999px;padding:6px 12px;font-size:12px;font-weight:700}
+
+/* --- 記録ボタン（最重要・大きく） --- */
+.ax17-record{width:100%;border:0;border-radius:15px;padding:15px 12px;margin-bottom:11px;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  font-size:17px;font-weight:800;color:#02101f;
+  background:linear-gradient(135deg,var(--v16-blue2),var(--v16-blue));box-shadow:var(--v16-glow)}
+.ax17-record small{font-size:11.5px;font-weight:700;opacity:.72}
+.ax17-record:active{transform:translateY(1px)}
+.ax17-record.full,.ax17-record:disabled{background:var(--v16-panel);color:var(--v16-mut);
+  border:1px solid var(--v16-line);box-shadow:none}
+
+/* --- セット一覧（セットごとに重量・回数） --- */
+.ax17-sets{display:flex;flex-direction:column;gap:7px;margin-bottom:10px}
+.ax17-set{display:grid;grid-template-columns:38px 1fr 30px;gap:6px;align-items:center;
+  background:var(--v16-bg2);border:1px solid var(--v16-line2);border-radius:13px;padding:7px 8px}
+.ax17-set.next{border-color:var(--v16-blue);box-shadow:0 0 0 1px rgba(11,140,255,.25)}
+.ax17-set.done{opacity:.62}
+.ax17-setno{display:flex;flex-direction:column;align-items:center;gap:1px;background:none;border:0;color:var(--v16-ink);padding:4px 0}
+.ax17-setno b{font-size:15px;font-weight:800}
+.ax17-setno i{font-style:normal;font-size:12px;color:var(--v16-blue2)}
+.ax17-set.done .ax17-setno i{color:var(--v16-blue2)}
+.ax17-setval{display:grid;grid-template-columns:1fr 1fr;gap:5px;min-width:0}
+.ax17-pair{display:grid;grid-template-columns:32px minmax(0,1fr) 32px;align-items:center;gap:1px}
+.ax17-pair button{height:38px;border-radius:10px;border:1px solid var(--v16-line);background:var(--v16-panel2);
+  color:var(--v16-ink);font-size:17px;line-height:1;padding:0}
+.ax17-pair button:active{background:var(--v16-blue);color:#02101f}
+.ax17-pair span{text-align:center;font-size:15px;font-weight:800;white-space:nowrap;letter-spacing:-.01em}
+.ax17-pair small{font-size:10px;font-weight:700;color:var(--v16-mut);margin-left:0}
+.ax17-setside{display:flex;flex-direction:column;gap:4px}
+.ax17-setside button{border:1px solid var(--v16-line2);background:var(--v16-panel);color:var(--v16-mut);
+  border-radius:8px;font-size:10px;font-weight:700;padding:5px 0;line-height:1.1}
+.ax17-setside button:disabled{opacity:.3}
+
+/* --- セット追加・段階的に下げる --- */
+.ax17-addrow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.ax17-addrow button{flex:1 1 auto;border:1px solid var(--v16-line);background:var(--v16-panel2);color:var(--v16-ink);
+  border-radius:11px;padding:10px 8px;font-size:12.5px;font-weight:700;white-space:nowrap}
+.ax17-addrow button.pri{flex:1 1 100%;border-color:var(--v16-blue);color:var(--v16-blue2);background:rgba(11,140,255,.1)}
+.ax17-addrow button:active{background:var(--v16-blue);color:#02101f}
+
+.ax17-exactions{display:flex;gap:7px}
+.ax17-exactions button{flex:1;border:1px solid var(--v16-line2);background:none;color:var(--v16-mut);
+  border-radius:11px;padding:10px;font-size:12.5px;font-weight:700}
+
+/* --- 折りたたみの詳細・メモ --- */
+.ax17-more{background:var(--v16-panel);border:1px solid var(--v16-line2);border-radius:15px;margin-bottom:9px;overflow:hidden}
+.ax17-more>summary{padding:13px 14px;font-size:13.5px;font-weight:700;color:var(--v16-mut);cursor:pointer;list-style:none}
+.ax17-more>summary::-webkit-details-marker{display:none}
+.ax17-more>summary::after{content:"▾";float:right;color:var(--v16-dim)}
+.ax17-more[open]>summary::after{content:"▴"}
+.ax17-morebody{padding:0 12px 13px}
+.ax17-selects{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:9px}
+.ax17-selects label{display:flex;flex-direction:column;gap:4px;font-size:11px;font-weight:700;color:var(--v16-mut)}
+.ax17-selects select{background:var(--v16-bg2);border:1px solid var(--v16-line);color:var(--v16-ink);
+  border-radius:10px;padding:9px;font-size:15px;font-weight:700;-webkit-appearance:none;appearance:none}
+.ax17-chips{display:flex;gap:6px;margin-bottom:8px}
+.ax17-chips button{flex:1;border:1px solid var(--v16-line2);background:var(--v16-bg2);color:var(--v16-mut);
+  border-radius:999px;padding:8px;font-size:12.5px;font-weight:700}
+.ax17-chips button.on{border-color:var(--v16-blue);color:var(--v16-blue2);background:rgba(11,140,255,.12)}
+.ax17-morebody textarea{width:100%;background:var(--v16-bg2);border:1px solid var(--v16-line2);color:var(--v16-ink);
+  border-radius:12px;padding:11px;font-size:15px;min-height:62px;margin-bottom:7px;resize:vertical}
+
+/* 旧入力画面のシェルは v17 では使わない */
+.ax17-shell .ax16t-shell{display:none}
