@@ -107,3 +107,8 @@
 
 /* 旧入力画面のシェルは v17 では使わない */
 .ax17-shell .ax16t-shell{display:none}
+
+/* --- カレンダー更新ボタン（v19） --- */
+.ax19-calrefresh{margin-left:8px;border:1px solid var(--v16-line);background:var(--v16-panel2);
+  color:var(--v16-blue2);border-radius:999px;padding:5px 12px;font-size:11.5px;font-weight:800;white-space:nowrap}
+.ax19-calrefresh:disabled{opacity:.55}

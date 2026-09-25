@@ -7,6 +7,7 @@
  * Client protocol:
  *   GET  ?op=health&token=...&callback=...
  *   GET  ?op=pull&token=...&callback=...
+ *   GET  ?op=calendar&token=...&back=14&days=60&callback=...
  *   POST form fields:
  *     op=push
  *     token
@@ -41,6 +42,8 @@ function doGet(e) {
       out = health_();
     } else if (op === "pull") {
       out = pull_();
+    } else if (op === "calendar") {
+      out = calendar_(p);
     } else {
       throw new Error("unsupported op");
     }
@@ -111,6 +114,39 @@ function health_() {
     schemaVersion:AXIS_SYNC_SERVER.schemaVersion,
     snapshotCount:rows,
     time:new Date().toISOString()
+  };
+}
+
+/**
+ * Google カレンダーの予定をそのまま返す。
+ * どの予定をAXISに取り込むかの判定はクライアント側で行うため、
+ * このスクリプトには利用者名などの顧客情報を持たせない。
+ */
+function calendar_(p) {
+  const back = Math.min(90, Math.max(0, Number(p.back || 14) || 14));
+  const days = Math.min(365, Math.max(1, Number(p.days || 90) || 90));
+  const id = String(p.calendarId || "").trim();
+  const cal = id ? CalendarApp.getCalendarById(id) : CalendarApp.getDefaultCalendar();
+  if (!cal) throw new Error("calendar not found");
+  const tz = Session.getScriptTimeZone() || "Asia/Tokyo";
+  const now = new Date();
+  const from = new Date(now.getFullYear(), now.getMonth(), now.getDate() - back);
+  const to = new Date(now.getFullYear(), now.getMonth(), now.getDate() + days);
+  const events = cal.getEvents(from, to).map(function (ev) {
+    return {
+      id: String(ev.getId() || ""),
+      summary: String(ev.getTitle() || ""),
+      start: Utilities.formatDate(ev.getStartTime(), tz, "yyyy-MM-dd'T'HH:mm:ss"),
+      end: Utilities.formatDate(ev.getEndTime(), tz, "yyyy-MM-dd'T'HH:mm:ss"),
+      allDay: ev.isAllDayEvent()
+    };
+  });
+  return {
+    ok: true,
+    syncedAt: Utilities.formatDate(now, tz, "yyyy-MM-dd HH:mm:ss"),
+    calendar: String(cal.getName() || ""),
+    count: events.length,
+    events: events
   };
 }
 
