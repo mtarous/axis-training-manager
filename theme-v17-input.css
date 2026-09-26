@@ -112,3 +112,40 @@
 .ax19-calrefresh{margin-left:8px;border:1px solid var(--v16-line);background:var(--v16-panel2);
   color:var(--v16-blue2);border-radius:999px;padding:5px 12px;font-size:11.5px;font-weight:800;white-space:nowrap}
 .ax19-calrefresh:disabled{opacity:.55}
+
+/* ===== v23 修正：上端の食い込み・保存ボタン・タップ時のズレ ===== */
+
+/* 旧ヘッダーを隠しているため、時計やカメラの下に content が潜っていた */
+.main{padding-top:env(safe-area-inset-top)}
+
+/* 上部バーは固定位置でも時計に重ならないようにする */
+.ax17-bar{
+  top:0;
+  margin-top:calc(-1 * env(safe-area-inset-top));
+  padding-top:calc(10px + env(safe-area-inset-top));
+  grid-template-columns:1fr auto;
+  grid-template-areas:"client save" "date save";
+  row-gap:6px;
+}
+.ax17-bar select{grid-area:client}
+.ax17-bar input[type=date]{grid-area:date;width:100%;font-size:15px}
+/* 保存は押しやすい大きさにする */
+#ax17-save{
+  grid-area:save;
+  height:100%;min-height:62px;min-width:94px;
+  padding:0 20px;font-size:17px;border-radius:14px;
+}
+
+/* タップした瞬間に色が変わるだけにして、拡大や選択で画面が動かないようにする */
+.ax17-card button,.ax17-bar button,.ax17-record,.ax17-progress button{
+  -webkit-tap-highlight-color:transparent;
+  -webkit-user-select:none;user-select:none;touch-action:manipulation;
+}
+/* 入力欄にふれたときiOSが拡大しないよう16px以上を保つ */
+.ax17-exinput,.ax17-bar select,.ax17-bar input[type=date],.ax17-morebody textarea,.ax17-selects select{font-size:16px}
+
+/* ホームの「鍛えた部位」が誰の記録か分かるようにする */
+.ax16-musclewho{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin:-2px 0 10px;
+  padding:8px 11px;border-radius:11px;background:rgba(11,140,255,.09);border:1px solid rgba(24,205,255,.22)}
+.ax16-musclewho b{font-size:15px;font-weight:800}
+.ax16-musclewho span{font-size:11.5px;color:var(--v16-mut);font-weight:700}

@@ -180,8 +180,9 @@ window.renderHome=function(){
 
  <div class="ax16-panel"><div class="ax16-head"><div class="ax16-h"><span class="ic">${v16Icon("body")}</span>鍛えた部位</div>
    ${last?`<button class="ax16-more" onclick="openClient('${String(last.client).replace(/'/g,"\\'")}')">詳細 ${v16Icon("chev")}</button>`:""}</div>
+   ${last?`<div class="ax16-musclewho"><b>${esc(last.client)}</b><span>${esc(fmt(last.date))} の記録</span></div>`:""}
    ${muscleMap(last?.rows||[])}
-   <div class="ax16-mut" style="text-align:center;margin-top:8px">● 直近のトレーニングで使用した部位</div></div>
+   <div class="ax16-mut" style="text-align:center;margin-top:8px">${last?`● ${esc(last.client)}${/(さん|様|夫婦)$/.test(String(last.client))?"":"さん"}が直近で使用した部位`:"● 直近のトレーニングで使用した部位"}</div></div>
 
  <div class="ax16-panel"><div class="ax16-head"><div class="ax16-h"><span class="ic">${v16Icon("bulb")}</span>次回提案</div></div>
    <b style="font-size:15px">${a?.next?.[0]?esc(a.next[0].exercise):"次のセッションを準備"}</b>

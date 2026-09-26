@@ -66,24 +66,66 @@ function focusIndex(i){
 function curEx(){return window.exs?.[focusIndex(activeIndex)]}
 function refresh(){drawEx17();saveDraft()}
 
+/* 値だけを書き換える。カードを作り直すと押した場所が動いてしまうため、
+   重量・回数・セット完了はDOMを部分更新する。 */
+function patchStep(i,j){
+  const e=window.exs?.[i]; if(!e) return false;
+  const row=document.querySelectorAll("#ax17-main .ax17-set")[j];
+  if(!row) return false;
+  const st=e.steps[j]; if(!st) return false;
+  const w=row.querySelector(".ax17-w"), r=row.querySelector(".ax17-r");
+  if(w) w.innerHTML=String(st.w)==="自重"?"自重":esc(st.w)+"<small>kg</small>";
+  if(r) r.innerHTML=esc(st.r)+"<small>回</small>";
+  return true;
+}
+function patchProgress(i){
+  const e=window.exs?.[i]; if(!e) return;
+  const done=e.done.length, sets=e.steps.length;
+  const btn=document.querySelector("#ax17-main .ax17-record");
+  if(btn){
+    btn.classList.toggle("full",done>=sets);
+    btn.disabled=done>=sets;
+    btn.innerHTML=(done>=sets?"この種目は完了":"SET "+(done+1)+" を記録する")
+      +"<small>"+done+" / "+sets+" セット完了</small>";
+  }
+  document.querySelectorAll("#ax17-main .ax17-set").forEach((row,j)=>{
+    row.classList.toggle("done",e.done.includes(j));
+    row.classList.toggle("next",j===done);
+    const mark=row.querySelector(".ax17-setno i");
+    if(mark) mark.textContent=e.done.includes(j)?"✓":"○";
+  });
+  const bar=el("#ax17-progress");
+  if(bar){
+    const btns=bar.querySelectorAll("button");
+    window.exs.forEach((x,k)=>{
+      const b=btns[k]; if(!b) return;
+      ensureSteps(x);
+      b.className=(x.done.length>=x.steps.length?"done":x.done.length?"part":"")+(k===i?" on":"");
+    });
+  }
+}
+
 function bumpSetWeight(i,j,d){
   const e=window.exs?.[i]; if(!e) return; ensureSteps(e);
   const s=e.steps[j]; if(!s) return;
   if(String(s.w)==="自重") s.w=0;
   s.w=Math.max(0,round1(num(s.w,0)+d));
-  syncLegacy(e); refresh();
+  syncLegacy(e);
+  if(!patchStep(i,j)) refresh(); else saveDraft();
 }
 function bumpSetReps(i,j,d){
   const e=window.exs?.[i]; if(!e) return; ensureSteps(e);
   const s=e.steps[j]; if(!s) return;
   s.r=Math.max(0,num(s.r,0)+d);
-  syncLegacy(e); refresh();
+  syncLegacy(e);
+  if(!patchStep(i,j)) refresh(); else saveDraft();
 }
 function setBody(i,j){
   const e=window.exs?.[i]; if(!e) return; ensureSteps(e);
   const s=e.steps[j]; if(!s) return;
   s.w=String(s.w)==="自重"?0:"自重";
-  syncLegacy(e); refresh();
+  syncLegacy(e);
+  if(!patchStep(i,j)) refresh(); else saveDraft();
 }
 /* もう1セット追加。delta を渡すと重量を段階的に下げ／上げて追加する */
 function addStep(i,delta,ratio){
@@ -108,7 +150,7 @@ function toggleStep(i,j){
   const e=window.exs?.[i]; if(!e) return; ensureSteps(e);
   const k=e.done.indexOf(j);
   if(k>=0) e.done.splice(k,1); else e.done.push(j);
-  refresh();
+  patchProgress(i); saveDraft();
   if(k<0&&typeof window.showSmartRest==="function") window.showSmartRest(i);
 }
 /* 次の未完了セットを記録 */
@@ -184,6 +226,7 @@ function memoLabel(m){return m==="caution"?"注意点":m==="share"?"共有事項
 /* ---- 描画 ---- */
 window.drawEx17=function(){
   const root=el("#ax17-main"); if(!root) return;
+  const keepY=window.scrollY;
   if(!window.exs?.length) addExercise();
   const i=focusIndex(activeIndex), e=window.exs[i], total=window.exs.length;
   ensureSteps(e);
@@ -263,6 +306,7 @@ window.drawEx17=function(){
 
   if(typeof window.showSmartRest==="function") window.showSmartRest(i);
   saveDraft();
+  if(Math.abs(window.scrollY-keepY)>1) window.scrollTo(0,keepY);
 };
 
 window.renderInput=function(p={}){
