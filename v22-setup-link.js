@@ -31,6 +31,49 @@ function applyPayload(raw){
   return {ok:true,endpoint};
 }
 
+/* 貼り付けられた文字列から設定を取り込む。
+   ホーム画面に追加したアプリはSafariと保存領域が別なので、
+   リンクをタップする代わりに、リンクそのものを貼り付けて設定できるようにする。 */
+window.axisApplySetupText=function(text){
+  const m=String(text||"").match(/axissync=([A-Za-z0-9_\-]+)/);
+  const raw=m?m[1]:String(text||"").trim();
+  if(!raw) return {ok:false,error:"設定リンクが空です"};
+  return applyPayload(raw);
+};
+
+/* 「その他」の同期カードに貼り付け欄を出す */
+function injectPasteBox(){
+  if(document.querySelector("#axisSetupPaste")) return;
+  const card=document.querySelector(".axsync-card");
+  if(!card) return;
+  const mk=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
+  const wrap=mk("div","axsetup-paste"); wrap.id="axisSetupPaste";
+  wrap.appendChild(mk("div","axsetup-title","設定リンクを貼り付けて設定"));
+  wrap.appendChild(mk("div","axsetup-help","メールの「AXIS TRAINING 同期設定リンク」を長押しして『リンクをコピー』し、ここに貼り付けてください。ホーム画面に追加したアプリでも、この方法なら設定できます。"));
+  const ta=document.createElement("textarea");
+  ta.className="axsetup-input"; ta.placeholder="ここに設定リンクを貼り付け"; ta.rows=2; ta.spellcheck=false;
+  wrap.appendChild(ta);
+  const btn=mk("button","ax16-btn pri axsetup-btn","この内容で設定する"); btn.type="button";
+  wrap.appendChild(btn);
+  const out=mk("div","axsetup-out"); wrap.appendChild(out);
+  btn.onclick=()=>{
+    const r=window.axisApplySetupText(ta.value);
+    if(r.ok){
+      out.className="axsetup-out ok";
+      out.textContent="設定しました。下の「今すぐ同期」を押してください。";
+      ta.value="";
+      if(typeof renderMore==="function") setTimeout(renderMore,400);
+    }else{
+      out.className="axsetup-out ng";
+      out.textContent=r.error||"設定できませんでした";
+    }
+  };
+  card.appendChild(wrap);
+}
+window.axisInjectSetupPaste=injectPasteBox;
+document.addEventListener("click",()=>setTimeout(injectPasteBox,80));
+setTimeout(injectPasteBox,1200);
+
 function consume(){
   const h=String(location.hash||"");
   const m=h.match(/[#&]axissync=([A-Za-z0-9_\-]+)/);
