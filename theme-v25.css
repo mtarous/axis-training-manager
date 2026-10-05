@@ -1,0 +1,45 @@
+/* AXIS v25 休憩タイマー常駐バー・重量の刻み選択 */
+body.ax25-resting{padding-bottom:132px}
+.ax25-rest{
+  position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));
+  z-index:60;background:linear-gradient(168deg,#0b1828,#061020);color:var(--v16-ink,#e9f2fc);border:1px solid var(--v16-line,#12304e);border-radius:16px;
+  padding:10px 12px;box-shadow:0 12px 32px rgba(0,0,0,.6)
+}
+.ax25-rest-head{display:flex;align-items:center;gap:10px}
+.ax25-rest-head b{font-size:24px;font-variant-numeric:tabular-nums;min-width:66px}
+.ax25-rest-head span{font-size:12px;opacity:.75}
+.ax25-rest-track{flex:1;height:6px;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden}
+.ax25-rest-track i{display:block;height:100%;width:100%;background:linear-gradient(90deg,#0b8cff,#18cdff);transition:width .3s linear}
+.ax25-rest.paused .ax25-rest-track i{background:#fbbf24}
+.ax25-rest.zero{background:linear-gradient(168deg,#0d3a24,#08261a);border-color:#1f7a4d}
+.ax25-rest.zero .ax25-rest-track i{background:#86efac}
+.ax25-rest-btns{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:7px;margin-top:10px}
+.ax25-rest-btns button{
+  border:1px solid var(--v16-line,#12304e);border-radius:11px;background:rgba(11,140,255,.12);color:var(--v16-ink,#e9f2fc);
+  padding:13px 0;font-size:14px;font-weight:800
+}
+.ax25-rest-btns button.ax25-main{background:rgba(11,140,255,.22);border-color:var(--v16-blue,#0b8cff)}
+.ax25-rest-btns button.ax25-stop{background:#dc2626;border-color:#dc2626;color:#fff}
+
+.ax25-steprow{
+  display:flex;align-items:center;flex-wrap:wrap;gap:6px;
+  margin:10px 0 2px;padding-top:10px;border-top:1px solid var(--v16-line2,#0e2339)
+}
+.ax25-steplabel{font-size:12px;font-weight:700;color:var(--v16-mut,#7d93ad)}
+.ax25-steprow button{
+  border:1px solid var(--v16-line,#12304e);background:rgba(11,140,255,.08);
+  border-radius:999px;padding:8px 12px;font-size:13px;font-weight:700;
+  color:var(--v16-ink,#e9f2fc)
+}
+.ax25-steprow button.on{
+  background:linear-gradient(135deg,var(--v16-blue,#0b8cff),var(--v16-blue2,#18cdff));
+  border-color:var(--v16-blue2,#18cdff);color:#04121f;box-shadow:var(--v16-glow,none)
+}
+.ax25-stephint{font-size:11px;color:var(--v16-dim,#556b84);margin-left:auto}
+
+.ax25-tap{cursor:pointer;border-bottom:1px dashed var(--v16-dim,#556b84)}
+.ax25-inline{
+  width:84px;text-align:center;font-size:17px;font-weight:800;
+  background:var(--v16-panel,#08111f);color:var(--v16-ink,#e9f2fc);
+  border:2px solid var(--v16-blue2,#18cdff);border-radius:9px;padding:4px 2px
+}
