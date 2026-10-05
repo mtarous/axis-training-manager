@@ -1,0 +1,29 @@
+/* AXIS v2 デザイントークン
+   色・間隔・角丸はここだけで定義する。画面側では生の値を書かない。 */
+:root{
+  --ax-bg:#03060d;
+  --ax-panel:#08111f;
+  --ax-panel2:#0b1828;
+  --ax-line:#12304e;
+  --ax-line2:#0e2339;
+
+  --ax-ink:#e9f2fc;
+  --ax-mut:#7d93ad;
+  --ax-dim:#556b84;
+
+  --ax-blue:#0b8cff;
+  --ax-cyan:#18cdff;
+  --ax-red:#dc2626;
+  --ax-red-ink:#ff8f8f;
+  --ax-green:#22c55e;
+
+  --ax-r:16px;
+  --ax-r-sm:11px;
+  --ax-gap:10px;
+
+  --ax-tap:46px;              /* 指で押す最小の高さ */
+  --ax-navh:62px;             /* 下部ナビの高さ */
+
+  --ax-shadow:0 12px 32px rgba(0,0,0,.55);
+  --ax-glow:0 0 22px rgba(11,140,255,.38);
+}

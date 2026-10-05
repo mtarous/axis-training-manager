@@ -1,0 +1,127 @@
+/* AXIS v2 共通スタイル */
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+[hidden]{display:none!important}
+body{
+  margin:0;background:var(--ax-bg);color:var(--ax-ink);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif;
+  font-size:14px;line-height:1.5;
+  padding-bottom:calc(var(--ax-navh) + env(safe-area-inset-bottom) + 12px)
+}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+h1,h2,h3{margin:0}
+
+.ax-app{max-width:720px;margin:0 auto;padding:12px 12px 0}
+.ax-eyebrow{font-size:9.5px;letter-spacing:.2em;color:var(--ax-dim);font-weight:800}
+.ax-mut{color:var(--ax-mut)}
+.ax-empty{color:var(--ax-dim);text-align:center;padding:28px 10px}
+
+.ax-panel{
+  background:linear-gradient(168deg,var(--ax-panel2),var(--ax-panel));
+  border:1px solid var(--ax-line2);border-radius:var(--ax-r);
+  padding:14px;margin-bottom:var(--ax-gap)
+}
+
+/* ボタン */
+.ax-btn{
+  border:1px solid var(--ax-line);background:rgba(11,140,255,.10);color:var(--ax-ink);
+  border-radius:var(--ax-r-sm);padding:0 14px;height:var(--ax-tap);
+  font-size:14px;font-weight:700;display:inline-flex;align-items:center;justify-content:center;gap:6px
+}
+.ax-btn.pri{background:linear-gradient(135deg,var(--ax-blue),var(--ax-cyan));border-color:var(--ax-cyan);color:#04121f;box-shadow:var(--ax-glow)}
+.ax-btn.danger{border-color:rgba(220,38,38,.55);background:rgba(220,38,38,.12);color:var(--ax-red-ink)}
+.ax-btn.ghost{background:none}
+.ax-btn.full{width:100%}
+.ax-btn:disabled{opacity:.4;box-shadow:none}
+
+/* 入力 */
+.ax-field{display:grid;gap:4px}
+.ax-field>span{font-size:11.5px;font-weight:700;color:var(--ax-mut)}
+.ax-input,.ax-select,.ax-area{
+  width:100%;background:var(--ax-panel);color:var(--ax-ink);
+  border:1px solid var(--ax-line);border-radius:var(--ax-r-sm);
+  padding:0 12px;height:var(--ax-tap);font-size:15px
+}
+.ax-area{height:auto;min-height:76px;padding:10px 12px;line-height:1.6;resize:vertical}
+
+/* 下部ナビ */
+.ax-nav{
+  position:fixed;left:0;right:0;bottom:0;z-index:20;
+  display:grid;grid-template-columns:repeat(2,1fr);
+  background:rgba(3,6,13,.94);border-top:1px solid var(--ax-line2);
+  padding:6px 6px calc(6px + env(safe-area-inset-bottom));
+  backdrop-filter:blur(8px)
+}
+.ax-nav button{
+  border:0;background:none;color:var(--ax-dim);
+  font-size:11px;font-weight:700;padding:5px 0;display:grid;gap:2px;justify-items:center
+}
+.ax-nav button b{font-size:17px;font-weight:800}
+.ax-nav button.on{color:var(--ax-cyan)}
+
+/* 画面下に重ねるバーの置き場 */
+.ax-dock{
+  position:fixed;left:10px;right:10px;
+  bottom:calc(var(--ax-navh) + env(safe-area-inset-bottom) + 10px);
+  z-index:30;display:grid;grid-template-columns:minmax(0,1fr);gap:8px;pointer-events:none
+}
+.ax-dock>*{pointer-events:auto;min-width:0}
+.ax-bar{
+  background:linear-gradient(168deg,var(--ax-panel2),#061020);
+  border:1px solid var(--ax-line);border-radius:var(--ax-r);
+  padding:11px 13px;box-shadow:var(--ax-shadow)
+}
+
+/* 鍵画面 */
+.ax-lock{max-width:360px;margin:16vh auto;padding:0 18px;text-align:center}
+.ax-lock h1{font-size:26px;letter-spacing:.06em;margin-bottom:6px}
+.ax-lock h1 i{font-style:normal;color:var(--ax-cyan);text-shadow:0 0 16px rgba(24,205,255,.75)}
+.ax-lock p{color:var(--ax-mut);font-size:12.5px;margin:0 0 18px}
+.ax-lock .ax-input{text-align:center;margin-bottom:10px}
+.ax-lock label{display:flex;align-items:center;justify-content:center;gap:6px;color:var(--ax-mut);font-size:12.5px;margin-top:10px}
+.ax-lockmsg{color:var(--ax-red-ink);font-size:12.5px;min-height:18px;margin-top:10px}
+
+/* 画面切り替え */
+.ax-view{display:none}
+.ax-view.on{display:block}
+
+/* 通知バー */
+.ax-toast{display:flex;align-items:center;gap:10px;overflow:hidden}
+.ax-toast span{flex:1;min-width:0}
+.ax-toast b{display:block;font-size:14px;font-weight:800;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ax-toast small{display:block;font-size:11.5px;color:var(--ax-mut);margin-top:2px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ax-toast-act{
+  border:1px solid var(--ax-blue);background:rgba(11,140,255,.22);color:var(--ax-ink);
+  border-radius:var(--ax-r-sm);padding:0 16px;height:var(--ax-tap);font-size:14px;font-weight:800;flex:none
+}
+.ax-toast-close{
+  border:1px solid var(--ax-line);background:none;color:var(--ax-mut);
+  border-radius:var(--ax-r-sm);width:42px;height:var(--ax-tap);font-size:17px;flex:none
+}
+
+/* その場打ち直し */
+.ax-inline{
+  width:86px;text-align:center;font-size:17px;font-weight:800;
+  background:var(--ax-panel);color:var(--ax-ink);
+  border:2px solid var(--ax-cyan);border-radius:9px;padding:4px 2px
+}
+
+/* 休憩タイマー */
+body.ax-resting{padding-bottom:calc(var(--ax-navh) + env(safe-area-inset-bottom) + 140px)}
+.ax-rest-head{display:flex;align-items:center;gap:10px}
+.ax-rest-head b{font-size:24px;font-variant-numeric:tabular-nums;min-width:66px}
+.ax-rest-head span{font-size:12px;color:var(--ax-mut)}
+.ax-rest-track{flex:1;height:6px;border-radius:999px;background:rgba(255,255,255,.12);overflow:hidden}
+.ax-rest-track i{display:block;height:100%;width:100%;
+  background:linear-gradient(90deg,var(--ax-blue),var(--ax-cyan));transition:width .3s linear}
+.ax-rest.paused .ax-rest-track i{background:#fbbf24}
+.ax-rest.zero .ax-rest-track i{background:#86efac}
+.ax-rest-btns{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:7px;margin-top:10px}
+.ax-rest-btns button{
+  border:1px solid var(--ax-line);background:rgba(11,140,255,.12);color:var(--ax-ink);
+  border-radius:var(--ax-r-sm);height:var(--ax-tap);font-size:14px;font-weight:800
+}
+.ax-rest-btns .ax-rest-main{background:rgba(11,140,255,.22);border-color:var(--ax-blue)}
+.ax-rest-btns .ax-rest-stop{background:var(--ax-red);border-color:var(--ax-red);color:#fff}

@@ -1,0 +1,97 @@
+/* トレ中入力 */
+.tr-bar{display:grid;grid-template-columns:1fr 132px 84px;gap:7px;margin-bottom:10px}
+.tr-bar .ax-btn{height:var(--ax-tap)}
+
+.tr-dots{display:flex;gap:5px;margin:0 2px 10px}
+.tr-dots button{
+  flex:1;height:5px;border:0;border-radius:999px;background:var(--ax-line2);padding:0
+}
+.tr-dots button.part{background:var(--ax-blue)}
+.tr-dots button.done{background:var(--ax-green)}
+.tr-dots button.on{box-shadow:0 0 0 2px rgba(24,205,255,.45)}
+
+.tr-nav{display:grid;grid-template-columns:var(--ax-tap) 1fr var(--ax-tap);align-items:center;gap:6px;margin-bottom:10px}
+.tr-nav b{text-align:center;font-size:13px;color:var(--ax-mut)}
+.tr-nav button{
+  height:var(--ax-tap);border:1px solid var(--ax-line);background:none;color:var(--ax-ink);
+  border-radius:var(--ax-r-sm);font-size:20px
+}
+.tr-nav button:disabled{opacity:.25}
+
+.tr-name{font-size:17px;font-weight:700;margin-bottom:9px}
+
+.tr-prev{display:flex;align-items:center;gap:8px;margin-bottom:11px;font-size:12.5px;color:var(--ax-mut)}
+.tr-prev span{flex:1;min-width:0}
+.tr-prev .ax-btn{height:36px;font-size:12px;padding:0 11px}
+
+.tr-record{
+  width:100%;border:0;border-radius:var(--ax-r);padding:14px 10px;margin-bottom:12px;
+  background:linear-gradient(135deg,var(--ax-blue),var(--ax-cyan));color:#04121f;
+  font-size:17px;font-weight:800;box-shadow:var(--ax-glow)
+}
+.tr-record small{display:block;font-size:12px;font-weight:700;opacity:.75;margin-top:3px}
+.tr-record.full{background:none;border:1px solid var(--ax-line);color:var(--ax-mut);box-shadow:none}
+
+/* いま記録するセット */
+.tr-editor{display:grid;gap:7px;margin-bottom:11px}
+.tr-erow{display:grid;grid-template-columns:40px 46px 1fr 46px 52px;gap:6px;align-items:center}
+.tr-erow>span{font-size:11.5px;font-weight:700;color:var(--ax-mut)}
+.tr-erow>button{
+  height:48px;border:1px solid var(--ax-line);background:rgba(11,140,255,.10);color:var(--ax-ink);
+  border-radius:10px;font-size:19px;font-weight:800
+}
+.tr-erow .tr-val{
+  text-align:center;font-size:22px;font-weight:800;white-space:nowrap;
+  border-bottom:1px dashed var(--ax-dim);padding:6px 0;cursor:pointer
+}
+.tr-erow .tr-val small{font-size:12px;font-weight:700;color:var(--ax-mut);margin-left:2px}
+.tr-sub{
+  height:48px;border:1px solid var(--ax-line2);background:none;color:var(--ax-mut);
+  border-radius:10px;font-size:11.5px;font-weight:700
+}
+.tr-sub.on{border-color:var(--ax-cyan);color:var(--ax-cyan);background:rgba(24,205,255,.10)}
+.tr-spacer{display:block}
+
+/* セット一覧 */
+.tr-list{display:grid;gap:5px}
+.tr-li{
+  display:grid;grid-template-columns:40px 1fr 36px;gap:4px;align-items:center;
+  border:1px solid var(--ax-line2);border-radius:10px
+}
+.tr-li.on{border-color:var(--ax-blue);background:rgba(11,140,255,.08)}
+.tr-li.done{background:rgba(34,197,94,.07)}
+.tr-li.done.on{background:rgba(34,197,94,.12)}
+.tr-licheck{
+  height:38px;border:0;background:none;color:var(--ax-mut);font-size:15px;font-weight:800
+}
+.tr-li.done .tr-licheck{color:var(--ax-green)}
+.tr-libody{
+  height:38px;border:0;background:none;color:var(--ax-ink);
+  display:flex;align-items:center;gap:9px;text-align:left;padding:0
+}
+.tr-libody i{font-style:normal;font-size:10.5px;font-weight:800;color:var(--ax-dim);letter-spacing:.06em}
+.tr-libody b{font-size:14px;font-weight:700}
+.tr-lidel{height:38px;border:0;background:none;color:var(--ax-dim);font-size:15px}
+.tr-lidel:disabled{opacity:.25}
+
+.tr-steprow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:12px 0 2px;
+  padding-top:11px;border-top:1px solid var(--ax-line2)}
+.tr-steprow>span{font-size:12px;font-weight:700;color:var(--ax-mut)}
+.tr-steprow button{
+  border:1px solid var(--ax-line);background:rgba(11,140,255,.08);color:var(--ax-ink);
+  border-radius:999px;padding:8px 13px;font-size:13px;font-weight:700
+}
+.tr-steprow button.on{
+  background:linear-gradient(135deg,var(--ax-blue),var(--ax-cyan));
+  border-color:var(--ax-cyan);color:#04121f;box-shadow:var(--ax-glow)
+}
+.tr-steprow>small{font-size:11px;color:var(--ax-dim);margin-left:auto}
+
+.tr-add{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:11px}
+.tr-add .full{grid-column:1 / -1}
+.tr-exacts{display:flex;gap:7px;margin-top:9px}
+.tr-exacts .ax-btn{flex:1}
+
+.tr-memo summary{font-size:13px;font-weight:800;cursor:pointer;list-style:none}
+.tr-memobody{display:grid;gap:10px;margin-top:12px}
+.tr-selects{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}

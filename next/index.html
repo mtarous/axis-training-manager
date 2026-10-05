@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#03060d">
+<title>AXIS TRAINING</title>
+<link rel="apple-touch-icon" href="../icon-192.png">
+<link rel="stylesheet" href="styles/tokens.css?v=1">
+<link rel="stylesheet" href="styles/app.css?v=1">
+<link rel="stylesheet" href="styles/train.css?v=1">
+<link rel="stylesheet" href="styles/history.css?v=1">
+</head>
+<body>
+
+<div id="lock" class="ax-lock">
+  <h1>A<i>X</i>IS</h1>
+  <p>TRAINING MANAGER</p>
+  <input id="pass" class="ax-input" type="password" placeholder="アクセスコード" autocomplete="current-password">
+  <button id="unlock" class="ax-btn pri full">ひらく</button>
+  <label><input id="remember" type="checkbox" checked>この端末に記憶する</label>
+  <div id="lockmsg" class="ax-lockmsg"></div>
+</div>
+
+<main id="app" class="ax-app" hidden>
+  <section id="view-train" class="ax-view on"></section>
+  <section id="view-history" class="ax-view"></section>
+</main>
+
+<nav id="nav" class="ax-nav" hidden>
+  <button data-v="train" class="on"><b>＋</b>トレ中</button>
+  <button data-v="history"><b>≡</b>記録</button>
+</nav>
+
+<script type="module" src="app.js?v=1"></script>
+</body>
+</html>
