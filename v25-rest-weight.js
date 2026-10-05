@@ -12,6 +12,18 @@ const mmss=s=>Math.floor(Math.max(0,s)/60)+":"+String(Math.floor(Math.max(0,s)%6
 /* ---- 休憩タイマー ---- */
 let left=0,total=0,id=null,running=false;
 
+/* 画面下に重ねて出すバーの置き場。休憩バーと取り消しバーが重ならないようにする */
+window.axisDock=window.axisDock||function(){
+  let d=document.querySelector("#axis-dock");
+  if(!d){
+    d=document.createElement("div");
+    d.id="axis-dock";
+    d.className="axis-dock";
+    document.body.appendChild(d);
+  }
+  return d;
+};
+
 function bar(){
   let b=el("#ax25-rest");
   if(b) return b;
@@ -30,7 +42,7 @@ function bar(){
       <button type="button" onclick="axisRest.add(30)">＋30秒</button>
       <button type="button" class="ax25-stop" onclick="axisRest.stop()">停止</button>
     </div>`;
-  document.body.appendChild(b);
+  window.axisDock().appendChild(b);
   return b;
 }
 

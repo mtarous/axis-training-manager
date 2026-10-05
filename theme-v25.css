@@ -1,8 +1,12 @@
 /* AXIS v25 休憩タイマー常駐バー・重量の刻み選択 */
-body.ax25-resting{padding-bottom:132px}
+body.ax25-resting{padding-bottom:196px}
+.axis-dock{
+  position:fixed;left:10px;right:10px;bottom:calc(72px + env(safe-area-inset-bottom));
+  z-index:60;display:grid;gap:8px;pointer-events:none
+}
+.axis-dock>*{pointer-events:auto}
 .ax25-rest{
-  position:fixed;left:10px;right:10px;bottom:calc(10px + env(safe-area-inset-bottom));
-  z-index:60;background:linear-gradient(168deg,#0b1828,#061020);color:var(--v16-ink,#e9f2fc);border:1px solid var(--v16-line,#12304e);border-radius:16px;
+  background:linear-gradient(168deg,#0b1828,#061020);color:var(--v16-ink,#e9f2fc);border:1px solid var(--v16-line,#12304e);border-radius:16px;
   padding:10px 12px;box-shadow:0 12px 32px rgba(0,0,0,.6)
 }
 .ax25-rest-head{display:flex;align-items:center;gap:10px}
