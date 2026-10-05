@@ -177,6 +177,11 @@ window.openSummary=function(c){
   const adv=(typeof professionalAdvice==="function"?professionalAdvice(c):a.advice)||[];
   const reportDate=last?jp(last.date):jp(today()),next=a.next?.[0],vol=Math.round(sessionVolume(last||{rows:[]}));
   const muscles=muscleNames(rows),goal=axisClientGoal(c)||"コンディションとフォームを確認しながら継続";
+  const grouped=typeof axisGroupMenuRows==="function"?axisGroupMenuRows(rows):[];
+  const menuCount=grouped.length||rows.length;
+  const totalSets=grouped.reduce((a,x)=>a+x.sets,0)||rows.reduce((a,r)=>a+(Number(r.sets)||0),0);
+  const menuHtml=typeof axisMenuRowsHtml==="function"?axisMenuRowsHtml(rows,12)
+    :(rows.length?rows.slice(0,8).map((r,i)=>'<div class="axp-menurow"><i>'+String(i+1).padStart(2,"0")+'</i><b>'+esc(r.exercise)+'</b><span>'+esc(r.weight)+' / '+esc(r.reps)+'回 / '+esc(r.sets)+'set</span></div>').join(""):'<div class="axp-muted">記録はありません。</div>');
   show("summary",false);
   S("#summary").innerHTML=
     '<div class="axu-safe"></div>'+
@@ -184,9 +189,9 @@ window.openSummary=function(c){
     '<div class="axp-report axu-report">'+
       '<div class="axp-reporthero axu-hero"><div><div class="ax16-logo">A<i>X</i>IS<small>TRAINING</small></div><span>SESSION REPORT</span></div><div class="axp-reportdate"><span>DATE</span><b>'+esc(reportDate)+'</b></div></div>'+
       '<div class="axp-reportclient axu-client"><div><span class="ax16-eyebrow">CLIENT</span><h2>'+esc(displayClientName(c))+'</h2><p>'+esc(goal)+'</p></div><div class="axp-check">✓</div></div>'+
-      '<div class="axp-reportkpi axu-kpi"><div><span>総ボリューム</span><b>'+vol.toLocaleString()+'<small>kg</small></b></div><div><span>前回比</span><b>'+esc(deltaText(m))+'</b></div><div><span>メニュー</span><b>'+rows.length+'<small>種目</small></b></div></div>'+
-      '<section class="axu-card axu-menu"><div class="axp-rtitle"><b>今日のメニュー</b><span>TOTAL '+rows.length+'</span></div>'+
-        (rows.length?rows.slice(0,8).map((r,i)=>'<div class="axp-menurow"><i>'+String(i+1).padStart(2,"0")+'</i><b>'+esc(r.exercise)+'</b><span>'+esc(r.weight)+(typeof r.weight==="number"?"kg":"")+' / '+esc(r.reps)+'回 / '+esc(r.sets)+'set</span></div>').join(""):'<div class="axp-muted">記録はありません。</div>')+
+      '<div class="axp-reportkpi axu-kpi"><div><span>総ボリューム</span><b>'+vol.toLocaleString()+'<small>kg</small></b></div><div><span>前回比</span><b>'+esc(deltaText(m))+'</b></div><div><span>メニュー</span><b>'+menuCount+'<small>種目</small></b></div></div>'+
+      '<section class="axu-card axu-menu"><div class="axp-rtitle"><b>今日のメニュー</b><span>'+menuCount+'種目 / '+totalSets+'セット</span></div>'+
+        menuHtml+
       '</section>'+
       '<section class="axu-card axu-muscle-summary"><div class="axp-rtitle"><b>鍛えた部位</b><span>'+muscles.length+'部位</span></div><div class="axu-musclechips">'+(muscles.length?muscles.map(x=>'<span>'+esc(x)+'</span>').join(""):'<span>記録なし</span>')+'</div></section>'+
       '<details class="axu-card axu-fold axu-muscle-fold"><summary><span>人体図を見る</span><small>FRONT / BACK</small></summary><div class="axu-foldbody">'+muscleMap(rows)+'</div></details>'+
