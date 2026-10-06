@@ -1,0 +1,33 @@
+/* ホーム */
+.ho-hero{
+  background:linear-gradient(150deg,rgba(11,140,255,.18),rgba(3,6,13,0));
+  border:1px solid var(--ax-line);border-radius:var(--ax-r);padding:16px;margin-bottom:11px
+}
+.ho-hero h2{font-size:21px;margin:4px 0 6px}
+.ho-hero p{margin:0;font-size:13px;color:var(--ax-mut)}
+
+.ho-start{height:54px;font-size:16px;margin-bottom:12px}
+
+.ho-kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:14px}
+.ho-kpis>div{
+  background:var(--ax-panel);border:1px solid var(--ax-line2);border-radius:var(--ax-r-sm);
+  padding:11px 8px;text-align:center
+}
+.ho-kpis b{display:block;font-size:21px}
+.ho-kpis span{font-size:10.5px;color:var(--ax-mut)}
+
+.ho-title{display:flex;align-items:baseline;gap:9px;margin:4px 2px 9px}
+.ho-title h3{font-size:14px;flex:1}
+.ho-more{border:0;background:none;color:var(--ax-cyan);font-size:12px;font-weight:700}
+
+.ho-item{
+  width:100%;display:flex;align-items:center;gap:11px;text-align:left;margin-bottom:7px;
+  background:var(--ax-panel);border:1px solid var(--ax-line2);color:var(--ax-ink);
+  border-radius:var(--ax-r-sm);padding:11px 13px
+}
+.ho-time{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--ax-cyan);flex:none}
+.ho-label{flex:1;min-width:0}
+.ho-label b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ho-label i{font-style:normal;font-size:11px;color:var(--ax-mut)}
+.ho-go{color:var(--ax-dim);font-size:17px;flex:none}
+.ho-synced{font-size:11px;color:var(--ax-dim);margin:14px 2px 0}

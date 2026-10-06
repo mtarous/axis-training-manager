@@ -8,6 +8,10 @@
 <link rel="apple-touch-icon" href="../icon-192.png">
 <link rel="stylesheet" href="styles/tokens.css?v=1">
 <link rel="stylesheet" href="styles/app.css?v=1">
+<link rel="stylesheet" href="styles/home.css?v=1">
+<link rel="stylesheet" href="styles/clients.css?v=1">
+<link rel="stylesheet" href="styles/report.css?v=1">
+<link rel="stylesheet" href="styles/schedule.css?v=1">
 <link rel="stylesheet" href="styles/train.css?v=1">
 <link rel="stylesheet" href="styles/history.css?v=1">
 </head>
@@ -23,15 +27,23 @@
 </div>
 
 <main id="app" class="ax-app" hidden>
-  <section id="view-train" class="ax-view on"></section>
+  <section id="view-home" class="ax-view on"></section>
+  <section id="view-schedule" class="ax-view"></section>
+  <section id="view-clients" class="ax-view"></section>
+  <section id="view-client" class="ax-view"></section>
+  <section id="view-report" class="ax-view"></section>
   <section id="view-history" class="ax-view"></section>
+  <section id="view-train" class="ax-view"></section>
 </main>
 
 <nav id="nav" class="ax-nav" hidden>
-  <button data-v="train" class="on"><b>＋</b>トレ中</button>
+  <button data-v="home" class="on"><b>⌂</b>ホーム</button>
+  <button data-v="schedule"><b>◷</b>予定</button>
+  <button data-v="clients"><b>◎</b>利用者</button>
   <button data-v="history"><b>≡</b>記録</button>
+  <button data-v="train"><b>＋</b>トレ中</button>
 </nav>
 
-<script type="module" src="app.js?v=1"></script>
+<script type="module" src="app.js?v=2"></script>
 </body>
 </html>

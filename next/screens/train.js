@@ -44,6 +44,22 @@ export function openNew(clientId = ""){
   store.clearDraft();
   render();
 }
+/* 直近のメニューをそのまま今日の記録として開く */
+export function openFromPrevious(clientId){
+  const last = store.sessions({ clientId })[0];
+  current = makeSession(clientId, today());
+  if(last){
+    current.exercises = last.exercises.map(e => ({
+      ...makeExercise(e.name, e.sets.map(x => ({ weight: x.weight, reps: x.reps })))
+    }));
+  }
+  active = 0;
+  editSet = 0;
+  stepByEx = {};
+  store.clearDraft();
+  render();
+}
+
 export function openSession(id){
   const s = store.session(id);
   if(!s) return;

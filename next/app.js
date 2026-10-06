@@ -3,21 +3,55 @@
 
 import { decryptBlob } from "./core/crypto.js";
 import { importLegacy } from "./core/migrate.js";
+import { setMeta } from "./core/meta.js";
 import * as store from "./core/store.js";
 import { el } from "./ui/dom.js";
-import * as train from "./screens/train.js";
+import * as home from "./screens/home.js";
+import * as clients from "./screens/clients.js";
+import * as report from "./screens/report.js";
+import * as schedule from "./screens/schedule.js";
 import * as history from "./screens/history.js";
+import * as train from "./screens/train.js";
 
 const KEY_CODE = "axis_training_key";
-let view = "train";
+const TABS = ["home", "schedule", "clients", "history", "train"];
+/* 下のタブに出さない画面は、どのタブを光らせるかだけ決める */
+const TAB_OF = { client: "clients", report: "clients" };
 
-function show(name){
+let view = "home";
+
+export function go(name, arg){
+  if(name === "train-from"){ train.openFromPrevious(arg); return go("train") }
+  if(name === "train-session"){ train.openSession(arg); return go("train") }
+  if(name === "client"){ clients.setCurrent(arg); }
+  if(name === "report"){ report.setCurrent(arg); }
+
   view = name;
   document.querySelectorAll(".ax-view").forEach(v => v.classList.toggle("on", v.id === "view-" + name));
-  document.querySelectorAll(".ax-nav button").forEach(b => b.classList.toggle("on", b.dataset.v === name));
-  if(name === "train") train.render();
-  if(name === "history") history.render();
+  const tab = TAB_OF[name] || name;
+  document.querySelectorAll(".ax-nav button").forEach(b => b.classList.toggle("on", b.dataset.v === tab));
+  draw();
   window.scrollTo(0, 0);
+}
+
+function draw(){
+  if(view === "home")     home.render();
+  if(view === "schedule") schedule.render();
+  if(view === "clients")  clients.renderList();
+  if(view === "client")   clients.renderDetail();
+  if(view === "report")   report.render();
+  if(view === "history")  history.render();
+  if(view === "train")    train.render();
+}
+
+function startApp(){
+  el("#lock").hidden = true;
+  el("#app").hidden = false;
+  el("#nav").hidden = false;
+  [home, clients, report, schedule].forEach(m => m.setRouter(go));
+  history.setEditHandler(id => go("train-session", id));
+  train.openDraftOrNew();
+  go("home");
 }
 
 async function unlock(code){
@@ -25,18 +59,17 @@ async function unlock(code){
   msg.textContent = "読み込んでいます…";
   try{
     const data = await decryptBlob("../data.enc", code);
+    setMeta(data);
+    try{
+      const cal = await decryptBlob("../calendar-current.enc", code);
+      setMeta({ ...data, calendarEvents: cal.events || [], calendarSyncedAt: cal.syncedAt || "" });
+    }catch(e){ /* カレンダーが読めなくても記録は使える */ }
+
     store.load();
-    const imported = importLegacy({ base: data.history || [], meta: data });
-    store.mergeImported(imported);
+    store.mergeImported(importLegacy({ base: data.history || [], meta: data }));
 
     if(el("#remember").checked) localStorage.setItem(KEY_CODE, code);
-    el("#lock").hidden = true;
-    el("#app").hidden = false;
-    el("#nav").hidden = false;
-
-    history.setEditHandler(id => { train.openSession(id); show("train") });
-    train.openDraftOrNew();
-    show("train");
+    startApp();
   }catch(e){
     console.error(e);
     msg.textContent = "アクセスコードが違うか、データを読み込めません。";
@@ -46,23 +79,18 @@ async function unlock(code){
 /* データを持たずに動かす（確認用）。本番の入口からは使わない。 */
 export function startWithoutData(){
   store.load();
-  el("#lock").hidden = true;
-  el("#app").hidden = false;
-  el("#nav").hidden = false;
-  history.setEditHandler(id => { train.openSession(id); show("train") });
-  train.openDraftOrNew();
-  show("train");
+  startApp();
 }
 
 function boot(){
   el("#unlock").addEventListener("click", () => unlock(el("#pass").value));
   el("#pass").addEventListener("keydown", e => { if(e.key === "Enter") unlock(el("#pass").value) });
-  document.querySelectorAll(".ax-nav button").forEach(b => b.addEventListener("click", () => show(b.dataset.v)));
-  store.subscribe(() => { if(view === "history") history.render() });
+  document.querySelectorAll(".ax-nav button").forEach(b => b.addEventListener("click", () => go(b.dataset.v)));
+  store.subscribe(() => { if(view !== "train") draw() });
 
   const saved = localStorage.getItem(KEY_CODE);
   if(saved){ el("#pass").value = saved; unlock(saved) }
 }
 
-window.axisDev = { store, train, history, startWithoutData };
+window.axisDev = { store, go, startWithoutData, screens: { home, clients, report, schedule, history, train } };
 boot();
