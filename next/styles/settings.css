@@ -1,0 +1,18 @@
+/* 設定 */
+.se-head{display:flex;align-items:flex-start;gap:9px;margin:0 2px 13px}
+.se-head h2{font-size:22px;margin-top:3px}
+.se-back{
+  width:40px;height:40px;border:1px solid var(--ax-line);background:none;color:var(--ax-ink);
+  border-radius:var(--ax-r-sm);font-size:20px;flex:none
+}
+.se-h{font-size:14px;font-weight:800;margin-bottom:6px}
+.se-note{margin:0 0 12px;font-size:12px;color:var(--ax-mut);line-height:1.65}
+.se-mt{margin-top:10px}
+.se-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.se-grid .full{grid-column:1 / -1}
+.se-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.se-stats>div{
+  border:1px solid var(--ax-line2);border-radius:var(--ax-r-sm);padding:11px 8px;text-align:center
+}
+.se-stats b{display:block;font-size:20px}
+.se-stats span{font-size:10.5px;color:var(--ax-mut)}

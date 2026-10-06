@@ -12,11 +12,13 @@ import * as report from "./screens/report.js";
 import * as schedule from "./screens/schedule.js";
 import * as history from "./screens/history.js";
 import * as train from "./screens/train.js";
+import * as settings from "./screens/settings.js";
+import * as calendar from "./features/calendar.js";
 
 const KEY_CODE = "axis_training_key";
 const TABS = ["home", "schedule", "clients", "history", "train"];
 /* 下のタブに出さない画面は、どのタブを光らせるかだけ決める */
-const TAB_OF = { client: "clients", report: "clients" };
+const TAB_OF = { client: "clients", report: "clients", settings: "home" };
 
 let view = "home";
 
@@ -42,13 +44,14 @@ function draw(){
   if(view === "report")   report.render();
   if(view === "history")  history.render();
   if(view === "train")    train.render();
+  if(view === "settings") settings.render();
 }
 
 function startApp(){
   el("#lock").hidden = true;
   el("#app").hidden = false;
   el("#nav").hidden = false;
-  [home, clients, report, schedule].forEach(m => m.setRouter(go));
+  [home, clients, report, schedule, settings].forEach(m => m.setRouter(go));
   history.setEditHandler(id => go("train-session", id));
   train.openDraftOrNew();
   go("home");
@@ -67,6 +70,10 @@ async function unlock(code){
 
     store.load();
     store.mergeImported(importLegacy({ base: data.history || [], meta: data }));
+
+    // 前回取れた予定をすぐ出し、古ければ裏で取り直す
+    calendar.applyCached();
+    calendar.refreshIfStale().then(() => { if(view === "home" || view === "schedule") draw() });
 
     if(el("#remember").checked) localStorage.setItem(KEY_CODE, code);
     startApp();

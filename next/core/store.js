@@ -25,16 +25,17 @@ function persist(){
 export function subscribe(fn){ listeners.add(fn); return () => listeners.delete(fn) }
 export function getState(){ return state }
 
+/* 保存されたものを読み直す。何も無ければ空に戻す（読み込み前の状態を引きずらない）。 */
 export function load(){
   const saved = readJSON(KEY_STATE, null);
-  if(saved && saved.version === 2){
-    state = {
-      version: 2,
-      clients: saved.clients && typeof saved.clients === "object" ? saved.clients : {},
-      sessions: saved.sessions && typeof saved.sessions === "object" ? saved.sessions : {},
-      updatedAt: saved.updatedAt || nowISO()
-    };
-  }
+  state = (saved && saved.version === 2)
+    ? {
+        version: 2,
+        clients: saved.clients && typeof saved.clients === "object" ? saved.clients : {},
+        sessions: saved.sessions && typeof saved.sessions === "object" ? saved.sessions : {},
+        updatedAt: saved.updatedAt || nowISO()
+      }
+    : { version: 2, clients: {}, sessions: {}, updatedAt: nowISO() };
   purgeTrash();
   return state;
 }

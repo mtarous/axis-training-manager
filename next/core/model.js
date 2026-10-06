@@ -130,3 +130,29 @@ export function summarizeSets(sets){
   });
   return parts.map(p => weightText(p.weight) + " × " + p.reps + "回" + (p.count > 1 ? " × " + p.count + "set" : "")).join(" / ");
 }
+
+/* 1セッションを「1行=1種目」の表に開く。Excel書き出しと外部連携のかたち。
+   同じ重量×回数が続くセットは1行にまとめる。 */
+export function expandToRows(session, clientName){
+  const memo = [session.notes?.insight, session.notes?.share].filter(Boolean).join(" / ");
+  const out = [];
+  (session.exercises || []).forEach(e => {
+    const parts = [];
+    e.sets.forEach(s => {
+      const last = parts[parts.length - 1];
+      if(last && String(last.weight) === String(s.weight) && last.reps === s.reps) last.sets += 1;
+      else parts.push({ weight: s.weight, reps: s.reps, sets: 1 });
+    });
+    parts.forEach(p => out.push({
+      date: session.date,
+      client: clientName,
+      exercise: e.name,
+      weight: p.weight,
+      reps: p.reps,
+      sets: p.sets,
+      achieved: session.status,
+      memo
+    }));
+  });
+  return out;
+}

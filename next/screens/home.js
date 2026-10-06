@@ -37,6 +37,7 @@ export function render(){
 
   root.innerHTML =
     '<section class="ho-hero">' +
+      '<button type="button" class="ho-gear" data-act="settings" aria-label="設定">⚙</button>' +
       '<span class="ax-eyebrow">TODAY</span>' +
       '<h2>' + esc(jp(t)) + '</h2>' +
       '<p>' + (todays.length ? "今日は " + todays.length + "件の予定があります" : "今日の予定はありません") + '</p>' +
@@ -66,6 +67,7 @@ export function render(){
     if(!t2) return;
     if(t2.dataset.act === "train") go("train");
     if(t2.dataset.act === "schedule") go("schedule");
+    if(t2.dataset.act === "settings") go("settings");
     if(t2.dataset.act === "open" && t2.dataset.id) go("client", t2.dataset.id);
   };
 }
