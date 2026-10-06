@@ -16,6 +16,9 @@ import * as settings from "./screens/settings.js";
 import * as calendar from "./features/calendar.js";
 
 const KEY_CODE = "axis_training_key";
+/* 暗号化データはリポジトリの一番上にある。
+   このHTMLがどこに置かれても同じ場所を指すよう、モジュールの位置から数える。 */
+const dataURL = name => new URL("../" + name, import.meta.url).href;
 const TABS = ["home", "schedule", "clients", "history", "train"];
 /* 下のタブに出さない画面は、どのタブを光らせるかだけ決める */
 const TAB_OF = { client: "clients", report: "clients", settings: "home" };
@@ -61,10 +64,10 @@ async function unlock(code){
   const msg = el("#lockmsg");
   msg.textContent = "読み込んでいます…";
   try{
-    const data = await decryptBlob("../data.enc", code);
+    const data = await decryptBlob(dataURL("data.enc"), code);
     setMeta(data);
     try{
-      const cal = await decryptBlob("../calendar-current.enc", code);
+      const cal = await decryptBlob(dataURL("calendar-current.enc"), code);
       setMeta({ ...data, calendarEvents: cal.events || [], calendarSyncedAt: cal.syncedAt || "" });
     }catch(e){ /* カレンダーが読めなくても記録は使える */ }
 
@@ -94,6 +97,12 @@ function boot(){
   el("#pass").addEventListener("keydown", e => { if(e.key === "Enter") unlock(el("#pass").value) });
   document.querySelectorAll(".ax-nav button").forEach(b => b.addEventListener("click", () => go(b.dataset.v)));
   store.subscribe(() => { if(view !== "train") draw() });
+
+  /* オフラインでも開けるようにする。失敗しても普通に使える。 */
+  if("serviceWorker" in navigator){
+    /* 置き場所ごとに受け持ちが変わるよう、HTMLから見た位置で登録する */
+    navigator.serviceWorker.register("sw.js").catch(() => {});
+  }
 
   const saved = localStorage.getItem(KEY_CODE);
   if(saved){ el("#pass").value = saved; unlock(saved) }

@@ -9,6 +9,9 @@ import { el, esc, toast } from "../ui/dom.js";
 let go = () => {};
 export function setRouter(fn){ go = fn }
 
+/* 以前のアプリはリポジトリの一番上にある。どの階層から開かれても届くようにする。 */
+const legacyURL = () => new URL("../../legacy.html", import.meta.url).href;
+
 /* v2の記録を「1行=1種目」の表に開く */
 function rows(){
   return store.sessions()
@@ -61,6 +64,12 @@ export function render(){
         '<button class="ax-btn" data-act="cal-refresh"' + (calendar.isConfigured() ? "" : " disabled") + '>いま取り込む</button>' +
         '<button class="ax-btn" data-act="cal-choose"' + (calendar.isConfigured() ? "" : " disabled") + '>カレンダーを選ぶ</button>' +
       '</div>' +
+    '</section>' +
+
+    '<section class="ax-panel">' +
+      '<div class="se-h">以前のアプリ</div>' +
+      '<p class="se-note">作り直す前の画面も残してあります。記録は同じものを見ています。</p>' +
+      '<a class="ax-btn full se-link" href="' + legacyURL() + '">以前のアプリを開く</a>' +
     '</section>' +
 
     '<section class="ax-panel">' +

@@ -16,3 +16,4 @@
 }
 .se-stats b{display:block;font-size:20px}
 .se-stats span{font-size:10.5px;color:var(--ax-mut)}
+.se-link{text-decoration:none}

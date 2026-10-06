@@ -1,0 +1,334 @@
+﻿<!doctype html><html lang="ja"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#05070b"><meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="AXIS Training">
+<link rel="apple-touch-icon" href="icon-192.png"><link rel="manifest" href="manifest.json"><link rel="stylesheet" href="theme-v7.css?v=12"><link rel="stylesheet" href="theme-v10.css?v=12"><link rel="stylesheet" href="theme-v13.css?v=13"><link rel="stylesheet" href="theme-v14.css?v=15"><link rel="stylesheet" href="theme-v16.css?v=17"><link rel="stylesheet" href="theme-v16-train.css?v=2"><link rel="stylesheet" href="theme-v16-guide.css?v=1"><link rel="stylesheet" href="theme-v16-history-edit.css?v=1"><link rel="stylesheet" href="theme-v16-pages.css?v=1"><link rel="stylesheet" href="theme-v16-anatomy.css?v=1"><link rel="stylesheet" href="theme-v16-report-client-admin.css?v=1"><link rel="stylesheet" href="theme-v16-client-portability.css?v=1"><link rel="stylesheet" href="theme-v16-sync.css?v=1">
+<link rel="stylesheet" href="theme-v17-input.css?v=3">
+<link rel="stylesheet" href="theme-v20-bulk.css?v=3">
+<link rel="stylesheet" href="theme-v25.css?v=2">
+<link rel="stylesheet" href="theme-v26.css?v=1">
+<title>AXIS TRAINING</title><style>
+:root{--bg:#f4f7fb;--card:#fff;--ink:#172033;--muted:#718096;--line:#e5e7eb;--blue:#2563eb;--green:#16a34a;--orange:#ea580c;--blue2:#eaf1ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans JP",sans-serif}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.app{max-width:860px;margin:auto;padding-bottom:86px}.top{position:sticky;top:0;z-index:9;background:rgba(244,247,251,.94);backdrop-filter:blur(12px);padding:14px 16px;border-bottom:1px solid var(--line)}
+h1{font-size:19px;margin:0}.sub{color:var(--muted);font-size:13px;line-height:1.55}.main{padding:12px}.hero{background:linear-gradient(135deg,#111827,#294a7a);color:#fff;border-radius:24px;padding:21px}.hero h2{font-size:26px;margin:6px 0}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.kpi,.card,.form{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px}.kpi b{display:block;font-size:20px}.kpi span{color:var(--muted);font-size:11px}
+.title{display:flex;justify-content:space-between;align-items:center;margin:20px 2px 9px}.title h3{margin:0;font-size:16px}.card{margin-bottom:9px}.session{display:grid;grid-template-columns:58px 1fr;gap:10px}.time{font-weight:800;color:var(--blue)}
+.pill{display:inline-block;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:700;background:var(--blue2);color:var(--blue)}.pill.care{background:#fff3e8;color:var(--orange)}.menu{margin-top:9px;padding-top:9px;border-top:1px dashed var(--line);font-size:13px;line-height:1.65}
+.search,input,select,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fff}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px}.client{border:1px solid var(--line);background:#fff;border-radius:16px;padding:14px;text-align:left}.client b{display:block}.client span{font-size:12px;color:var(--muted)}
+.exercise{padding:9px 10px;background:#f8fafc;border-radius:10px;margin-top:5px;font-size:13px}.row{display:grid;grid-template-columns:1.5fr .7fr .7fr .7fr;gap:6px;margin-bottom:7px}.btn{border:0;border-radius:12px;padding:11px 13px;font-weight:800}.primary{background:var(--blue);color:#fff}.soft{background:var(--blue2);color:var(--blue)}.danger{background:#fee2e2;color:#991b1b}.view{display:none}.view.on{display:block}
+.notice{padding:12px;border-radius:14px;background:#fff7ed;color:#8a3c08;margin-top:10px;font-size:13px;line-height:1.6}.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(860px,100%);display:grid;grid-template-columns:repeat(5,1fr);background:rgba(255,255,255,.97);border-top:1px solid var(--line);padding:7px 5px calc(7px + env(safe-area-inset-bottom));z-index:10}.nav{border:0;background:none;color:#7c8799;font-size:11px}.nav b{display:block;font-size:18px}.nav.on{color:var(--blue);font-weight:800}
+.lock{min-height:100vh;display:grid;place-items:center;padding:20px;background:linear-gradient(160deg,#0f172a,#20345c)}.lockbox{width:min(420px,100%);background:#fff;border-radius:24px;padding:22px}.lockbox h2{margin:0 0 6px}.lockbox input{margin:12px 0}.lockbox label input{width:auto}
+.workout{background:#fff;border:1px solid var(--line);border-radius:18px;padding:13px;margin-bottom:10px}.workout h4{margin:0 0 8px}.stepper{display:grid;grid-template-columns:44px 1fr 44px;gap:6px;align-items:center;margin:7px 0}.stepper button{height:42px;border:0;border-radius:11px;background:#eef2f7;font-size:20px;font-weight:800}.stepval{text-align:center;font-size:17px;font-weight:800}.sets{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}.setbtn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;font-weight:700}.setbtn.done{background:#dcfce7;border-color:#86efac;color:#166534}.timerbar{position:sticky;top:68px;z-index:7;background:#111827;color:#fff;border-radius:14px;padding:9px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}.timerbar button{border:0;background:#334155;color:#fff;border-radius:10px;padding:7px 10px}
+@media(max-width:560px){.main{padding:9px}.grid{grid-template-columns:1fr}.row{grid-template-columns:1fr 1fr}.row input:first-child{grid-column:1/-1}.kpi{padding:11px}.kpi b{font-size:18px}}
+
+.exercise-select{font-weight:750;background:#fff}
+.exercise-head{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center}
+.weight-tools{margin-top:8px}.segment{display:flex;gap:6px;flex-wrap:wrap;margin:7px 0}
+.segbtn{border:1px solid var(--line);background:#fff;color:var(--muted);border-radius:999px;padding:7px 10px;font-size:12px;font-weight:800}
+.segbtn.on{background:#111827;color:#fff;border-color:#111827}.weightinput{text-align:center;font-size:18px;font-weight:800;padding:8px!important}
+.bodyweight{background:#f8fafc;border:1px solid var(--line);border-radius:12px;padding:12px;text-align:center;font-weight:800;margin:6px 0}
+.exportgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.exportnote{margin-top:8px;color:var(--muted);font-size:12px;line-height:1.55}
+@media(max-width:560px){.exportgrid{grid-template-columns:1fr}}
+
+.analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.analysis-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:10px}
+.analysis-card h3{font-size:15px;margin:0 0 8px}.analysis-card ul{margin:8px 0 0;padding-left:19px}.analysis-card li{margin:5px 0;font-size:13px;line-height:1.55}
+.metric-row{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:9px 0}.metric{background:#f8fafc;border-radius:12px;padding:10px}.metric b{display:block;font-size:18px}.metric span{font-size:11px;color:var(--muted)}
+.linebox{width:100%;min-height:150px;border:1px solid var(--line);border-radius:14px;padding:12px;background:#fbfcfe;white-space:pre-wrap;line-height:1.65;font-size:14px}
+.copyok{background:#dcfce7!important;color:#166534!important}.source-note{font-size:11px;color:#9a4b00;margin-top:7px}
+.calbadge{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:800;padding:5px 8px;border-radius:999px;background:#ecfeff;color:#0e7490}
+@media(max-width:560px){.analysis-grid{grid-template-columns:1fr}.metric-row{grid-template-columns:repeat(3,1fr)}}
+</style></head><body>
+<div id="lock" class="lock"><div class="lockbox"><h2>AXIS TRAINING</h2><div class="sub">トレーニング記録は暗号化されています。</div><input id="pass" type="password" placeholder="アクセスコード"><label class="sub"><input id="remember" type="checkbox" checked> このiPhoneでコードを記憶</label><button class="btn primary" style="width:100%;margin-top:12px" onclick="unlock()">開く</button><div id="lockmsg" class="sub" style="margin-top:10px;color:#b91c1c"></div></div></div>
+<div id="app" class="app" style="display:none"><header class="top"><h1>AXIS TRAINING</h1></header><main class="main"><section id="home" class="view on"></section><section id="schedule" class="view"></section><section id="clients" class="view"></section><section id="history" class="view"></section><section id="input" class="view"></section><section id="detail" class="view"></section></main></div>
+<script src="xlsx.full.min.js"></script>
+<nav id="bottom" class="bottom" style="display:none"><button class="nav on" data-v="home"><b>⌂</b>ホーム</button><button class="nav" data-v="schedule"><b>◷</b>予定</button><button class="nav" data-v="clients"><b>◎</b>利用者</button><button class="nav" data-v="history"><b>≡</b>履歴</button><button class="nav" data-v="input"><b>＋</b>トレ中</button></nav>
+<script>
+let BASE=[],META={},added=JSON.parse(localStorage.getItem("axis_training_added")||"[]"),draft=JSON.parse(localStorage.getItem("axis_training_draft")||"null"),current="",timerId=null,timerLeft=0;
+const $=s=>document.querySelector(s),esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m])),today=()=>new Date().toLocaleDateString("sv-SE"),fmt=d=>d?d.slice(5).replace("-","/"):"";
+async function decryptBlob(path,p){
+  const e=await fetch(path,{cache:"no-store"}).then(r=>{if(!r.ok)throw new Error(path);return r.json()}),te=new TextEncoder(),td=new TextDecoder(),b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+  const km=await crypto.subtle.importKey("raw",te.encode(p),"PBKDF2",false,["deriveKey"]);
+  const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:b64(e.salt),iterations:e.iter,hash:"SHA-256"},km,{name:"AES-GCM",length:256},false,["decrypt"]);
+  const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(e.nonce),additionalData:te.encode(e.aad)},key,b64(e.ct));
+  return JSON.parse(td.decode(pt))
+}
+async function decryptData(p){return decryptBlob("data.enc",p)}
+async function loadCalendar(p){
+  try{
+    const c=await decryptBlob("calendar-current.enc",p);
+    META.calendarEvents=Array.isArray(c.events)?c.events:[];
+    META.calendarSyncedAt=c.syncedAt||"";
+    META.calendarLoadError=false
+  }catch(e){META.calendarEvents=[];META.calendarSyncedAt="";META.calendarLoadError=true}
+}
+function calendarSyncNotice(){
+  const stamp=String(META.calendarSyncedAt||"").trim();
+  const iso=stamp.replace(" ","T");
+  const when=Date.parse(/(Z|[+-]\d\d:?\d\d)$/i.test(iso)?iso:iso+"+09:00");
+  const stale=!Number.isFinite(when)||Date.now()-when>12*60*60*1000;
+  const shown=Number.isFinite(when)?new Date(when).toLocaleString("ja-JP",{month:"long",day:"numeric",hour:"2-digit",minute:"2-digit"}):stamp;
+  const message=META.calendarLoadError?"カレンダー予定を読み込めませんでした":
+    stale?`カレンダー予定は古い可能性があります${shown?`（最終取込 ${esc(shown)}）`:""}`:
+    `カレンダー最終取込 ${esc(shown)}`;
+  const note=META.calendarLive?"Googleカレンダーから直接読み込んでいます。":"予定の追加は自動では反映されません。";
+  return `<div class="ax16-calendar-status${stale||META.calendarLoadError?" warning":""}">${message}。${note}</div>`
+}
+async function unlock(){const p=$("#pass").value;$("#lockmsg").textContent="";try{const d=await decryptData(p);BASE=d.history||[];META=d;await loadCalendar(p);if($("#remember").checked)localStorage.setItem("axis_training_key",p);if(window.axisSetUnlockedPassphrase)window.axisSetUnlockedPassphrase(p);$("#lock").style.display="none";$("#app").style.display="block";$("#bottom").style.display="grid";renderAll();renderInput(draft||{});if(window.axisAfterUnlock)window.axisAfterUnlock()}catch(e){$("#lockmsg").textContent="アクセスコードが違うか、データを読み込めません。"}}
+function expandExercise(e){return typeof axisExpandSteps==="function"?axisExpandSteps(e):[{exercise:e.exercise,weight:e.weight,reps:e.reps,sets:e.sets}]}
+function all(){return BASE.concat(added.flatMap(s=>{
+  const memo=`RPE:${s.rpe||"-"} 痛み:${s.pain??"-"} ${s.note||""} 次回:${s.next||""}`;
+  let axisExerciseIndex=0;
+  return (s.exercises||[]).flatMap(e=>expandExercise(e).map(part=>({date:s.date,client:s.client,exercise:part.exercise,weight:part.weight,reps:part.reps,sets:part.sets,achieved:s.status,memo,source:"アプリ入力",_axisSessionStamp:s.savedAt||"",_axisExerciseIndex:axisExerciseIndex++})))
+}))}
+
+function appRows(){
+  return added.flatMap(s=>(s.exercises||[]).map(e=>({
+    date:s.date,client:s.client,exercise:e.exercise,weight:e.weight,reps:e.reps,sets:e.sets,
+    achieved:s.status||"完了",
+    memo:`RPE:${s.rpe||"-"} 痛み:${s.pain??"-"} ${s.note||""} 次回:${s.next||""}`,
+    source:"アプリ入力"
+  })))
+}
+function exerciseList(){
+  return [...new Set(all().map(r=>String(r.exercise||"").trim()).filter(Boolean))]
+    .sort((a,b)=>a.localeCompare(b,"ja"))
+}
+function exerciseOptions(current){
+  const list=exerciseList(), cur=String(current||"");
+  const extra=cur && !list.includes(cur) ? `<option selected>${esc(cur)}</option>` : "";
+  return `<option value="">種目を選択</option>${extra}${list.map(x=>`<option ${x===cur?"selected":""}>${esc(x)}</option>`).join("")}<option value="__new__">＋ 新しい種目を入力</option>`
+}
+function chooseExercise(i,v){
+  if(v==="__new__"){
+    const x=prompt("新しい種目名を入力してください");
+    if(x&&x.trim()) exs[i].exercise=x.trim();
+  }else exs[i].exercise=v;
+  drawEx();saveDraft()
+}
+function inferWeightStep(v){
+  const x=parseFloat(v);
+  if(!Number.isFinite(x)) return 1;
+  return Math.abs(x-Math.round(x))>0.001 ? 0.5 : 1
+}
+function normalizeWeight(v){
+  if(String(v).includes("自重")) return "自重";
+  const x=parseFloat(v);
+  return Number.isFinite(x)?x:0
+}
+function sessions(client){const m=new Map;all().forEach(r=>{if(client&&r.client!==client)return;const k=r.date+"__"+r.client;if(!m.has(k))m.set(k,{date:r.date,client:r.client,source:r.source,rows:[]});const s=m.get(k);s.rows.push(r);if(r.source==="既存記録")s.source="既存記録";if(r.source==="アプリ入力")s.source="アプリ入力"});return[...m.values()].sort((a,b)=>(b.date+a.client).localeCompare(a.date+b.client))}
+function latest(c,before){return sessions(c).filter(s=>!before||s.date<before)[0]||null}
+function menu(s,n=3){return s?s.rows.slice(0,n).map(r=>`<div>・${esc(r.exercise)} ${esc(r.weight)}${typeof r.weight==="number"?"kg":""} ${esc(r.reps)}${r.reps?"回":""}${r.sets?` × ${esc(r.sets)}set`:""}</div>`).join(""):'<div class="sub">過去メニューなし</div>'}
+function clientList(){const m=new Map;all().forEach(r=>{if(!r.client)return;if(!m.has(r.client))m.set(r.client,{name:r.client,days:new Set,rows:0});const x=m.get(r.client);x.rows++;if(r.date)x.days.add(r.date)});return[...m.values()].map(x=>({...x,days:x.days.size})).sort((a,b)=>a.name.localeCompare(b.name,"ja"))}
+
+function normalizedCalendarSchedule(){
+  return (META.calendarEvents||[]).map(e=>{
+    const title=String(e.summary||"予定").trim();
+    const known=clientList().map(x=>x.name).find(n=>title.includes(n))||"";
+    let type="予定";
+    if(title.includes("パーソナル"))type="パーソナル";
+    else if(title.includes("ケア")||title.includes("整体")||title.includes("施術"))type="ケア";
+    else if(title.includes("体験"))type="体験";
+    return {date:String(e.start||"").slice(0,10),time:String(e.start||"").slice(11,16),client:known||title,type,label:title,calendar:true,eventId:e.id||""}
+  }).filter(x=>x.date&&x.time)
+}
+function mergedSchedule(){
+  const manual=META.schedule||[], cal=normalizedCalendarSchedule(), seen=new Set;
+  return [...cal,...manual].filter(x=>{
+    const k=[x.date,x.time,x.label||x.client,x.type].join("|");
+    if(seen.has(k))return false;seen.add(k);return true
+  }).sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time))
+}
+function card(s){const l=s.type==="パーソナル"?latest(s.client,s.date):null;return`<div class="card session" ${s.type==="パーソナル"?`onclick="openClient('${s.client.replace(/'/g,"\\'")}')"`:""}><div class="time">${s.time}</div><div><b>${esc(s.label||s.client)}</b> <span class="pill ${s.type==="ケア"?"care":""}">${s.type}</span>${s.calendar?` <span class="calbadge">Googleカレンダー</span>`:""}${META.goals?.[s.client]?`<div class="sub">${esc(META.goals[s.client])}</div>`:""}${l?`<div class="menu"><b>直近 ${fmt(l.date)}</b>${menu(l)}</div>`:""}</div></div>`}
+function renderHome(){const t=today(),sch=mergedSchedule(),up=sch.filter(x=>x.date>=t).slice(0,6),cs=clientList();$("#home").innerHTML=`<div class="hero"><div>${t}</div><h2>${sch.filter(x=>x.date===t).length?`今日は ${sch.filter(x=>x.date===t).length}件`:"今日の予定はありません"}</h2><div>利用者を開いて「直近メニューで開始」でOK。</div></div><div class="kpis"><div class="kpi"><b>${sch.filter(x=>x.type==="パーソナル").length}</b><span>今週PT</span></div><div class="kpi"><b>${cs.length}</b><span>利用者</span></div><div class="kpi"><b>${all().length}</b><span>種目記録</span></div></div><div class="title"><h3>次の予定</h3></div>${up.length?up.map(card).join(""):'<div class="card empty">予定なし</div>'}${META.calendarSyncedAt?`<div class="sub" style="margin:6px 4px 14px">Googleカレンダー同期：${esc(META.calendarSyncedAt)}</div>`:""}<div class="title"><h3>Excel・バックアップ</h3></div><div class="card">
+<div class="exportgrid">
+<button class="btn primary" onclick="exportExcel('new')">Excel取り込み用 (.xlsx)</button>
+<button class="btn soft" onclick="exportExcel('all')">全履歴をExcel出力</button>
+<button class="btn soft" onclick="exportBackup()">端末入力をJSON保存</button>
+</div>
+<div class="exportnote">Excel取り込み用は、元の「記録」シートと同じ9列（日付・クライアント・種目・重量kg・回数・セット・達成・メモ・区分）で出力します。</div>
+</div>`}
+function renderSchedule(){const sch=mergedSchedule(),ds=[...new Set(sch.map(x=>x.date))];$("#schedule").innerHTML='<div class="title"><h3>週間予定</h3></div>'+ds.map(d=>`<div class="title"><h3>${d}</h3></div>${sch.filter(x=>x.date===d).map(card).join("")}`).join("")}
+function renderClients(){$("#clients").innerHTML='<div class="title"><h3>利用者</h3></div><input id="q" class="search" placeholder="名前で検索"><div id="cgrid" class="grid" style="margin-top:10px"></div>';const draw=()=>{const q=$("#q").value||"";$("#cgrid").innerHTML=clientList().filter(c=>c.name.includes(q)).map(c=>`<button class="client" onclick="openClient('${c.name.replace(/'/g,"\\'")}')"><b>${esc(c.name)}</b><span>${c.days}日 / ${c.rows}種目</span></button>`).join("")};draw();$("#q").oninput=draw}
+function histCard(s){return`<div class="card"><div style="display:flex;justify-content:space-between"><b>${fmt(s.date)}｜${esc(s.client)}</b><span class="pill">${esc(s.source||"既存記録")}</span></div>${s.rows.map(r=>`<div class="exercise"><b>${esc(r.exercise)}</b>　${esc(r.weight)}${typeof r.weight==="number"?"kg":""}　${esc(r.reps)}${r.reps?"回":""}${r.sets?` × ${esc(r.sets)}set`:""}</div>`).join("")}</div>`}
+function renderHistory(){$("#history").innerHTML='<div class="title"><h3>全履歴</h3></div><input id="hq" class="search" placeholder="利用者・種目で検索"><div id="hlist" style="margin-top:10px"></div>';const draw=()=>{const q=$("#hq").value||"";$("#hlist").innerHTML=sessions().filter(s=>!q||s.client.includes(q)||s.rows.some(r=>r.exercise.includes(q))).slice(0,160).map(histCard).join("")||'<div class="empty">該当なし</div>'};draw();$("#hq").oninput=draw}
+
+function num(v){const x=parseFloat(v);return Number.isFinite(x)?x:null}
+function sessionVolume(s){
+  return s.rows.reduce((sum,r)=>{
+    const w=num(r.weight),rp=num(r.reps),st=num(r.sets);
+    return sum+(w!=null&&rp!=null&&st!=null?w*rp*st:0)
+  },0)
+}
+function latestPain(c){
+  const own=added.find(x=>x.client===c);
+  return own?num(own.pain):null
+}
+function displayClientName(c){if(c==="峰岡夫婦")return "峰岡ご夫婦";return c.endsWith("さん")?c:c+"さん"}
+function analyzeClient(c){
+  const ss=sessions(c), recent=ss.slice(0,3), latestS=recent[0]||null;
+  if(!latestS)return {summary:["記録がまだありません。"],progress:[],next:[],advice:["まずは体調とフォームを確認しながら基準となる記録を作りましょう。"],line:"",refIncluded:false,recent:[]};
+  const progress=[], next=[];
+  const refIncluded=recent.some(x=>x.source!=="既存記録"&&x.source!=="アプリ入力");
+  for(const r of latestS.rows){
+    const prev=ss.slice(1).flatMap(x=>x.rows.map(y=>({...y,_date:x.date}))).find(x=>x.exercise===r.exercise);
+    const w=num(r.weight), rp=num(r.reps), st=num(r.sets), pw=prev?num(prev.weight):null, pr=prev?num(prev.reps):null;
+    if(prev&&w!=null&&pw!=null){
+      if(w>pw)progress.push(`${r.exercise}：${pw}kg → ${w}kg`);
+      else if(w===pw&&rp!=null&&pr!=null&&rp>pr)progress.push(`${r.exercise}：${w}kgで ${pr}回 → ${rp}回`);
+    }else if(prev&&String(r.weight).includes("自重")&&rp!=null&&pr!=null&&rp>pr){
+      progress.push(`${r.exercise}：自重で ${pr}回 → ${rp}回`)
+    }
+    const pain=latestPain(c);
+    if(String(r.weight).includes("自重")){
+      const target=rp!=null?Math.min(rp+1,15):10;
+      next.push({exercise:r.exercise,text:`自重 ${target}回 × ${st||3}setを目安（フォーム優先）`,weight:"自重",reps:target,sets:st||3})
+    }else if(w!=null){
+      if(pain!=null&&pain>=4){
+        next.push({exercise:r.exercise,text:`${w}kg以下で痛みを確認しながら実施`,weight:w,reps:rp||10,sets:st||3})
+      }else if(prev&&pw===w&&rp!=null&&pr!=null&&rp>=12&&pr>=10){
+        const inc=w<=10?0.5:1;
+        const nw=Math.round((w+inc)*10)/10;
+        next.push({exercise:r.exercise,text:`${nw}kg × ${Math.max(8,Math.min(10,rp))}回 × ${st||3}setを候補`,weight:nw,reps:Math.max(8,Math.min(10,rp)),sets:st||3})
+      }else{
+        const nr=rp!=null?Math.min(rp+1,12):10;
+        next.push({exercise:r.exercise,text:`${w}kg × ${nr}回 × ${st||3}setを目安`,weight:w,reps:nr,sets:st||3})
+      }
+    }else{
+      next.push({exercise:r.exercise,text:"前回と同条件で動作の質を確認",weight:r.weight,reps:rp||10,sets:st||3})
+    }
+  }
+  const goal=String(META.goals?.[c]||"");
+  const advice=[];
+  if(/膝|痛/.test(goal))advice.push("痛みが強い日は無理に重量や可動域を上げず、動きやすい範囲で続けてください。");
+  if(/ダイエット|引き締め|腹部/.test(goal))advice.push("トレーニング以外の日も歩数と食事量を意識し、毎食たんぱく質を入れると継続しやすいです。");
+  if(/筋肥大|大き/.test(goal))advice.push("筋肉をつけるため、トレーニング後の食事と睡眠も確認していきましょう。");
+  if(/BIG3/.test(goal))advice.push("重量を急いで上げるより、同じフォームを繰り返せることを優先しましょう。");
+  if(/ゴルフ/.test(goal))advice.push("筋力だけでなく、体幹と股関節の動かしやすさも意識していきましょう。");
+  if(!advice.length)advice.push("次回もフォームを優先し、余裕があれば回数か重量のどちらか一つだけ少し上げていきましょう。");
+  const volumes=recent.map(sessionVolume).filter(x=>x>0);
+  const trend=volumes.length>=2?(volumes[0]>volumes[1]*1.05?"増加":volumes[0]<volumes[1]*.95?"低下":"ほぼ維持"):"算出対象不足";
+  const summary=[
+    `直近：${latestS.date} / ${latestS.rows.length}種目`,
+    `直近3回の数値化できる総負荷量：${trend}`,
+    progress.length?`伸びが確認できた項目：${progress.slice(0,3).join("、")}`:"重量・回数は大きな変化なし"
+  ];
+  const firstProgress=progress[0]||`${latestS.rows[0]?.exercise||"トレーニング"}を継続`;
+  const firstNext=next.slice(0,2).map(x=>x.text).join("、");
+  const line=`${displayClientName(c)}、本日もありがとうございました😊
+今回は${firstProgress}できています。
+次回は${firstNext||"今回の内容をベースに状態を見ながら調整"}していく予定です。
+
+${advice[0]}
+無理のない範囲で続けていきましょう！
+また次回もよろしくお願いします😊`;
+  return {summary,progress,next,advice,line,refIncluded,volumes,recent}
+}
+function analysisHTML(c){
+  const a=analyzeClient(c);
+  const vols=a.recent.map(x=>({date:x.date,value:Math.round(sessionVolume(x))})).filter(x=>x.value>0).reverse();
+  return `<div class="title"><h3>データ分析・次回提案</h3></div>
+  <div class="metric-row">
+    <div class="metric"><b>${a.recent.length}</b><span>直近分析回数</span></div>
+    <div class="metric"><b>${a.progress.length}</b><span>伸びた項目</span></div>
+    <div class="metric"><b>${a.next.length}</b><span>次回候補種目</span></div>
+  </div>
+  ${a.refIncluded?'<div class="source-note">※分析には「参考（補完・想定）」記録を含みます。実施済み記録とは分けて確認してください。</div>':""}
+  <div class="analysis-grid">
+    <div class="analysis-card"><h3>分析</h3><ul>${a.summary.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+    ${vols.length?`<div class="sub" style="margin-top:10px">総負荷量（重量×回数×set、数値化できる種目のみ）</div>${vols.map(v=>`<div class="sub">${fmt(v.date)}：${v.value.toLocaleString()} kg</div>`).join("")}`:""}</div>
+    <div class="analysis-card"><h3>次にした方がいいこと</h3><ul>${a.next.slice(0,8).map(x=>`<li><b>${esc(x.exercise)}</b>：${esc(x.text)}</li>`).join("")}</ul>
+    <button class="btn soft" style="width:100%;margin-top:10px" onclick="useSuggestedMenu('${c.replace(/'/g,"\\'")}')">この提案でトレ開始</button></div>
+    <div class="analysis-card"><h3>お客様へのアドバイス</h3><ul>${a.advice.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></div>
+    <div class="analysis-card"><h3>LINE文面</h3><textarea id="lineText" class="linebox">${esc(a.line)}</textarea>
+    <button id="copyLineBtn" class="btn primary" style="width:100%;margin-top:8px" onclick="copyLine()">LINE文面をコピー</button></div>
+  </div>`
+}
+function useSuggestedMenu(c){
+  const a=analyzeClient(c);
+  const ex=a.next.map(x=>({exercise:x.exercise,weight:x.weight,weightStep:inferWeightStep(x.weight),reps:x.reps,sets:x.sets,done:[]}));
+  show("input",true);renderInput({client:c,date:today(),exercises:ex,note:META.attention?.[c]||""});saveDraft()
+}
+async function copyLine(){
+  const el=$("#lineText"),btn=$("#copyLineBtn");if(!el)return;
+  try{await navigator.clipboard.writeText(el.value)}catch(e){el.select();document.execCommand("copy")}
+  if(btn){const old=btn.textContent;btn.textContent="コピーしました ✓";btn.classList.add("copyok");setTimeout(()=>{btn.textContent=old;btn.classList.remove("copyok")},1400)}
+}
+function openClient(c){current=c;show("detail",false);const ss=sessions(c);$("#detail").innerHTML=`<div class="form"><div class="sub">利用者カルテ</div><h2>${esc(c)}</h2>${META.goals?.[c]?`<div class="sub"><b>目標：</b>${esc(META.goals[c])}</div>`:""}${META.attention?.[c]?`<div class="notice"><b>注意・共有</b><br>${esc(META.attention[c])}</div>`:""}<button class="btn primary" style="width:100%;margin-top:12px" onclick="prefill('${c.replace(/'/g,"\\'")}')">直近メニューで開始</button></div>${analysisHTML(c)}<div class="title"><h3>過去メニュー</h3></div>${ss.slice(0,40).map(histCard).join("")}`}
+function n(v,d=0){const x=parseFloat(v);return Number.isFinite(x)?x:d}
+function renderInput(p={}){const cs=clientList().map(x=>x.name),ex=p.exercises||[{exercise:"",weight:0,weightStep:1,reps:10,sets:3,done:[]}];window.exs=ex.map(x=>({...x,weight:normalizeWeight(x.weight),weightStep:x.weightStep||inferWeightStep(x.weight),done:Array.isArray(x.done)?x.done:[]}));$("#input").innerHTML=`<div class="timerbar"><span id="timerText">休憩タイマー</span><span><button onclick="startTimer(60)">60秒</button> <button onclick="startTimer(90)">90秒</button></span></div><div class="title"><h3>トレ中入力</h3></div><div class="form"><div class="row"><input id="fdate" type="date" value="${p.date||today()}"><select id="fclient"><option value="">利用者</option>${cs.map(c=>`<option ${p.client===c?"selected":""}>${esc(c)}</option>`).join("")}</select><select id="fstatus"><option>完了</option><option>良好</option><option>要確認</option><option>変更</option></select><select id="frpe"><option value="">RPE</option>${[1,2,3,4,5,6,7,8,9,10].map(x=>`<option ${String(p.rpe)===String(x)?"selected":""}>${x}</option>`).join("")}</select></div></div><div class="title"><h3>メニュー</h3><button class="btn soft" onclick="addEx()">＋種目</button></div><div id="editors"></div><div class="form"><label class="sub">痛み 0〜10</label><select id="fpain">${[0,1,2,3,4,5,6,7,8,9,10].map(x=>`<option ${String(p.pain)===String(x)?"selected":""}>${x}</option>`).join("")}</select><textarea id="fnote" placeholder="気づき・注意点" style="margin-top:8px">${esc(p.note||"")}</textarea><textarea id="fnext" placeholder="次回やること" style="margin-top:8px">${esc(p.next||"")}</textarea><button class="btn primary" style="width:100%;margin-top:10px" onclick="save()">今日の記録を保存</button></div>`;drawEx();["fdate","fclient","fstatus","frpe","fpain","fnote","fnext"].forEach(id=>$("#"+id).addEventListener("input",saveDraft))}
+function drawEx(){
+  $("#editors").innerHTML=exs.map((e,i)=>{
+    const step=Number(e.weightStep)||1, isBody=String(e.weight)==="自重";
+    return `<div class="workout">
+      <div class="exercise-head">
+        <select class="exercise-select" onchange="chooseExercise(${i},this.value)">${exerciseOptions(e.exercise)}</select>
+        <button class="btn danger" onclick="removeEx(${i})">×</button>
+      </div>
+      <div class="sub" style="margin-top:9px">重量</div>
+      <div class="weight-tools">
+        <div class="segment">
+          <button class="segbtn ${step===0.5&&!isBody?"on":""}" onclick="setWeightStep(${i},0.5)">0.5kg刻み</button>
+          <button class="segbtn ${step===1&&!isBody?"on":""}" onclick="setWeightStep(${i},1)">1kg刻み</button>
+          <button class="segbtn ${isBody?"on":""}" onclick="setBodyWeight(${i})">自重</button>
+        </div>
+        ${isBody?`<div class="bodyweight">自重</div>`:`<div class="stepper"><button onclick="stepW(${i},-1)">−</button><input class="weightinput" type="number" inputmode="decimal" step="${step}" min="0" value="${esc(e.weight)}" onchange="setWeightDirect(${i},this.value)"><button onclick="stepW(${i},1)">＋</button></div>`}
+      </div>
+      <div class="sub">回数</div>
+      <div class="stepper"><button onclick="stepR(${i},-1)">−</button><div class="stepval">${esc(e.reps)}</div><button onclick="stepR(${i},1)">＋</button></div>
+      <div class="sub">セット</div>
+      <div class="sets">${Array.from({length:n(e.sets,3)},(_,j)=>`<button class="setbtn ${e.done.includes(j)?"done":""}" onclick="toggleSet(${i},${j})">SET ${j+1}${e.done.includes(j)?" ✓":""}</button>`).join("")}<button class="setbtn" onclick="changeSets(${i},1)">＋SET</button>${n(e.sets,3)>1?`<button class="setbtn" onclick="changeSets(${i},-1)">−SET</button>`:""}</div>
+    </div>`
+  }).join("")
+}
+function stepW(i,dir){
+  const e=exs[i],step=Number(e.weightStep)||1;
+  if(String(e.weight)==="自重")e.weight=0;
+  e.weight=Math.max(0,Math.round((n(e.weight)+dir*step)/step)*step);
+  e.weight=Math.round(e.weight*10)/10;drawEx();saveDraft()
+}
+function setWeightStep(i,step){
+  const e=exs[i];e.weightStep=step;
+  if(String(e.weight)==="自重")e.weight=0;
+  e.weight=Math.max(0,Math.round(n(e.weight)/step)*step);
+  e.weight=Math.round(e.weight*10)/10;drawEx();saveDraft()
+}
+function setBodyWeight(i){exs[i].weight="自重";drawEx();saveDraft()}
+function setWeightDirect(i,v){
+  const e=exs[i],step=Number(e.weightStep)||1,x=n(v,0);
+  e.weight=Math.max(0,Math.round(x/step)*step);e.weight=Math.round(e.weight*10)/10;
+  drawEx();saveDraft()
+}
+function stepR(i,d){exs[i].reps=Math.max(0,n(exs[i].reps)+d);drawEx();saveDraft()}function changeSets(i,d){exs[i].sets=Math.max(1,n(exs[i].sets,3)+d);exs[i].done=exs[i].done.filter(x=>x<exs[i].sets);drawEx();saveDraft()}function toggleSet(i,j){const a=exs[i].done,k=a.indexOf(j);k>=0?a.splice(k,1):a.push(j);drawEx();saveDraft()}function addEx(){exs.push({exercise:"",weight:0,weightStep:1,reps:10,sets:3,done:[]});drawEx();saveDraft()}function removeEx(i){exs.splice(i,1);if(!exs.length)addEx();else{drawEx();saveDraft()}}
+function currentDraft(){return{date:$("#fdate")?.value||today(),client:$("#fclient")?.value||"",status:$("#fstatus")?.value||"完了",rpe:$("#frpe")?.value||"",pain:$("#fpain")?.value||0,note:$("#fnote")?.value||"",next:$("#fnext")?.value||"",exercises:exs||[]}}function saveDraft(){draft=currentDraft();localStorage.setItem("axis_training_draft",JSON.stringify(draft))}
+function prefill(c){const l=latest(c),ex=l?l.rows.map(r=>({exercise:r.exercise,weight:normalizeWeight(r.weight),weightStep:inferWeightStep(r.weight),reps:n(r.reps,10),sets:n(r.sets,3),done:[]})):[];show("input",true);renderInput({client:c,date:today(),exercises:ex.length?ex:[{exercise:"",weight:0,weightStep:1,reps:10,sets:3,done:[]}],note:META.attention?.[c]||""});saveDraft()}
+function save(){const s=currentDraft();s.exercises=s.exercises.filter(x=>x.exercise);if(!s.date||!s.client||!s.exercises.length){alert("日付・利用者・メニューを入力してください");return}s.savedAt=new Date().toISOString();added.unshift(s);localStorage.setItem("axis_training_added",JSON.stringify(added));localStorage.removeItem("axis_training_draft");draft=null;renderAll();alert("保存しました");openClient(s.client)}
+function startTimer(sec){clearInterval(timerId);timerLeft=sec;tick();timerId=setInterval(()=>{timerLeft--;tick();if(timerLeft<=0){clearInterval(timerId);if(navigator.vibrate)navigator.vibrate([200,100,200])}},1000)}function tick(){const el=$("#timerText");if(el)el.textContent=timerLeft>0?`休憩 ${Math.floor(timerLeft/60)}:${String(timerLeft%60).padStart(2,"0")}`:"休憩タイマー"}
+
+function exportExcel(scope="new"){
+  if(typeof XLSX==="undefined"){alert("Excel機能を読み込めませんでした。再読み込みしてください。");return}
+  const src=scope==="all"?all():appRows();
+  if(!src.length){alert("まだアプリで保存した記録がありません。");return}
+  const header=["日付","クライアント","種目","重量kg","回数","セット","達成","メモ","区分"];
+  const aoa=[header,...src.map(r=>[r.date,r.client,r.exercise,r.weight,r.reps,r.sets,r.achieved,r.memo,r.source])];
+  const ws=XLSX.utils.aoa_to_sheet(aoa);
+  ws["!cols"]=[{wch:12},{wch:18},{wch:28},{wch:10},{wch:10},{wch:9},{wch:10},{wch:46},{wch:14}];
+  const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,ws,"記録");
+  const guide=XLSX.utils.aoa_to_sheet([
+    ["AXIS TRAINING Excel取込用"],
+    ["「記録」シートは元Excelと同じ9列です。"],
+    ["出力範囲",scope==="all"?"既存履歴＋アプリ入力":"アプリで新しく保存した記録のみ"],
+    ["出力日時",new Date().toLocaleString("ja-JP")]
+  ]);
+  XLSX.utils.book_append_sheet(wb,guide,"使い方");
+  const tag=today().replaceAll("-","");
+  XLSX.writeFile(wb,`AXIS_トレーニング記録_${scope==="all"?"全履歴":"Excel取込"}_${tag}.xlsx`,{compression:true})
+}
+
+function exportBackup(){const blob=new Blob([JSON.stringify({sessions:added,exported:new Date().toISOString()},null,2)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="axis_training_backup.json";a.click();URL.revokeObjectURL(a.href)}
+function show(id,nav=true){document.querySelectorAll(".view").forEach(x=>x.classList.remove("on"));$("#"+id).classList.add("on");if(nav)document.querySelectorAll(".nav").forEach(x=>x.classList.toggle("on",x.dataset.v===id));scrollTo(0,0)}
+document.querySelectorAll(".nav").forEach(b=>b.onclick=()=>{show(b.dataset.v);if(b.dataset.v==="input")renderInput(draft||{})});function renderAll(){renderHome();renderSchedule();renderClients();renderHistory()}
+</script><script src="v5.js?v=18"></script><script src="v6.js?v=12"></script><script src="v7-summary-muscle.js?v=18"></script><script src="v9-smart-rest.js?v=12"></script><script src="v10-ui.js?v=12"></script><script src="v13-refine.js?v=13"></script><script src="v14-ux.js?v=14"></script><script src="v16-design.js?v=19"></script><script src="v16-train.js?v=2"></script><script src="v16-guide.js?v=1"></script><script src="v16-history-edit.js?v=1"></script><script src="v16-pages.js?v=2"></script><script src="v16-anatomy.js?v=2"></script><script src="v16-report-client-admin.js?v=2"></script><script src="v16-client-portability.js?v=1"></script><script src="v16-sync.js?v=1"></script><script src="v17-input.js?v=2"></script><script src="v18-excel-submit.js?v=1"></script><script src="v19-calendar-live.js?v=2"></script><script src="v20-bulk-import.js?v=2"></script><script src="v24-menu-group.js?v=1"></script><script src="v22-setup-link.js?v=2"></script><script src="v25-rest-weight.js?v=2"></script><script src="v26-delete-session.js?v=1"></script><script>(async()=>{const saved=localStorage.getItem("axis_training_key");if(saved){$("#pass").value=saved;await unlock()}if("serviceWorker"in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{})})();
+</script></body></html>
