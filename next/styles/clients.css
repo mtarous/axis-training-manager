@@ -69,3 +69,10 @@
 .cd-rec b{font-size:13.5px;flex:none}
 .cd-rec span{font-size:12px;color:var(--ax-mut);flex:1;min-width:0;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* LINE文面 */
+.cd-linenote{margin:0 0 10px;font-size:11.5px;color:var(--ax-dim)}
+.cd-linebox{min-height:188px;font-size:13px;line-height:1.75}
+.cd-lineacts{display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-top:9px}
+.cd-advice{margin:0;padding-left:1.1em;display:grid;gap:8px}
+.cd-advice li{font-size:12.5px;color:var(--ax-mut);line-height:1.7}

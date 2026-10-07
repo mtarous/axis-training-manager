@@ -1,9 +1,7 @@
 /* AXIS v2 起動と画面の切り替え。
    ここは繋ぐだけ。画面の中身は screens/ が持つ。 */
 
-import { decryptBlob } from "./core/crypto.js";
-import { importLegacy } from "./core/migrate.js";
-import { setMeta } from "./core/meta.js";
+import * as archive from "./core/archive.js";
 import * as store from "./core/store.js";
 import { el } from "./ui/dom.js";
 import * as home from "./screens/home.js";
@@ -15,10 +13,6 @@ import * as train from "./screens/train.js";
 import * as settings from "./screens/settings.js";
 import * as calendar from "./features/calendar.js";
 
-const KEY_CODE = "axis_training_key";
-/* 暗号化データはリポジトリの一番上にある。
-   このHTMLがどこに置かれても同じ場所を指すよう、モジュールの位置から数える。 */
-const dataURL = name => new URL("../" + name, import.meta.url).href;
 const TABS = ["home", "schedule", "clients", "history", "train"];
 /* 下のタブに出さない画面は、どのタブを光らせるかだけ決める */
 const TAB_OF = { client: "clients", report: "clients", settings: "home" };
@@ -62,28 +56,28 @@ function startApp(){
 
 async function unlock(code){
   const msg = el("#lockmsg");
+  if(!String(code || "").trim()){ msg.textContent = "アクセスコードを入れてください。"; return }
   msg.textContent = "読み込んでいます…";
   try{
-    const data = await decryptBlob(dataURL("data.enc"), code);
-    setMeta(data);
-    try{
-      const cal = await decryptBlob(dataURL("calendar-current.enc"), code);
-      setMeta({ ...data, calendarEvents: cal.events || [], calendarSyncedAt: cal.syncedAt || "" });
-    }catch(e){ /* カレンダーが読めなくても記録は使える */ }
-
-    store.load();
-    store.mergeImported(importLegacy({ base: data.history || [], meta: data }));
-
-    // 前回取れた予定をすぐ出し、古ければ裏で取り直す
-    calendar.applyCached();
-    calendar.refreshIfStale().then(() => { if(view === "home" || view === "schedule") draw() });
-
-    if(el("#remember").checked) localStorage.setItem(KEY_CODE, code);
-    startApp();
+    await archive.load(code, { remember: el("#remember").checked });
+    afterOpen();
   }catch(e){
     console.error(e);
     msg.textContent = "アクセスコードが違うか、データを読み込めません。";
   }
+}
+
+/* コードが分からないときでも、この端末に入っている記録だけで使えるようにする。
+   data.enc は暗号化されたままなので、過去の記録はあとからコードを入れれば足せる。 */
+function openWithoutCode(){
+  archive.loadLocalOnly();
+  afterOpen();
+}
+
+function afterOpen(){
+  calendar.applyCached();
+  calendar.refreshIfStale().then(() => { if(view === "home" || view === "schedule") draw() });
+  startApp();
 }
 
 /* データを持たずに動かす（確認用）。本番の入口からは使わない。 */
@@ -93,8 +87,12 @@ export function startWithoutData(){
 }
 
 function boot(){
+  /* 先に、この端末に保存されている記録を読む。取り込みはこのあと足す形になる。 */
+  store.load();
+
   el("#unlock").addEventListener("click", () => unlock(el("#pass").value));
   el("#pass").addEventListener("keydown", e => { if(e.key === "Enter") unlock(el("#pass").value) });
+  el("#skip").addEventListener("click", openWithoutCode);
   document.querySelectorAll(".ax-nav button").forEach(b => b.addEventListener("click", () => go(b.dataset.v)));
   store.subscribe(() => { if(view !== "train") draw() });
 
@@ -104,9 +102,9 @@ function boot(){
     navigator.serviceWorker.register("sw.js").catch(() => {});
   }
 
-  const saved = localStorage.getItem(KEY_CODE);
+  const saved = archive.savedCode();
   if(saved){ el("#pass").value = saved; unlock(saved) }
 }
 
-window.axisDev = { store, go, startWithoutData, screens: { home, clients, report, schedule, history, train } };
+window.axisDev = { store, go, startWithoutData, archive, openWithoutCode, screens: { home, clients, report, schedule, history, train } };
 boot();

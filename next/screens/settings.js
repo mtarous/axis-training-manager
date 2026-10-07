@@ -2,6 +2,7 @@
 
 import * as store from "../core/store.js";
 import { expandToRows } from "../core/model.js";
+import * as archive from "../core/archive.js";
 import * as calendar from "../features/calendar.js";
 import { buildPlainWorkbook, buildSubmitWorkbook, saveWorkbook } from "../features/excel.js";
 import { el, esc, toast } from "../ui/dom.js";
@@ -31,6 +32,18 @@ export function render(){
       '<button type="button" class="se-back" data-act="back" aria-label="戻る">‹</button>' +
       '<div><span class="ax-eyebrow">SETTINGS</span><h2>設定</h2></div>' +
     '</div>' +
+
+    (archive.savedCode()
+      ? ""
+      : '<section class="ax-panel se-archive">' +
+          '<div class="se-h">過去の記録を読み込む</div>' +
+          '<p class="se-note">元のExcelから取り込んだ過去の記録は、アクセスコードを入れると出てきます。' +
+            'この端末に入力した記録は、コード無しでもそのまま使えています。</p>' +
+          '<label class="ax-field"><span>アクセスコード</span>' +
+            '<input id="se-code" class="ax-input" type="password" autocomplete="current-password"></label>' +
+          '<button class="ax-btn pri full se-mt" data-act="load-archive">読み込む</button>' +
+          '<div id="se-codemsg" class="se-note se-mt"></div>' +
+        '</section>') +
 
     '<section class="ax-panel">' +
       '<div class="se-h">Excelに書き出す</div>' +
@@ -93,9 +106,24 @@ export function render(){
       case "cal-save":      saveCalendar(); break;
       case "cal-refresh":   refreshCalendar(t); break;
       case "cal-choose":    chooseCalendar(); break;
+      case "load-archive":  loadArchive(); break;
     }
   };
   el("#se-file").onchange = backupLoad;
+}
+
+async function loadArchive(){
+  const code = el("#se-code")?.value || "";
+  const msg = el("#se-codemsg");
+  if(!code.trim()){ msg.textContent = "アクセスコードを入れてください。"; return }
+  msg.textContent = "読み込んでいます…";
+  try{
+    const n = await archive.load(code);
+    render();
+    toast(n + "件の過去の記録を読み込みました", { seconds: 6 });
+  }catch(e){
+    msg.textContent = "アクセスコードが違うか、データを読み込めません。";
+  }
 }
 
 function exportSubmit(){

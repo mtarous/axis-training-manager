@@ -125,3 +125,7 @@ body.ax-resting{padding-bottom:calc(var(--ax-navh) + env(safe-area-inset-bottom)
 }
 .ax-rest-btns .ax-rest-main{background:rgba(11,140,255,.22);border-color:var(--ax-blue)}
 .ax-rest-btns .ax-rest-stop{background:var(--ax-red);border-color:var(--ax-red);color:#fff}
+
+/* 鍵画面：コード無しで開く */
+.ax-lockskip{margin-top:26px;padding-top:18px;border-top:1px solid var(--ax-line2)}
+.ax-lockskip p{margin:10px 0 0;font-size:11.5px;color:var(--ax-dim);line-height:1.7}

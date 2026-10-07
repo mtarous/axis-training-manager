@@ -3,7 +3,7 @@
 import * as store from "../core/store.js";
 import { clientSummary, deltaText, nextTargets, volumeTrend } from "../core/stats.js";
 import { musclesOfSession } from "../core/muscles.js";
-import { summarizeSets } from "../core/model.js";
+import { coachingAdvice, lineMessage } from "../features/line-text.js";
 import { el, esc } from "../ui/dom.js";
 
 let query = "";
@@ -101,6 +101,22 @@ export function renderDetail(){
         '<ul class="cd-next">' + targets.map(t => '<li><b>' + esc(t.name) + '</b>' + esc(t.text) + '</li>').join("") + '</ul></section>'
       : "") +
 
+    (s.last
+      ? '<section class="ax-panel cd-line">' +
+          '<div class="cd-h">LINE文面</div>' +
+          '<p class="cd-linenote">直して使えます。コピーしてLINEに貼ってください。</p>' +
+          '<textarea id="cd-linetext" class="ax-area cd-linebox">' + esc(lineMessage(c.id)) + '</textarea>' +
+          '<div class="cd-lineacts">' +
+            '<button class="ax-btn pri" data-act="copy-line">コピー</button>' +
+            '<button class="ax-btn" data-act="redo-line">作り直す</button>' +
+          '</div>' +
+        '</section>' +
+
+        '<section class="ax-panel"><div class="cd-h">今日のポイント</div>' +
+          '<ul class="cd-advice">' + coachingAdvice(c).map(a => '<li>' + esc(a) + '</li>').join("") + '</ul>' +
+        '</section>'
+      : "") +
+
     '<div class="cd-h cd-listh">これまでの記録<span>' + list.length + '件</span></div>' +
     (list.length
       ? list.slice(0, 6).map(x =>
@@ -119,8 +135,29 @@ export function renderDetail(){
       case "report":  go("report", c.id); break;
       case "edit":    editClient(c); break;
       case "edit-session": go("train-session", t.dataset.id); break;
+      case "copy-line":  copyLine(); break;
+      case "redo-line":  renderDetail(); break;
     }
   };
+}
+
+async function copyLine(){
+  const box = el("#cd-linetext");
+  if(!box) return;
+  const btn = document.querySelector('[data-act="copy-line"]');
+  const label = btn?.textContent;
+  try{
+    await navigator.clipboard.writeText(box.value);
+  }catch(e){
+    /* クリップボードが使えない端末向け。選択状態にして手でコピーしてもらう。 */
+    box.focus();
+    box.select();
+    try{ document.execCommand("copy") }catch(e2){}
+  }
+  if(btn){
+    btn.textContent = "コピーしました";
+    setTimeout(() => { btn.textContent = label }, 1600);
+  }
 }
 
 function editClient(c){
