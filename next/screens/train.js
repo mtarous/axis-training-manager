@@ -8,6 +8,7 @@ import * as rest from "../ui/rest-timer.js";
 
 const STEPS = [1, 2.5, 5];
 
+let pool = {};           // 利用者id → 書きかけのセッション（ペアトレで2人ぶん持つ）
 let current = null;      // いま編集しているセッション
 let active = 0;          // 表示している種目の番号
 let stepByEx = {};       // 種目id → ＋−の刻み
@@ -36,23 +37,63 @@ function clampEdit(){
 }
 
 /* ---- 開く ---- */
+/* ペアの相手。設定されていなければ null */
+function partnerOf(clientId){
+  const c = store.client(clientId);
+  const p = c?.partnerId ? store.client(c.partnerId) : null;
+  return p && p.id !== clientId ? p : null;
+}
+
+function blank(clientId){
+  const s = makeSession(clientId, current?.date || today());
+  return s;
+}
+
+/* いま抱えているその人のぶんを出す。無ければ新しく作る。
+   前回の書きかけを引き継ぐのは openDraftOrNew だけにする（新規は必ずまっさら）。 */
+function sessionFor(clientId){
+  if(!pool[clientId]) pool[clientId] = blank(clientId);
+  return pool[clientId];
+}
+
+/* ペアが設定されていれば、相手のぶんも一緒に抱える */
+function includePartner(clientId){
+  const p = partnerOf(clientId);
+  if(p) sessionFor(p.id);
+}
+
+function switchTo(clientId){
+  if(!clientId) return;
+  current = sessionFor(clientId);
+  active = 0;
+  editSet = 0;
+  render();
+}
+
 export function openNew(clientId = ""){
-  current = makeSession(clientId, today());
+  pool = {};
+  current = blank(clientId);
+  if(clientId) pool[clientId] = current;
+  includePartner(clientId);
   active = 0;
   editSet = 0;
   stepByEx = {};
   store.clearDraft();
   render();
 }
+
 /* 直近のメニューをそのまま今日の記録として開く */
 export function openFromPrevious(clientId){
+  pool = {};
   const last = store.sessions({ clientId })[0];
-  current = makeSession(clientId, today());
+  const s = makeSession(clientId, today());
   if(last){
-    current.exercises = last.exercises.map(e => ({
-      ...makeExercise(e.name, e.sets.map(x => ({ weight: x.weight, reps: x.reps })))
-    }));
+    s.exercises = last.exercises.map(e =>
+      makeExercise(e.name, e.sets.map(x => ({ weight: x.weight, reps: x.reps }))));
   }
+  pool[clientId] = s;
+  current = s;
+  includePartner(clientId);
   active = 0;
   editSet = 0;
   stepByEx = {};
@@ -63,17 +104,24 @@ export function openFromPrevious(clientId){
 export function openSession(id){
   const s = store.session(id);
   if(!s) return;
+  pool = {};
   current = JSON.parse(JSON.stringify(s));
+  pool[current.clientId] = current;
   active = 0;
   editSet = 0;
   stepByEx = {};
   render();
 }
+
 export function openDraftOrNew(){
-  const d = store.draft();
-  if(d && d.exercises?.length){
-    current = d;
+  const saved = store.drafts();
+  const ids = Object.keys(saved).filter(k => saved[k]?.exercises?.length);
+  if(ids.length){
+    pool = {};
+    ids.forEach(id => { pool[id] = saved[id] });
+    current = pool[ids[0]];
     active = 0;
+    editSet = 0;
     stepByEx = {};
     render();
   }else{
@@ -81,7 +129,7 @@ export function openDraftOrNew(){
   }
 }
 
-function keep(){ store.saveDraft(current) }
+function keep(){ Object.values(pool).forEach(s => { if(s.clientId) store.saveDraft(s) }) }
 
 /* ---- 操作 ---- */
 function bumpWeight(j, d){
@@ -171,24 +219,33 @@ function usePrevious(){
 }
 
 function save(){
-  current.exercises = current.exercises.filter(e => e.name.trim());
-  if(!current.clientId){ alert("利用者を選んでください"); return }
-  if(!current.exercises.length){ alert("種目を1つ以上入れてください"); return }
+  Object.values(pool).forEach(x => { x.exercises = x.exercises.filter(e => e.name.trim()) });
+  const ready = Object.values(pool).filter(x => x.clientId && x.exercises.length);
 
-  const saved = store.saveSession(current);
-  store.clearDraft();
-  const label = saved.date + "｜" + store.clientName(saved.clientId);
-  toast("保存しました", {
+  if(!ready.length){
+    if(!current.clientId) alert("利用者を選んでください");
+    else alert("種目を1つ以上入れてください");
+    return;
+  }
+
+  const saved = ready.map(x => store.saveSession(x));
+  saved.forEach(x => store.clearDraft(x.clientId));
+
+  const names = saved.map(x => store.clientName(x.clientId)).join("・");
+  const label = saved[0].date + "｜" + names;
+  toast(saved.length > 1 ? saved.length + "人ぶん保存しました" : "保存しました", {
     detail: label,
     actionLabel: "取り消す",
     onAction: () => {
-      store.purgeSession(saved.id);
-      current = JSON.parse(JSON.stringify(saved));
+      saved.forEach(x => store.purgeSession(x.id));
+      pool = {};
+      saved.forEach(x => { pool[x.clientId] = JSON.parse(JSON.stringify(x)) });
+      current = pool[saved[0].clientId];
       render();
       toast("保存を取り消しました", { detail: label, seconds: 6 });
     }
   });
-  openNew(saved.clientId);
+  openNew(saved[0].clientId);
 }
 
 /* ---- 描画 ---- */
@@ -262,6 +319,8 @@ export function render(){
     '<button class="ax-btn pri" data-act="save">保存</button>' +
   '</div>' +
 
+  pairBar() +
+
   (total > 1 ? '<div class="tr-dots">' +
     current.exercises.map((x, k) => {
       const d = doneOf(x.id).length;
@@ -328,6 +387,23 @@ export function render(){
   if(Math.abs(window.scrollY - keepY) > 1) window.scrollTo(0, keepY);
 }
 
+/* ペアトレの切り替え。相手が設定されている人のときだけ出す。 */
+function pairBar(){
+  const partner = partnerOf(current.clientId);
+  if(!partner) return "";
+  const me = store.client(current.clientId);
+  /* 切り替えても並び順が入れ替わらないようにする（押す場所が動くと間違えるため） */
+  const people = [me, partner].sort((a, b) => a.id.localeCompare(b.id));
+  return '<div class="tr-pair-bar">' +
+    people.map(p => {
+      const s = pool[p.id];
+      const done = s ? s.exercises.filter(e => e.name.trim()).length : 0;
+      return '<button type="button" class="' + (p.id === current.clientId ? "on" : "") + '" data-act="who" data-id="' + esc(p.id) + '">' +
+        '<b>' + esc(p.name) + '</b><i>' + (done ? done + "種目" : "未入力") + '</i></button>';
+    }).join("") +
+  '</div>';
+}
+
 function hasMemo(){
   return Object.values(current.notes).some(Boolean);
 }
@@ -351,6 +427,7 @@ function bind(root){
     switch(t.dataset.act){
       case "save":      save(); break;
       case "go":        focus(Number(t.dataset.i)); render(); break;
+      case "who":       switchTo(t.dataset.id); break;
       case "prev":      focus(active - 1); render(); break;
       case "next":      focus(active + 1); render(); break;
       case "record":    recordNext(); break;
@@ -373,7 +450,15 @@ function bind(root){
       case "useprev":   usePrevious(); break;
     }
   };
-  root.querySelector("#tr-client").onchange = e => { current.clientId = e.target.value; render() };
+  root.querySelector("#tr-client").onchange = e => {
+    const id = e.target.value;
+    /* 種目を入れる前に選び直したときは、その場で付け替える */
+    if(current.clientId && pool[current.clientId] === current) delete pool[current.clientId];
+    current.clientId = id;
+    if(id) pool[id] = current;
+    includePartner(id);
+    render();
+  };
   root.querySelector("#tr-date").onchange   = e => { current.date = e.target.value; render() };
   root.querySelector("#tr-name").oninput    = e => { ex().name = e.target.value; keep() };
   root.querySelectorAll("[data-note]").forEach(a => a.oninput = e => { current.notes[e.target.dataset.note] = e.target.value; keep() });

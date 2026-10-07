@@ -149,9 +149,26 @@ export function mergeImported({ clients: cs = {}, sessions: ss = [] } = {}){
 }
 
 /* ---- 書きかけの記録 ---- */
-export function draft(){ return readJSON(KEY_DRAFT, null) }
-export function saveDraft(s){ localStorage.setItem(KEY_DRAFT, JSON.stringify(s)) }
-export function clearDraft(){ localStorage.removeItem(KEY_DRAFT) }
+/* ペアトレでは2人ぶんを同時に持つので、利用者ごとに分けて覚える。 */
+export function drafts(){
+  const raw = readJSON(KEY_DRAFT, null);
+  if(!raw || typeof raw !== "object") return {};
+  if(Array.isArray(raw.exercises)) return { [raw.clientId || ""]: raw };   // 1人ぶんだった頃の形
+  return raw;
+}
+export function saveDraft(s){
+  if(!s) return;
+  const d = drafts();
+  d[s.clientId || ""] = s;
+  localStorage.setItem(KEY_DRAFT, JSON.stringify(d));
+}
+export function clearDraft(clientId){
+  if(clientId === undefined){ localStorage.removeItem(KEY_DRAFT); return }
+  const d = drafts();
+  delete d[clientId || ""];
+  if(Object.keys(d).length) localStorage.setItem(KEY_DRAFT, JSON.stringify(d));
+  else localStorage.removeItem(KEY_DRAFT);
+}
 
 /* ---- 持ち出し・取り込み ---- */
 export function exportBackup(){

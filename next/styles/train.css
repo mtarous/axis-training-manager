@@ -95,3 +95,17 @@
 .tr-memo summary{font-size:13px;font-weight:800;cursor:pointer;list-style:none}
 .tr-memobody{display:grid;gap:10px;margin-top:12px}
 .tr-selects{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+
+/* ペアトレの切り替え */
+.tr-pair-bar{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}
+.tr-pair-bar button{
+  border:1px solid var(--ax-line);background:var(--ax-panel);color:var(--ax-ink);
+  border-radius:var(--ax-r-sm);padding:9px 10px;text-align:left
+}
+.tr-pair-bar button b{display:block;font-size:13.5px;font-weight:800;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tr-pair-bar button i{font-style:normal;font-size:10.5px;color:var(--ax-mut)}
+.tr-pair-bar button.on{
+  border-color:var(--ax-cyan);background:rgba(11,140,255,.14);box-shadow:var(--ax-glow)
+}
+.tr-pair-bar button.on i{color:var(--ax-cyan)}

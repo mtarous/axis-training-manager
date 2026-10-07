@@ -76,3 +76,13 @@
 .cd-lineacts{display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-top:9px}
 .cd-advice{margin:0;padding-left:1.1em;display:grid;gap:8px}
 .cd-advice li{font-size:12.5px;color:var(--ax-mut);line-height:1.7}
+
+/* ペアトレ */
+.cd-pair{
+  display:flex;align-items:center;gap:9px;margin-bottom:11px;
+  border:1px solid var(--ax-line2);border-radius:var(--ax-r-sm);padding:10px 13px
+}
+.cd-pair>div{flex:1;min-width:0}
+.cd-pair b{display:block;font-size:12px;font-weight:800;color:var(--ax-mut)}
+.cd-pair span{font-size:13px}
+.cd-pair .ax-btn{height:36px;font-size:12.5px;padding:0 13px;flex:none}

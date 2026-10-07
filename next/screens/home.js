@@ -14,6 +14,28 @@ const jp = d => {
     : x.toLocaleDateString("ja-JP", { month: "long", day: "numeric", weekday: "short" });
 };
 
+/* 記録が1件も無いとき。ホーム画面に追加したアプリは保管場所が別なので、
+   「前は見えていたのに空」が起きる。その出口をここに置く。 */
+function emptyGuide(){
+  return '<section class="ax-panel ho-empty">' +
+    '<div class="ho-emptyh">この端末にはまだ記録がありません</div>' +
+    '<p>ホーム画面に追加したアプリは、Safariとは別の場所に記録を持ちます。' +
+      'そのため、Safariで見えていた記録はここには入っていません。</p>' +
+    '<div class="ho-emptyrow">' +
+      '<b>1. アクセスコードを入れる</b>' +
+      '<span>元のExcelから取り込んだ過去の記録が出てきます。</span>' +
+      '<button type="button" class="ax-btn" data-act="settings">コードを入れる</button>' +
+    '</div>' +
+    '<div class="ho-emptyrow">' +
+      '<b>2. バックアップを読み込む</b>' +
+      '<span>記録が見えているほうの画面で「設定 → バックアップ → ファイルに書き出す」。' +
+        'そのファイルをここで読み込みます。</span>' +
+      '<button type="button" class="ax-btn" data-act="settings">ファイルを読み込む</button>' +
+    '</div>' +
+    '<p class="ho-emptyfoot">このまま新しく記録を始めることもできます。</p>' +
+  '</section>';
+}
+
 function item(s){
   return '<button type="button" class="ho-item" data-act="open" data-id="' + esc(s.clientId) + '">' +
     '<span class="ho-time">' + esc(s.time || "--:--") + '</span>' +
@@ -34,6 +56,7 @@ export function render(){
   const month = t.slice(0, 7);
   const thisMonth = store.sessions().filter(s => s.date.startsWith(month)).length;
   const synced = schedule.syncedAt();
+  const empty = !store.clients().length && !store.sessions().length;
 
   root.innerHTML =
     '<section class="ho-hero">' +
@@ -42,6 +65,8 @@ export function render(){
       '<h2>' + esc(jp(t)) + '</h2>' +
       '<p>' + (todays.length ? "今日は " + todays.length + "件の予定があります" : "今日の予定はありません") + '</p>' +
     '</section>' +
+
+    (empty ? emptyGuide() : "") +
 
     '<button class="ax-btn pri full ho-start" data-act="train">＋ 記録をはじめる</button>' +
 

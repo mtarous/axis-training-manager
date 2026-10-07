@@ -67,6 +67,7 @@ export function renderDetail(){
   const list = store.sessions({ clientId: c.id });
   const muscles = s.last ? musclesOfSession(s.last) : [];
   const targets = nextTargets(c.id);
+  const partner = c.partnerId ? store.client(c.partnerId) : null;
 
   root.innerHTML =
     '<div class="cd-head">' +
@@ -82,6 +83,12 @@ export function renderDetail(){
     '</div>' +
 
     (c.attention ? '<div class="cd-attention"><b>注意点</b>' + esc(c.attention) + '</div>' : "") +
+
+    '<div class="cd-pair">' +
+      '<div><b>ペアトレ　一緒に記録する相手</b><span>' +
+        (partner ? esc(partner.name) : '設定なし') + '</span></div>' +
+      '<button type="button" class="ax-btn ghost" data-act="pair">' + (partner ? "変える" : "設定") + '</button>' +
+    '</div>' +
 
     '<div class="cd-kpis">' +
       '<div><b>' + s.count + '</b><span>回</span></div>' +
@@ -134,11 +141,38 @@ export function renderDetail(){
       case "start":   go("train-from", c.id); break;
       case "report":  go("report", c.id); break;
       case "edit":    editClient(c); break;
+      case "pair":    choosePartner(c); break;
       case "edit-session": go("train-session", t.dataset.id); break;
       case "copy-line":  copyLine(); break;
       case "redo-line":  renderDetail(); break;
     }
   };
+}
+
+/* ペアトレの相手を決める。夫婦など、同じ時間に来て別の種目をやる2人を結びつける。 */
+function choosePartner(c){
+  const others = store.clients().filter(x => x.id !== c.id);
+  if(!others.length){ alert("ほかに利用者が登録されていません。"); return }
+  const cur = c.partnerId ? others.findIndex(x => x.id === c.partnerId) + 1 : 0;
+  const lines = others.map((x, i) => (i + 1) + ". " + x.name + (x.id === c.partnerId ? "  ←いまの相手" : "")).join("\n");
+  const ans = prompt("一緒に記録する相手の番号を入れてください。\n0 で設定を外します。\n\n" + lines, String(cur));
+  if(ans === null) return;
+  const n = Number(ans);
+  if(!Number.isFinite(n) || n < 0 || n > others.length){ alert("番号が正しくありません。"); return }
+
+  /* 相手にも同じ結びつきを入れる。片方だけだと切り替えが出ない。 */
+  if(c.partnerId){
+    const old = store.client(c.partnerId);
+    if(old && old.partnerId === c.id) store.upsertClient({ ...old, partnerId: "" });
+  }
+  if(n === 0){
+    store.upsertClient({ ...c, partnerId: "" });
+  }else{
+    const mate = others[n - 1];
+    store.upsertClient({ ...c, partnerId: mate.id });
+    store.upsertClient({ ...mate, partnerId: c.id });
+  }
+  renderDetail();
 }
 
 async function copyLine(){

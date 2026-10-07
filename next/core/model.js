@@ -39,6 +39,7 @@ export function makeClient(name, extra = {}){
     name: String(name || "").trim(),
     goal: "",
     attention: "",
+    partnerId: "",      /* ペアトレの相手。2人で来る夫婦などを同時に記録するために使う */
     active: true,
     createdAt: nowISO(),
     updatedAt: nowISO(),
