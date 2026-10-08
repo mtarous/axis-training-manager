@@ -1,10 +1,10 @@
 /* トレ中入力。
    画面はこの1ファイルだけが描く。描き直しは render() の1本道。 */
 
-import * as store from "../core/store.js";
-import { BODYWEIGHT, makeExercise, makeSession, makeSet, num, round1, summarizeSets, today } from "../core/model.js";
-import { el, esc, inlineEdit, toast } from "../ui/dom.js";
-import * as rest from "../ui/rest-timer.js";
+import * as store from "../core/store.js?v=14";
+import { BODYWEIGHT, makeExercise, makeSession, makeSet, num, round1, summarizeSets, today } from "../core/model.js?v=14";
+import { el, esc, inlineEdit, toast } from "../ui/dom.js?v=14";
+import * as rest from "../ui/rest-timer.js?v=14";
 
 const STEPS = [1, 2.5, 5, 10];
 
