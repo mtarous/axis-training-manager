@@ -12,7 +12,13 @@ let inFlight = null;
 
 export function settings(){
   try{
-    const x = JSON.parse(localStorage.getItem(KEY_SETTINGS) || "{}") || {};
+    let x = JSON.parse(localStorage.getItem(KEY_SETTINGS) || "{}") || {};
+    // 旧版で接続済みの端末は、接続先と選択カレンダーを引き継ぐ。
+    if(localStorage.getItem(KEY_SETTINGS) === null){
+      const old = JSON.parse(localStorage.getItem("axis_sync_settings_v1") || "{}") || {};
+      x = { endpoint: old.endpoint || "", token: old.token || "",
+        calendarId: localStorage.getItem("axis_calendar_id_v1") || "" };
+    }
     return {
       endpoint: String(x.endpoint || "").trim(),
       token: String(x.token || "").trim(),
@@ -55,13 +61,13 @@ function jsonp(endpoint, params, timeoutMs = 15000){
 }
 
 function apply(events, syncedAt){
-  setMeta({ ...getMeta(), calendarEvents: events, calendarSyncedAt: syncedAt, calendarLive: true });
+  setMeta({ ...getMeta(), calendarEvents: events, calendarSyncedAt: syncedAt, calendarLive: true, calendarLoadError: "" });
 }
 
 /* 前回取れた分をすぐ出す。通信を待たせない。 */
 export function applyCached(){
   const c = cache();
-  if(c && c.events.length){ apply(c.events, c.syncedAt); return true }
+  if(c){ apply(c.events, c.syncedAt); return true }
   return false;
 }
 
@@ -88,7 +94,7 @@ export async function refreshIfStale(){
   if(!isConfigured()) return;
   const c = cache();
   if(c && Date.now() - Number(c.at || 0) < FRESH_MS) return;
-  try{ await refresh() }catch(e){}
+  try{ await refresh() }catch(e){ setMeta({ ...getMeta(), calendarLoadError: String(e.message || e) }) }
 }
 
 export async function listCalendars(){

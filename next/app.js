@@ -31,6 +31,7 @@ export function go(name, arg){
   document.querySelectorAll(".ax-nav button").forEach(b => b.classList.toggle("on", b.dataset.v === tab));
   draw();
   window.scrollTo(0, 0);
+  if(name === "schedule") calendar.refreshIfStale().then(() => { if(view === "schedule") draw() });
 }
 
 function draw(){

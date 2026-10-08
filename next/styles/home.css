@@ -2,7 +2,7 @@
 .ho-hero{
   position:relative;
   background:linear-gradient(150deg,rgba(11,140,255,.18),rgba(3,6,13,0));
-  border:1px solid var(--ax-line);border-radius:var(--ax-r);padding:16px;margin-bottom:11px
+  border:1px solid var(--ax-line);border-radius:var(--ax-r);padding:16px 66px 16px 16px;margin-bottom:11px
 }
 .ho-hero h2{font-size:21px;margin:4px 0 6px}
 .ho-gear{

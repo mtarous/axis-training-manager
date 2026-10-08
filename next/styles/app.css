@@ -11,7 +11,7 @@ button,input,select,textarea{font:inherit;color:inherit}
 button{cursor:pointer}
 h1,h2,h3{margin:0}
 
-.ax-app{max-width:720px;margin:0 auto;padding:12px 12px 0}
+.ax-app{max-width:720px;margin:0 auto;padding:calc(12px + env(safe-area-inset-top, 0px)) 12px 0}
 .ax-eyebrow{font-size:9.5px;letter-spacing:.2em;color:var(--ax-dim);font-weight:800}
 .ax-mut{color:var(--ax-mut)}
 .ax-empty{color:var(--ax-dim);text-align:center;padding:28px 10px}
