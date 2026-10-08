@@ -109,3 +109,40 @@
   border-color:var(--ax-cyan);background:rgba(11,140,255,.14);box-shadow:var(--ax-glow)
 }
 .tr-pair-bar button.on i{color:var(--ax-cyan)}
+
+/* スマホでは1画面内に操作を多く残し、スクロール量を抑える */
+@media (max-width:520px){
+  .tr-bar{grid-template-columns:minmax(0,1fr) 108px 64px;gap:5px;margin-bottom:6px}
+  .tr-bar .ax-input,.tr-bar .ax-select,.tr-bar .ax-btn{height:42px;font-size:13px;padding-left:8px;padding-right:8px}
+  .tr-pair-bar{gap:5px;margin-bottom:6px}
+  .tr-pair-bar button{padding:7px 8px}
+  .tr-dots{margin-bottom:6px}
+  .tr-card{padding:10px;margin-bottom:8px}
+  .tr-nav{grid-template-columns:42px 1fr 42px;gap:5px;margin-bottom:6px}
+  .tr-nav button{height:42px}
+  .tr-name{height:42px;font-size:15px;margin-bottom:6px}
+  .tr-prev{margin-bottom:7px;font-size:11.5px}
+  .tr-prev .ax-btn{height:32px;padding:0 9px}
+  .tr-record{padding:10px 8px;margin-bottom:8px;font-size:15px}
+  .tr-record small{font-size:11px;margin-top:1px}
+  .tr-editor{gap:5px;margin-bottom:8px}
+  .tr-erow{grid-template-columns:34px 42px minmax(64px,1fr) 42px 46px;gap:4px}
+  .tr-erow>button,.tr-sub{height:44px}
+  .tr-erow .tr-val{font-size:20px;padding:4px 0}
+  .tr-list{gap:4px}
+  .tr-licheck,.tr-libody,.tr-lidel{height:34px}
+  .tr-steprow{gap:4px;margin:8px 0 0;padding-top:8px}
+  .tr-steprow button{padding:7px 9px;font-size:12px}
+  .tr-steprow>small{display:none}
+  .tr-add{gap:5px;margin-top:8px}
+  .tr-add .ax-btn{height:42px;font-size:12px;padding:0 8px}
+  .tr-exacts{gap:5px;margin-top:6px}
+  .tr-exacts .ax-btn{height:40px;font-size:12px;padding:0 8px}
+  .tr-memo{padding:11px}
+}
+
+@media (max-width:380px){
+  .tr-bar{grid-template-columns:minmax(0,1fr) 102px 60px}
+  .tr-erow{grid-template-columns:30px 40px minmax(58px,1fr) 40px 44px}
+  .tr-steprow button{padding:6px 8px}
+}
