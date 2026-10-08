@@ -9,7 +9,7 @@ import * as clients from "./screens/clients.js";
 import * as report from "./screens/report.js";
 import * as schedule from "./screens/schedule.js?v=11";
 import * as history from "./screens/history.js";
-import * as train from "./screens/train.js?v=2";
+import * as train from "./screens/train.js?v=3";
 import * as settings from "./screens/settings.js?v=11";
 import * as calendar from "./features/calendar.js?v=11";
 
@@ -90,7 +90,7 @@ export function startWithoutData(){
 function boot(){
   if(/[#&]axissync=/.test(location.hash)){
     const link = location.hash;
-    history.replaceState(null, "", location.pathname + location.search);
+    window.history.replaceState(null, "", location.pathname + location.search);
     try{ calendar.importSetupLink(link) }
     catch(e){ alert(e.message) }
   }
