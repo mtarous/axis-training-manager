@@ -2,12 +2,12 @@
    旧アプリの professionalAdvice / professionalLine を v2 のデータで作り直したもの。
    文面はそのまま送る前提ではなく、直して使うたたき台。 */
 
-import { lineAdvice, safetyLevel } from "./coaching.js";
-import { musclesOfSession } from "../core/muscles.js";
-import * as sched from "../core/schedule.js";
-import * as store from "../core/store.js";
-import { clientSummary, nextTargets } from "../core/stats.js";
-import { today } from "../core/model.js";
+import { lineAdvice, safetyLevel } from "./coaching.js?v=14";
+import { musclesOfSession } from "../core/muscles.js?v=14";
+import * as sched from "../core/schedule.js?v=14";
+import * as store from "../core/store.js?v=14";
+import { clientSummary, nextTargets } from "../core/stats.js?v=14";
+import { today } from "../core/model.js?v=14";
 
 const jp = d => {
   const x = new Date(String(d).slice(0, 10) + "T00:00:00+09:00");
