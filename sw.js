@@ -2,7 +2,7 @@
    まずネットワーク、ダメならキャッシュ。オンラインなら必ず最新が出る。
    いまの本体（next/ の中身）と、以前のアプリ（legacy.html）の両方をまかなう。 */
 
-const CACHE = "axis-root-013";
+const CACHE = "axis-root-014";
 
 /* いまの本体 */
 const APP = [
@@ -16,7 +16,7 @@ const APP = [
   "icon-192.png",
   "icon-512.png",
   "next/app.js",
-  "next/app.js?v=12",
+  "next/app.js?v=13",
   "next/core/archive.js",
   "next/core/crypto.js",
   "next/core/meta.js",
@@ -37,7 +37,7 @@ const APP = [
   "next/screens/settings.js",
   "next/screens/settings.js?v=11",
   "next/screens/train.js",
-  "next/screens/train.js?v=2",
+  "next/screens/train.js?v=3",
   "next/features/calendar.js",
   "next/features/calendar.js?v=11",
   "next/features/coaching.js",
