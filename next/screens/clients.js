@@ -3,7 +3,8 @@
 import * as store from "../core/store.js";
 import { clientSummary, deltaText, nextTargets, volumeTrend } from "../core/stats.js";
 import { musclesOfSession } from "../core/muscles.js";
-import { coachingAdvice, lineMessage } from "../features/line-text.js";
+import { clientAdvice } from "../features/coaching.js";
+import { lineMessage } from "../features/line-text.js";
 import { el, esc } from "../ui/dom.js";
 
 let query = "";
@@ -120,7 +121,11 @@ export function renderDetail(){
         '</section>' +
 
         '<section class="ax-panel"><div class="cd-h">今日のポイント</div>' +
-          '<ul class="cd-advice">' + coachingAdvice(c).map(a => '<li>' + esc(a) + '</li>').join("") + '</ul>' +
+          '<ul class="cd-advice">' +
+            clientAdvice(c.id).map(a =>
+              '<li class="lv-' + esc(a.level) + '"><i>' + esc(label(a.level)) + '</i>' + esc(a.text) + '</li>'
+            ).join("") +
+          '</ul>' +
         '</section>'
       : "") +
 
@@ -148,6 +153,9 @@ export function renderDetail(){
     }
   };
 }
+
+const LEVELS = { safety:"安全", load:"負荷", progress:"伸ばし方", balance:"バランス", goal:"目標", habit:"頻度" };
+const label = lv => LEVELS[lv] || "メモ";
 
 /* ペアトレの相手を決める。夫婦など、同じ時間に来て別の種目をやる2人を結びつける。 */
 function choosePartner(c){

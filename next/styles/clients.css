@@ -86,3 +86,12 @@
 .cd-pair b{display:block;font-size:12px;font-weight:800;color:var(--ax-mut)}
 .cd-pair span{font-size:13px}
 .cd-pair .ax-btn{height:36px;font-size:12.5px;padding:0 13px;flex:none}
+
+/* 今日のポイント */
+.cd-advice li i{
+  font-style:normal;display:inline-block;font-size:10px;font-weight:800;
+  border:1px solid var(--ax-line);border-radius:999px;padding:2px 8px;margin-right:7px;
+  color:var(--ax-mut);vertical-align:1px
+}
+.cd-advice li.lv-safety{color:var(--ax-ink)}
+.cd-advice li.lv-safety i{border-color:rgba(220,38,38,.5);background:rgba(220,38,38,.12);color:var(--ax-red-ink)}
