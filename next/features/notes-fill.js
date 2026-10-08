@@ -2,10 +2,10 @@
    書くのは種目から導ける内容だけ。その日の様子（気づき）は作らない。
    すでに書かれている欄は上書きしない。 */
 
-import { BODYWEIGHT, num, sessionSetCount, summarizeSets } from "../core/model.js";
-import { musclesForExercise } from "../core/muscles.js";
-import { targetsForSession } from "../core/stats.js";
-import * as store from "../core/store.js";
+import { BODYWEIGHT, num, sessionSetCount, summarizeSets } from "../core/model.js?v=14";
+import { musclesForExercise } from "../core/muscles.js?v=14";
+import { targetsForSession } from "../core/stats.js?v=14";
+import * as store from "../core/store.js?v=14";
 
 /* 種目ごとのフォーム・安全の要点。名前は表記ゆれがあるので当たり判定で持つ。 */
 const CUES = [
