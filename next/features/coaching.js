@@ -4,9 +4,9 @@
    - 診断名は付けない。「可能性」と「確認しましょう」で止める
    - 高齢・有痛・術後は保守的に。進めるのは安全が確認できたときだけ */
 
-import { BODYWEIGHT, num, sessionVolume } from "../core/model.js";
-import { musclesForExercise } from "../core/muscles.js";
-import * as store from "../core/store.js";
+import { BODYWEIGHT, num, sessionVolume } from "../core/model.js?v=14";
+import { musclesForExercise } from "../core/muscles.js?v=14";
+import * as store from "../core/store.js?v=14";
 
 /* 受診を優先すべき兆候。メモに出ていたら拾う。 */
 const RED_FLAGS = [
