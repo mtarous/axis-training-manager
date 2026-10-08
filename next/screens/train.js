@@ -78,7 +78,6 @@ export function openNew(clientId = ""){
   active = 0;
   editSet = 0;
   stepByEx = {};
-  store.clearDraft();
   render();
 }
 
@@ -89,7 +88,7 @@ export function openFromPrevious(clientId){
   const s = makeSession(clientId, today());
   if(last){
     s.exercises = last.exercises.map(e =>
-      makeExercise(e.name, e.sets.map(x => ({ weight: x.weight, reps: x.reps }))));
+      makeExercise(e.name, e.sets.map(x => ({ weight: x.weight, reps: x.reps, side: x.side }))));
   }
   pool[clientId] = s;
   current = s;
@@ -97,7 +96,6 @@ export function openFromPrevious(clientId){
   active = 0;
   editSet = 0;
   stepByEx = {};
-  store.clearDraft();
   render();
 }
 
@@ -166,7 +164,7 @@ function addSet(delta, ratio){
     if(Number.isFinite(ratio)) w = Math.max(0, round1(num(w) * ratio));
     else if(Number.isFinite(delta)) w = Math.max(0, round1(num(w) + delta));
   }
-  e.sets.push(makeSet(w, last.reps));
+  e.sets.push(makeSet(w, last.reps, last.side));
   editSet = e.sets.length - 1;
   render();
 }
@@ -213,7 +211,7 @@ function usePrevious(){
   const prev = store.previousSession(current.clientId, current.date, current.id);
   const hit = prev?.exercises.find(e => e.name === ex().name);
   if(!hit) return;
-  ex().sets = hit.sets.map(s => makeSet(s.weight, s.reps));
+  ex().sets = hit.sets.map(s => makeSet(s.weight, s.reps, s.side));
   current.done[ex().id] = [];
   render();
 }
@@ -263,7 +261,7 @@ function editor(){
   const j = clampEdit();
   const s = e.sets[j];
   const body = String(s.weight) === BODYWEIGHT;
-  return '<div class="tr-editor">' +
+  return '<label class="ax-field"><span>左右</span><select class="ax-select" id="tr-side">' + ['','左','右'].map(side => '<option value="' + side + '"' + ((s.side || '') === side ? ' selected' : '') + '>' + (side || '左右なし') + '</option>').join('') + '</select></label>' + '<div class="tr-editor">' +
     '<div class="tr-erow">' +
       '<span>重量</span>' +
       '<button type="button" data-act="w-" data-j="' + j + '">−</button>' +
@@ -288,7 +286,7 @@ function setList(doneList){
     return '<div class="tr-li' + (done ? " done" : "") + (j === editSet ? " on" : "") + '">' +
       '<button type="button" class="tr-licheck" data-act="toggle" data-j="' + j + '" aria-label="SET ' + (j + 1) + 'の完了を切り替え">' + (done ? "✓" : "○") + '</button>' +
       '<button type="button" class="tr-libody" data-act="pick" data-j="' + j + '">' +
-        '<i>SET ' + (j + 1) + '</i>' +
+        '<i>SET ' + (j + 1) + (s.side ? ' · ' + s.side : '') + '</i>' +
         '<b>' + (String(s.weight) === BODYWEIGHT ? BODYWEIGHT : esc(s.weight) + "kg") + ' × ' + esc(s.reps) + '回</b>' +
       '</button>' +
       '<button type="button" class="tr-lidel" data-act="delset" data-j="' + j + '"' + (e.sets.length <= 1 ? " disabled" : "") + ' aria-label="このセットを削除">×</button>' +
@@ -459,6 +457,7 @@ function bind(root){
     includePartner(id);
     render();
   };
+  root.querySelector("#tr-side").onchange = ev => { ex().sets[clampEdit()].side = ev.target.value; render() };
   root.querySelector("#tr-date").onchange   = e => { current.date = e.target.value; render() };
   root.querySelector("#tr-name").oninput    = e => { ex().name = e.target.value; keep() };
   root.querySelectorAll("[data-note]").forEach(a => a.oninput = e => { current.notes[e.target.dataset.note] = e.target.value; keep() });
