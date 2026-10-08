@@ -47,15 +47,15 @@ export function makeClient(name, extra = {}){
   };
 }
 
-export function makeSet(weight = 0, reps = 10){
-  return { weight: normWeight(weight), reps: Math.max(0, Math.round(num(reps, 10))) };
+export function makeSet(weight = 0, reps = 10, side = ""){
+  return { weight: normWeight(weight), reps: Math.max(0, Math.round(num(reps, 10))), side: ["左", "右"].includes(side) ? side : "" };
 }
 
 export function makeExercise(name = "", sets){
   return {
     id: newId("e"),
     name: String(name || "").trim(),
-    sets: Array.isArray(sets) && sets.length ? sets.map(s => makeSet(s.weight, s.reps)) : [makeSet()]
+    sets: Array.isArray(sets) && sets.length ? sets.map(s => makeSet(s.weight, s.reps, s.side)) : [makeSet()]
   };
 }
 
@@ -98,7 +98,7 @@ export function normalizeSession(s){
         id: e.id || newId("e"),
         name: String(e.name || "").trim(),
         sets: (Array.isArray(e.sets) && e.sets.length ? e.sets : [makeSet()])
-          .map(x => makeSet(x.weight, x.reps))
+          .map(x => makeSet(x.weight, x.reps, x.side))
       }))
       .filter(e => e.name || e.sets.some(x => num(x.weight) || x.reps)),
     done: s.done && typeof s.done === "object" ? s.done : {},
@@ -126,10 +126,10 @@ export function summarizeSets(sets){
   const parts = [];
   (sets || []).forEach(x => {
     const last = parts[parts.length - 1];
-    if(last && String(last.weight) === String(x.weight) && last.reps === x.reps) last.count += 1;
-    else parts.push({ weight: x.weight, reps: x.reps, count: 1 });
+    if(last && String(last.weight) === String(x.weight) && last.reps === x.reps && last.side === x.side) last.count += 1;
+    else parts.push({ weight: x.weight, reps: x.reps, side: x.side, count: 1 });
   });
-  return parts.map(p => weightText(p.weight) + " × " + p.reps + "回" + (p.count > 1 ? " × " + p.count + "set" : "")).join(" / ");
+  return parts.map(p => (p.side ? p.side + " " : "") + weightText(p.weight) + " × " + p.reps + "回" + (p.count > 1 ? " × " + p.count + "set" : "")).join(" / ");
 }
 
 /* 1セッションを「1行=1種目」の表に開く。Excel書き出しと外部連携のかたち。
@@ -141,13 +141,13 @@ export function expandToRows(session, clientName){
     const parts = [];
     e.sets.forEach(s => {
       const last = parts[parts.length - 1];
-      if(last && String(last.weight) === String(s.weight) && last.reps === s.reps) last.sets += 1;
-      else parts.push({ weight: s.weight, reps: s.reps, sets: 1 });
+      if(last && String(last.weight) === String(s.weight) && last.reps === s.reps && last.side === s.side) last.sets += 1;
+      else parts.push({ weight: s.weight, reps: s.reps, side: s.side, sets: 1 });
     });
     parts.forEach(p => out.push({
       date: session.date,
       client: clientName,
-      exercise: e.name,
+      exercise: e.name + (p.side ? "（" + p.side + "）" : ""),
       weight: p.weight,
       reps: p.reps,
       sets: p.sets,
