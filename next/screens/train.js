@@ -6,7 +6,7 @@ import { BODYWEIGHT, makeExercise, makeSession, makeSet, num, round1, summarizeS
 import { el, esc, inlineEdit, toast } from "../ui/dom.js";
 import * as rest from "../ui/rest-timer.js";
 
-const STEPS = [1, 2.5, 5];
+const STEPS = [1, 2.5, 5, 10];
 
 let pool = {};           // 利用者id → 書きかけのセッション（ペアトレで2人ぶん持つ）
 let current = null;      // いま編集しているセッション
