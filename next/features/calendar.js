@@ -6,7 +6,8 @@ import { getMeta, setMeta } from "../core/meta.js";
 
 const KEY_SETTINGS = "axis_v2_calendar";
 const KEY_CACHE    = "axis_v2_calendar_cache";
-const FRESH_MS = 10 * 60 * 1000;
+/* 予定を追加した直後にAXISへ反映しやすいよう、旧10分から1分へ短縮。 */
+const FRESH_MS = 60 * 1000;
 
 let inFlight = null;
 
@@ -28,7 +29,12 @@ export function settings(){
 }
 export function saveSettings(x){
   const cur = settings();
-  localStorage.setItem(KEY_SETTINGS, JSON.stringify({ ...cur, ...x }));
+  const next = { ...cur, ...x };
+  localStorage.setItem(KEY_SETTINGS, JSON.stringify(next));
+  /* 接続先や対象カレンダーを変えたら、古い予定を新設定の予定として扱わない。 */
+  if(cur.endpoint !== next.endpoint || cur.token !== next.token || cur.calendarId !== next.calendarId){
+    clearCache();
+  }
 }
 export function isConfigured(){
   const s = settings();
@@ -89,7 +95,7 @@ export async function refresh({ back = 14, days = 90 } = {}){
   try{ return await inFlight } finally { inFlight = null }
 }
 
-/* 取ってから時間が経っていれば裏で取り直す。失敗しても黙って元のまま。 */
+/* 直近1分以内でなければ裏で取り直す。失敗しても元の予定は残す。 */
 export async function refreshIfStale(){
   if(!isConfigured()) return;
   const c = cache();
