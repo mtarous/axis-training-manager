@@ -4,6 +4,7 @@ import * as store from "../core/store.js";
 import { expandToRows } from "../core/model.js";
 import * as archive from "../core/archive.js";
 import * as calendar from "../features/calendar.js";
+import { countEmpty, fillEmptyNotes } from "../features/notes-fill.js";
 import { buildPlainWorkbook, buildSubmitWorkbook, saveWorkbook } from "../features/excel.js";
 import { el, esc, toast } from "../ui/dom.js";
 
@@ -26,6 +27,7 @@ export function render(){
 
   const cal = calendar.settings();
   const trash = store.trash().length;
+  const empty = countEmpty(store.getState().sessions);
 
   root.innerHTML =
     '<div class="se-head">' +
@@ -44,6 +46,16 @@ export function render(){
           '<button class="ax-btn pri full se-mt" data-act="load-archive">読み込む</button>' +
           '<div id="se-codemsg" class="se-note se-mt"></div>' +
         '</section>') +
+
+    (empty
+      ? '<section class="ax-panel">' +
+          '<div class="se-h">メニューから注意点などを記入する</div>' +
+          '<p class="se-note">空いている「注意点」「共有事項」「次回やること」を、その回の種目から埋めます。' +
+            'すでに書かれているものは書き換えません。' +
+            'その日の様子である「気づき」は、見ていないことを書くことになるので作りません。</p>' +
+          '<button class="ax-btn pri full" data-act="fill-notes">' + empty + '件に記入する</button>' +
+        '</section>'
+      : "") +
 
     '<section class="ax-panel">' +
       '<div class="se-h">Excelに書き出す</div>' +
@@ -107,6 +119,7 @@ export function render(){
       case "cal-refresh":   refreshCalendar(t); break;
       case "cal-choose":    chooseCalendar(); break;
       case "load-archive":  loadArchive(); break;
+      case "fill-notes":    busy(t, fillNotes); break;
     }
   };
   el("#se-file").onchange = backupLoad;
@@ -124,6 +137,12 @@ async function loadArchive(){
   }catch(e){
     msg.textContent = "アクセスコードが違うか、データを読み込めません。";
   }
+}
+
+function fillNotes(){
+  const n = store.repair(fillEmptyNotes);
+  render();
+  toast(n + "件に記入しました", { detail: "注意点・共有事項・次回やること", seconds: 6 });
 }
 
 /* 1000行を超えると数秒かかる。押せたことが分かるようにする。 */

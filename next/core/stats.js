@@ -33,13 +33,13 @@ export function deltaText(delta){
   return (delta > 0 ? "+" : "") + delta + "%";
 }
 
-/* 次回の目安。前回と同じ重量で全セット出来ていれば1段上げる。 */
-export function nextTargets(clientId, limit = 5){
-  const list = store.sessions({ clientId });
-  const last = list[0];
-  if(!last) return [];
-  return last.exercises.slice(0, limit).map(e => {
-    const top = e.sets.reduce((a, s) => (typeof s.weight === "number" && s.weight > a.weight ? s : a), e.sets[0]);
+/* 次回の目安。同じ重量で全セット出来ていれば1段上げる。
+   その回の内容だけを見るので、過去の記録にも同じ計算が使える。 */
+export function targetsForSession(session, limit = 5){
+  if(!session?.exercises?.length) return [];
+  return session.exercises.slice(0, limit).map(e => {
+    const top = e.sets.reduce((a, s) =>
+      (typeof s.weight === "number" && s.weight > a.weight ? s : a), e.sets[0]);
     if(typeof top.weight !== "number" || !top.weight){
       return { name: e.name, text: "回数を1〜2回のばす" };
     }
@@ -50,4 +50,8 @@ export function nextTargets(clientId, limit = 5){
       ? { name: e.name, text: (top.weight + step) + "kg × " + top.reps + "回を試す" }
       : { name: e.name, text: top.weight + "kg で回数をそろえる" };
   });
+}
+
+export function nextTargets(clientId, limit = 5){
+  return targetsForSession(store.sessions({ clientId })[0], limit);
 }
