@@ -184,11 +184,26 @@ export function exportBackup(){
 export function importBackup(data){
   if(!data || data.version !== 2) throw new Error("このファイルは読み込めません");
   let n = 0;
-  Object.values(data.clients || {}).forEach(c => { if(c?.id && !state.clients[c.id]) state.clients[c.id] = c });
+  const clientIds = {};
+  // 画像からの復元は、同名の既存利用者が1人ならその人へ追加する。
+  const incomingClients = Object.values(data.clients || {});
+  incomingClients.forEach(c => {
+    if(!c?.id) return;
+    let id = c.id;
+    if(data.restoreClientByName === true && !state.clients[id]){
+      const matches = Object.values(state.clients).filter(x => x.name?.trim() === c.name?.trim());
+      if(matches.length > 1) throw new Error("同名の利用者が複数いるため、復元先を決められません");
+      if(matches.length === 1) id = matches[0].id;
+    }
+    clientIds[c.id] = id;
+  });
+  incomingClients.forEach(c => {
+    if(c?.id && !state.clients[clientIds[c.id]]) state.clients[clientIds[c.id]] = { ...c, id: clientIds[c.id] };
+  });
   Object.values(data.sessions || {}).forEach(s => {
     if(!s?.id) return;
     const cur = state.sessions[s.id];
-    if(!cur || String(s.updatedAt) > String(cur.updatedAt)){ state.sessions[s.id] = normalizeSession(s); n += 1 }
+    if(!cur || String(s.updatedAt) > String(cur.updatedAt)){ state.sessions[s.id] = normalizeSession({ ...s, clientId: clientIds[s.clientId] || s.clientId }); n += 1 }
   });
   persist();
   return n;
