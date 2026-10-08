@@ -29,7 +29,7 @@ export function volumeTrend(clientId, limit = 8){
 
 export function deltaText(delta){
   if(delta === null || !Number.isFinite(delta)) return "—";
-  if(delta === 0) return "前回と同じ";
+  if(delta === 0) return "±0%";
   return (delta > 0 ? "+" : "") + delta + "%";
 }
 

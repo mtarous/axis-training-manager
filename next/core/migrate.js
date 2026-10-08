@@ -67,6 +67,38 @@ function buildClients(base, added, meta){
   return { clients, nameToId: n => seen(n) };
 }
 
+
+/* 元データのメモは「気づき：… 注意：… 共有：…」が1つの文にまとまっている。
+   本人向けまとめに注意点を出さないため、取り込みのときに分けておく。
+   【…】の但し書きと「原文は…」の処理メモは、本人に見せない注意点側へ寄せる。 */
+export function splitMemo(text){
+  const raw = String(text || "").trim();
+  const empty = { insight: "", caution: "", share: "", next: "" };
+  if(!raw) return empty;
+  if(!/気づき[:：]/.test(raw)) return { ...empty, insight: raw };
+
+  const inner = [];
+  let body = raw.replace(/【[^】]*】/g, m => { inner.push(m.replace(/[【】]/g, "")); return "" });
+  const note = body.match(/原文は.*$/);
+  if(note){ inner.push(note[0].trim()); body = body.slice(0, note.index) }
+
+  const out = { ...empty };
+  const parts = body.split(/(気づき|注意点?|共有|次回)[:：]/);
+  let lead = (parts[0] || "").trim();
+  for(let i = 1; i < parts.length; i += 2){
+    const key = parts[i];
+    const val = String(parts[i + 1] || "").trim();
+    if(/気づき/.test(key))      out.insight = [lead, val].filter(Boolean).join(" ");
+    else if(/注意/.test(key))   out.caution = val;
+    else if(/共有/.test(key))   out.share = val;
+    else if(/次回/.test(key))   out.next = val;
+    lead = "";
+  }
+  if(!out.insight) out.insight = lead;
+  if(inner.length) out.caution = [out.caution, ...inner].filter(Boolean).join(" ");
+  return out;
+}
+
 /* ---- 既存記録（data.enc）→ セッション ---- */
 function legacySessions(base, nameToId){
   const map = new Map();
@@ -79,7 +111,7 @@ function legacySessions(base, nameToId){
       id, clientId, date,
       status: String(r.achieved || "完了"),
       rpe: "", pain: "",
-      notes: { insight: String(r.memo || ""), caution: "", share: "", next: "" },
+      notes: splitMemo(r.memo),
       exercises: [], done: {}, source: "legacy",
       createdAt: date + "T00:00:00.000Z", updatedAt: date + "T00:00:00.000Z", deletedAt: null
     });
@@ -90,7 +122,7 @@ function legacySessions(base, nameToId){
       name: String(r.exercise || "").trim(),
       sets: Array.from({length: count}, () => makeSet(normWeight(r.weight), num(r.reps, 0)))
     });
-    if(!s.notes.insight && r.memo) s.notes.insight = String(r.memo);
+    if(!s.notes.insight && r.memo) s.notes = splitMemo(r.memo);
   });
   return [...map.values()];
 }
@@ -198,6 +230,19 @@ function applyOldDeletes(sessions, nameToId){
     if(s) s.deletedAt = at || nowISO();
   });
   return sessions;
+}
+
+/* すでに取り込み済みの記録にも同じ手当てをする。
+   前の版で1つにまとめて入れてしまった分を、あとから分け直す。 */
+export function resplitLegacyNotes(sessions){
+  let fixed = 0;
+  Object.values(sessions || {}).forEach(s => {
+    if(s?.source !== "legacy") return;
+    if(!/気づき[:：]/.test(String(s.notes?.insight || ""))) return;
+    s.notes = splitMemo(s.notes.insight);
+    fixed += 1;
+  });
+  return fixed;
 }
 
 /* ---- 入口 ---- */

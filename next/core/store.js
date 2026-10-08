@@ -131,6 +131,13 @@ export function previousSession(clientId, date, excludeId = ""){
     .filter(s => s.id !== excludeId && s.date < date)[0] || null;
 }
 
+/* 取り込み済みの記録に後から手当てをする。直した件数を返す。 */
+export function repair(fn){
+  const n = fn(state.sessions) || 0;
+  if(n) persist();
+  return n;
+}
+
 /* ---- 旧データの取り込み ---- */
 /* id は元データから決まるので、同じものを二度入れない。
    既に v2 側にあるものは触らない（v2での編集が勝つ）。 */

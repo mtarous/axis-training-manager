@@ -155,24 +155,37 @@ function choosePartner(c){
   if(!others.length){ alert("ほかに利用者が登録されていません。"); return }
   const cur = c.partnerId ? others.findIndex(x => x.id === c.partnerId) + 1 : 0;
   const lines = others.map((x, i) => (i + 1) + ". " + x.name + (x.id === c.partnerId ? "  ←いまの相手" : "")).join("\n");
-  const ans = prompt("一緒に記録する相手の番号を入れてください。\n0 で設定を外します。\n\n" + lines, String(cur));
+  const ans = prompt(
+    "一緒に記録する相手の番号を入れてください。\n" +
+    "0 で設定を外します。\n" +
+    "名前を入力すると、その人を新しく登録して相手にします。\n\n" + lines, String(cur));
   if(ans === null) return;
-  const n = Number(ans);
+
+  const typed = String(ans).trim();
+  const n = Number(typed);
+  /* 数字でなければ新しい利用者の名前として扱う */
+  if(typed && !/^\d+$/.test(typed)){
+    const mate = store.upsertClient({ name: typed, goal: "", attention: "", active: true });
+    link(c, mate);
+    renderDetail();
+    return;
+  }
   if(!Number.isFinite(n) || n < 0 || n > others.length){ alert("番号が正しくありません。"); return }
 
-  /* 相手にも同じ結びつきを入れる。片方だけだと切り替えが出ない。 */
+  if(n === 0) link(c, null);
+  else link(c, others[n - 1]);
+  renderDetail();
+}
+
+/* 相手にも同じ結びつきを入れる。片方だけだと切り替えが出ない。 */
+function link(c, mate){
   if(c.partnerId){
     const old = store.client(c.partnerId);
     if(old && old.partnerId === c.id) store.upsertClient({ ...old, partnerId: "" });
   }
-  if(n === 0){
-    store.upsertClient({ ...c, partnerId: "" });
-  }else{
-    const mate = others[n - 1];
-    store.upsertClient({ ...c, partnerId: mate.id });
-    store.upsertClient({ ...mate, partnerId: c.id });
-  }
-  renderDetail();
+  if(!mate){ store.upsertClient({ ...c, partnerId: "" }); return }
+  store.upsertClient({ ...c, partnerId: mate.id });
+  store.upsertClient({ ...mate, partnerId: c.id });
 }
 
 async function copyLine(){

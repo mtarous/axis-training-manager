@@ -4,7 +4,7 @@
 
 import { decryptBlob } from "./crypto.js";
 import { getMeta, setMeta } from "./meta.js";
-import { importLegacy } from "./migrate.js";
+import { importLegacy, resplitLegacyNotes } from "./migrate.js";
 import * as store from "./store.js";
 
 const KEY_CODE = "axis_training_key";
@@ -28,6 +28,7 @@ export async function load(code, { remember = true } = {}){
   }catch(e){ /* カレンダーが読めなくても記録は使える */ }
 
   const added = store.mergeImported(importLegacy({ base: data.history || [], meta: data }));
+  store.repair(resplitLegacyNotes);
   if(remember) localStorage.setItem(KEY_CODE, code);
   loaded = true;
   return added;
@@ -35,5 +36,7 @@ export async function load(code, { remember = true } = {}){
 
 /* コード無しで始める。この端末に残っている入力分だけを引き継ぐ。 */
 export function loadLocalOnly(){
-  return store.mergeImported(importLegacy({ base: [], meta: getMeta() }));
+  const added = store.mergeImported(importLegacy({ base: [], meta: getMeta() }));
+  store.repair(resplitLegacyNotes);
+  return added;
 }

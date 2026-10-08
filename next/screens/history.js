@@ -4,7 +4,11 @@ import * as store from "../core/store.js";
 import { sessionSetCount, sessionVolume, summarizeSets } from "../core/model.js";
 import { el, esc, toast } from "../ui/dom.js";
 
+const PAGE = 30;
+
 let query = "";
+let shown = PAGE;
+let typing = null;
 let onEdit = () => {};
 
 export function setEditHandler(fn){ onEdit = fn }
@@ -69,12 +73,18 @@ export function render(){
     '<div class="hi-title"><span class="ax-eyebrow">HISTORY</span><h2>記録</h2></div>' +
     trashPanel() +
     '<input id="hi-q" class="ax-input hi-search" placeholder="利用者・種目で探す" value="' + esc(query) + '">' +
-    (list.length ? list.slice(0, 200).map(card).join("") : '<div class="ax-empty">記録がありません</div>');
+    (list.length
+      ? list.slice(0, shown).map(card).join("") +
+        (list.length > shown
+          ? '<button type="button" class="ax-btn full hi-more" data-act="more">もっと見る（残り ' + (list.length - shown) + '件）</button>'
+          : "")
+      : '<div class="ax-empty">記録がありません</div>');
 
   root.onclick = ev => {
     const t = ev.target.closest("[data-act]");
     if(!t) return;
     const id = t.dataset.id;
+    if(t.dataset.act === "more"){ shown += PAGE; render(); return }
     if(t.dataset.act === "edit"){ onEdit(id); return }
     if(t.dataset.act === "del"){ remove(id); return }
     if(t.dataset.act === "restore"){ store.restoreSession(id); render(); return }
@@ -83,7 +93,17 @@ export function render(){
     }
   };
   const box = el("#hi-q");
-  box.oninput = e => { query = e.target.value; render(); el("#hi-q").focus() };
+  /* 1文字ごとに全件描き直すと、打っている最中に固まる。入力が止まってから描く。 */
+  box.oninput = e => {
+    query = e.target.value;
+    shown = PAGE;
+    clearTimeout(typing);
+    typing = setTimeout(() => {
+      render();
+      const again = el("#hi-q");
+      if(again){ again.focus(); again.setSelectionRange(again.value.length, again.value.length) }
+    }, 180);
+  };
 }
 
 function remove(id){

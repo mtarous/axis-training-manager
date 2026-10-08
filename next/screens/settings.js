@@ -99,8 +99,8 @@ export function render(){
     if(!t) return;
     switch(t.dataset.act){
       case "back":          go("home"); break;
-      case "excel-submit":  exportSubmit(); break;
-      case "excel-plain":   exportPlain(); break;
+      case "excel-submit":  busy(t, exportSubmit); break;
+      case "excel-plain":   busy(t, exportPlain); break;
       case "backup-save":   backupSave(); break;
       case "backup-load":   el("#se-file").click(); break;
       case "cal-save":      saveCalendar(); break;
@@ -124,6 +124,17 @@ async function loadArchive(){
   }catch(e){
     msg.textContent = "アクセスコードが違うか、データを読み込めません。";
   }
+}
+
+/* 1000行を超えると数秒かかる。押せたことが分かるようにする。 */
+function busy(btn, run){
+  const label = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = "作成中…";
+  setTimeout(() => {
+    try{ run() }
+    finally{ btn.disabled = false; btn.textContent = label }
+  }, 30);
 }
 
 function exportSubmit(){
