@@ -44,7 +44,10 @@ export function isConfigured(){
 function cache(){
   try{
     const x = JSON.parse(localStorage.getItem(KEY_CACHE) || "null");
-    return x && Array.isArray(x.events) ? x : null;
+    if(x && Array.isArray(x.events)) return x;
+    /* 旧版が取得済みの予定を引き継ぐ。接続できない端末でも、前回の予定は見られる。 */
+    const old = JSON.parse(localStorage.getItem("axis_calendar_live_v1") || "null");
+    return old && Array.isArray(old.events) ? old : null;
   }catch(e){ return null }
 }
 function writeCache(x){
