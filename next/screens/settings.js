@@ -3,7 +3,7 @@
 import * as store from "../core/store.js";
 import { expandToRows } from "../core/model.js";
 import * as archive from "../core/archive.js";
-import * as calendar from "../features/calendar.js?v=10";
+import * as calendar from "../features/calendar.js?v=11";
 import { countEmpty, fillEmptyNotes } from "../features/notes-fill.js";
 import { buildPlainWorkbook, buildSubmitWorkbook, saveWorkbook } from "../features/excel.js";
 import { el, esc, toast } from "../ui/dom.js";
@@ -79,7 +79,11 @@ export function render(){
     '<section class="ax-panel">' +
       '<div class="se-h">Googleカレンダー</div>' +
       '<p class="se-note">接続すると、予定をその場で読み直せます。未設定でも、取り込み済みの予定は見られます。</p>' +
-      '<label class="ax-field"><span>接続先のURL</span>' +
+       '<label class="ax-field"><span>メールの設定リンク</span>' +
+        '<textarea id="se-setup-link" class="ax-input" rows="2" placeholder="設定リンクをここに貼り付け" spellcheck="false"></textarea></label>' +
+      '<p class="se-note">ホーム画面のアプリでは、メールのリンクをコピーしてここに貼り付けてください。</p>' +
+      '<button class="ax-btn pri full" data-act="cal-link">リンクで接続して予定を取り込む</button>' +
+      '<label class="ax-field se-mt"><span>接続先のURL</span>' +
         '<input id="se-endpoint" class="ax-input" placeholder="https://script.google.com/macros/s/.../exec" value="' + esc(cal.endpoint) + '"></label>' +
       '<label class="ax-field se-mt"><span>トークン</span>' +
         '<input id="se-token" class="ax-input" type="password" placeholder="Apps Scriptで決めた合い言葉" value="' + esc(cal.token) + '"></label>' +
@@ -115,6 +119,7 @@ export function render(){
       case "excel-plain":   busy(t, exportPlain); break;
       case "backup-save":   backupSave(); break;
       case "backup-load":   el("#se-file").click(); break;
+      case "cal-link":      connectLink(t); break;
       case "cal-save":      saveCalendar(); break;
       case "cal-refresh":   refreshCalendar(t); break;
       case "cal-choose":    chooseCalendar(); break;
@@ -226,4 +231,13 @@ async function chooseCalendar(){
     render();
     await refreshCalendar({ textContent: "", disabled: false });
   }catch(e){ alert(String(e.message || e)) }
+}
+
+async function connectLink(btn){
+  try{
+    calendar.importSetupLink(el("#se-setup-link").value);
+    el("#se-setup-link").value = "";
+    await refreshCalendar(btn);
+    render();
+  }catch(e){ alert(e.message) }
 }
