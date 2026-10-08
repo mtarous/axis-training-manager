@@ -112,3 +112,20 @@ export async function listCalendars(){
 }
 
 export function clearCache(){ localStorage.removeItem(KEY_CACHE) }
+/* メールの設定リンクを、Safariとホーム画面のどちらでも受け取る。 */
+export function importSetupLink(text){
+  const match = String(text || "").match(/(?:[#&]|^)axissync=([A-Za-z0-9_-]+)/);
+  if(!match) throw new Error("メールに届いたAXISの設定リンクを貼り付けてください。");
+  let payload;
+  try{
+    const raw = match[1].replace(/-/g, "+").replace(/_/g, "/");
+    const binary = atob(raw + "=".repeat((4 - raw.length % 4) % 4));
+    payload = JSON.parse(new TextDecoder().decode(Uint8Array.from(binary, c => c.charCodeAt(0))));
+  }catch(e){ throw new Error("設定リンクを読み取れませんでした。リンク全体をコピーしてください。") }
+  const endpoint = String(payload.e || "").trim();
+  const token = String(payload.t || "").trim();
+  if(!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(endpoint) || !token)
+    throw new Error("設定リンクの接続先またはトークンが正しくありません。");
+  saveSettings({ endpoint, token, calendarId: String(payload.c || "") });
+  clearCache();
+}
