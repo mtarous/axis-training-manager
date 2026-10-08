@@ -1,10 +1,10 @@
 /* 予定。カレンダーの取り込み済みスナップショットを並べ、不要な予定は端末ごとに隠せる。 */
 
-import * as calendar from "../features/calendar.js?v=11";
-import { getMeta } from "../core/meta.js";
-import * as sched from "../core/schedule.js";
-import { today } from "../core/model.js";
-import { el, esc } from "../ui/dom.js";
+import * as calendar from "../features/calendar.js?v=14";
+import { getMeta } from "../core/meta.js?v=14";
+import * as sched from "../core/schedule.js?v=14";
+import { today } from "../core/model.js?v=14";
+import { el, esc } from "../ui/dom.js?v=14";
 
 let go = () => {};
 export function setRouter(fn){ go = fn }
