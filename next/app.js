@@ -7,11 +7,11 @@ import { el } from "./ui/dom.js";
 import * as home from "./screens/home.js";
 import * as clients from "./screens/clients.js";
 import * as report from "./screens/report.js";
-import * as schedule from "./screens/schedule.js";
+import * as schedule from "./screens/schedule.js?v=10";
 import * as history from "./screens/history.js";
 import * as train from "./screens/train.js";
-import * as settings from "./screens/settings.js";
-import * as calendar from "./features/calendar.js";
+import * as settings from "./screens/settings.js?v=10";
+import * as calendar from "./features/calendar.js?v=10";
 
 const TABS = ["home", "schedule", "clients", "history", "train"];
 /* 下のタブに出さない画面は、どのタブを光らせるかだけ決める */

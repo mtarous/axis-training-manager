@@ -3,7 +3,7 @@
 import * as store from "../core/store.js";
 import { expandToRows } from "../core/model.js";
 import * as archive from "../core/archive.js";
-import * as calendar from "../features/calendar.js";
+import * as calendar from "../features/calendar.js?v=10";
 import { countEmpty, fillEmptyNotes } from "../features/notes-fill.js";
 import { buildPlainWorkbook, buildSubmitWorkbook, saveWorkbook } from "../features/excel.js";
 import { el, esc, toast } from "../ui/dom.js";
