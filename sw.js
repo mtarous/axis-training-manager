@@ -2,7 +2,7 @@
    まずネットワーク、ダメならキャッシュ。オンラインなら必ず最新が出る。
    いまの本体（next/ の中身）と、以前のアプリ（legacy.html）の両方をまかなう。 */
 
-const CACHE = "axis-root-015";
+const CACHE = "axis-root-016";
 
 /* いまの本体 */
 const APP = [
@@ -16,12 +16,13 @@ const APP = [
   "icon-192.png",
   "icon-512.png",
   "next/app.js",
-  "next/app.js?v=13",
+  "next/app.js?v=14",
   "next/core/archive.js",
   "next/core/crypto.js",
   "next/core/meta.js",
   "next/core/migrate.js",
   "next/core/model.js",
+  "next/core/model.js?v=14",
   "next/core/muscles.js",
   "next/core/schedule.js",
   "next/core/stats.js",
@@ -33,13 +34,13 @@ const APP = [
   "next/screens/home.js",
   "next/screens/report.js",
   "next/screens/schedule.js",
-  "next/screens/schedule.js?v=11",
+  "next/screens/schedule.js?v=14",
   "next/screens/settings.js",
-  "next/screens/settings.js?v=11",
+  "next/screens/settings.js?v=14",
   "next/screens/train.js",
-  "next/screens/train.js?v=3",
+  "next/screens/train.js?v=14",
   "next/features/calendar.js",
-  "next/features/calendar.js?v=11",
+  "next/features/calendar.js?v=14",
   "next/features/coaching.js",
   "next/features/notes-fill.js",
   "next/features/line-text.js",
@@ -52,7 +53,7 @@ const APP = [
   "next/styles/schedule.css",
   "next/styles/settings.css",
   "next/styles/train.css",
-  "next/styles/train.css?v=3",
+  "next/styles/train.css?v=14",
   "next/styles/history.css"
 ];
 
@@ -131,7 +132,7 @@ self.addEventListener("fetch", e => {
         return res;
       })
       .catch(async () => {
-        /* ?v=1 のような版の違いは無視して拾う */
+        /* ?v=14 のような版の違いは無視して拾う */
         const hit = await caches.match(e.request, { ignoreSearch: true });
         if(hit) return hit;
         /* 画面そのものの読み込みだけ、最後にアプリの入口を返す。
