@@ -1,18 +1,20 @@
 /* AXIS v2 データの置き場。
    状態を変える道はここだけ。画面は読むだけで、直接 localStorage に触らない。 */
 
-import { newId, normalizeSession, nowISO, today } from "./model.js?v=18";
+import { newId, normalizeSession, nowISO, today } from "./model.js?v=19";
 
 const KEY_STATE = "axis_v2_state";
 const KEY_DRAFT = "axis_v2_draft";
 const TRASH_DAYS = 30;
 
 /* 峰岡夫婦は予約上は1枠だが、実績は2人別々に持つ。
-   旧「峰岡夫婦」の記録は判別不能なので移動せず、その利用者だけ非表示にして保存する。 */
+   旧「峰岡夫婦」のトレーニング記録は、ユーザー指定により宏晃さん・多江さんの両方へ同内容を複製する。
+   複製IDは元記録と利用者IDから固定し、何度起動しても増えない。 */
 const PAIR_MIGRATIONS = [
   { label: "峰岡夫婦", legacy: ["峰岡夫婦", "峰岡夫妻"], members: ["峰岡 宏晃", "峰岡 多江"] }
 ];
 const compactName = v => String(v || "").replace(/[\s　]+/g, "");
+const pairMirrorId = (sourceId, memberId) => `pair-mirror:${sourceId}:${memberId}`;
 
 function ensurePairMigrations(){
   let changed = false;
@@ -47,9 +49,32 @@ function ensurePairMigrations(){
       changed = true;
     }
 
-    if(old && (old.active !== false || old.legacyPairLabel !== spec.label)){
-      Object.assign(old, { active: false, legacyPairLabel: spec.label, updatedAt: nowISO() });
-      changed = true;
+    if(old){
+      /* 旧ペア記録は2人の履歴に同じ内容で反映。元記録は消さない。 */
+      const sourceSessions = Object.values(state.sessions).filter(x => x.clientId === old.id);
+      sourceSessions.forEach(source => {
+        members.forEach(member => {
+          const id = pairMirrorId(source.id, member.id);
+          const cur = state.sessions[id];
+          /* 本人側で編集した後は pairSourceId が落ちるので、その内容を上書きしない。 */
+          if(cur && cur.pairSourceId !== source.id) return;
+          if(cur && String(cur.pairSourceUpdatedAt || "") >= String(source.updatedAt || "")) return;
+          const copy = JSON.parse(JSON.stringify(source));
+          state.sessions[id] = {
+            ...copy,
+            id,
+            clientId: member.id,
+            pairSourceId: source.id,
+            pairSourceUpdatedAt: source.updatedAt || ""
+          };
+          changed = true;
+        });
+      });
+
+      if(old.active !== false || old.legacyPairLabel !== spec.label){
+        Object.assign(old, { active: false, legacyPairLabel: spec.label, updatedAt: nowISO() });
+        changed = true;
+      }
     }
   });
   return changed;

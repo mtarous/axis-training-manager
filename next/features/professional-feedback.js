@@ -1,10 +1,10 @@
 /* LINE向けの専門フィードバック。
    記録された種目・負荷・RPE・痛み・目標から、解剖/運動学・生体力学・運動生理・栄養・ケア・セルフ運動を組み立てる。
    診断はせず、安全上の懸念がある場合は負荷提案より受診・症状確認を優先する。 */
-import * as store from "../core/store.js?v=18";
-import { clientSummary } from "../core/stats.js?v=18";
-import { musclesOfSession } from "../core/muscles.js?v=18";
-import { assess, safetyLevel } from "./coaching.js?v=18";
+import * as store from "../core/store.js?v=19";
+import { clientSummary } from "../core/stats.js?v=19";
+import { musclesOfSession } from "../core/muscles.js?v=19";
+import { assess, safetyLevel } from "./coaching.js?v=19";
 
 const has=(s,re)=>re.test((s?.exercises||[]).map(e=>e.name).join(" "));
 const avgReps=s=>{const a=(s?.exercises||[]).flatMap(e=>e.sets||[]).map(x=>Number(x.reps)||0).filter(Boolean);return a.length?a.reduce((x,y)=>x+y,0)/a.length:0};

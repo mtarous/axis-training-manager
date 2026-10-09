@@ -1,12 +1,12 @@
 /* 利用者。一覧と、1人ぶんの詳細。 */
 
-import * as store from "../core/store.js?v=18";
-import { clientSummary, deltaText, nextTargets, volumeTrend } from "../core/stats.js?v=18";
-import { musclesOfSession } from "../core/muscles.js?v=18";
-import { clientAdvice } from "../features/coaching.js?v=18";
-import { lineMessage } from "../features/line-text.js?v=18";
-import { el, esc } from "../ui/dom.js?v=18";
-import { muscleMap } from "../ui/muscle-map.js?v=18";
+import * as store from "../core/store.js?v=19";
+import { clientSummary, deltaText, nextTargets, volumeTrend } from "../core/stats.js?v=19";
+import { musclesOfSession } from "../core/muscles.js?v=19";
+import { clientAdvice } from "../features/coaching.js?v=19";
+import { lineMessage } from "../features/line-text.js?v=19";
+import { el, esc } from "../ui/dom.js?v=19";
+import { muscleMap } from "../ui/muscle-map.js?v=19";
 
 let query = "";
 let currentId = "";

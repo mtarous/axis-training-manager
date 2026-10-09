@@ -1,9 +1,9 @@
 /* ホーム。今日やることと、記録への入口だけを出す。 */
 
-import * as store from "../core/store.js?v=18";
-import * as schedule from "../core/schedule.js?v=18";
-import { today } from "../core/model.js?v=18";
-import { el, esc } from "../ui/dom.js?v=18";
+import * as store from "../core/store.js?v=19";
+import * as schedule from "../core/schedule.js?v=19";
+import { today } from "../core/model.js?v=19";
+import { el, esc } from "../ui/dom.js?v=19";
 
 let go = () => {};
 export function setRouter(fn){ go = fn }
