@@ -4,8 +4,9 @@ import * as store from "../core/store.js?v=14";
 import { clientSummary, deltaText, nextTargets, volumeTrend } from "../core/stats.js?v=14";
 import { musclesOfSession } from "../core/muscles.js?v=14";
 import { clientAdvice } from "../features/coaching.js?v=14";
-import { lineMessage } from "../features/line-text.js?v=14";
+import { lineMessage } from "../features/line-text.js?v=16";
 import { el, esc } from "../ui/dom.js?v=14";
+import { muscleMap } from "../ui/muscle-map.js?v=1";
 
 let query = "";
 let currentId = "";
@@ -100,8 +101,7 @@ export function renderDetail(){
     '<section class="ax-panel"><div class="cd-h">総負荷の推移</div>' + bars(volumeTrend(c.id)) + '</section>' +
 
     (muscles.length
-      ? '<section class="ax-panel"><div class="cd-h">直近で鍛えた部位</div>' +
-        '<div class="cd-chips">' + muscles.map(m => '<span>' + esc(m) + '</span>').join("") + '</div></section>'
+      ? '<section class="ax-panel"><div class="cd-h">直近で鍛えた部位</div>' + muscleMap(s.last) + '</section>'
       : "") +
 
     (targets.length

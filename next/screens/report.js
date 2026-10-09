@@ -5,6 +5,7 @@ import { clientSummary, deltaText } from "../core/stats.js?v=14";
 import { musclesOfSession } from "../core/muscles.js?v=14";
 import { summarizeSets } from "../core/model.js?v=14";
 import { el, esc } from "../ui/dom.js?v=14";
+import { muscleMap } from "../ui/muscle-map.js?v=1";
 
 /* 名前にすでに敬称が付いていれば足さない */
 const honorific = name => /(さん|様|さま|氏)\s*$/.test(String(name)) ? "" : " さま";
@@ -61,8 +62,7 @@ export function render(){
       '</section>' +
 
       (muscles.length
-        ? '<section class="rp-block"><h3>鍛えた部位</h3><div class="rp-chips">' +
-          muscles.map(m => '<span>' + esc(m) + '</span>').join("") + '</div></section>'
+        ? '<section class="rp-block"><h3>鍛えた部位</h3>' + muscleMap(last) + '</section>'
         : "") +
 
       (last.notes.insight
