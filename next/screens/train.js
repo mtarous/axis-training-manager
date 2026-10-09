@@ -366,7 +366,7 @@ export function render(){
   '</section>' +
 
   '<details class="ax-panel tr-memo"' + (hasMemo() ? " open" : "") + '>' +
-    '<summary>メモ（気づき・注意点・共有・次回）</summary>' +
+    '<summary><span>体調・メモ</span><i>' + esc(metaSummary()) + '</i></summary>' +
     '<div class="tr-memobody">' +
       memoField("insight", "今日の気づき") +
       memoField("caution", "注意点") +
@@ -408,6 +408,22 @@ function pairBar(){
 function hasMemo(){
   return Object.values(current.notes).some(Boolean);
 }
+function effortLabel(value){
+  const n = Number(value) || 0;
+  if(n >= 10) return "ほぼ限界";
+  if(n >= 9) return "あと1回ほど";
+  if(n >= 8) return "あと2回ほど";
+  if(n >= 7) return "あと3回ほど";
+  if(n >= 6) return "あと4回以上";
+  if(n >= 5) return "余裕あり";
+  return n > 0 ? "かなり余裕" : "";
+}
+function metaSummary(){
+  const bits = [];
+  if(String(current.rpe ?? "").trim()) bits.push("きつさ " + effortLabel(current.rpe));
+  if(String(current.pain ?? "").trim() !== "") bits.push("痛み " + current.pain + "/10");
+  return bits.length ? bits.join(" · ") : "きつさ・痛みを入力";
+}
 function memoField(key, label){
   return '<label class="ax-field"><span>' + esc(label) + '</span>' +
     '<textarea class="ax-area" data-note="' + key + '">' + esc(current.notes[key]) + '</textarea></label>';
@@ -418,10 +434,7 @@ function selectField(key, label, options){
     '</select></label>';
 }
 function effortField(){
-  const options = [
-    ["", "-"], [1,"かなり余裕"], [2,"かなり余裕"], [3,"かなり余裕"], [4,"かなり余裕"],
-    [5,"余裕あり"], [6,"あと4回以上"], [7,"あと3回ほど"], [8,"あと2回ほど"], [9,"あと1回ほど"], [10,"ほぼ限界"]
-  ];
+  const options = [["", "-"], ...[1,2,3,4,5,6,7,8,9,10].map(v => [v, effortLabel(v)])];
   return '<label class="ax-field"><span>きつさ・余力</span><select class="ax-select" data-meta="rpe">' +
     options.map(([value,text]) => '<option value="' + esc(value) + '"' + (String(current.rpe) === String(value) ? " selected" : "") + '>' + esc(text) + '</option>').join("") +
     '</select></label>';
@@ -473,5 +486,10 @@ function bind(root){
   root.querySelector("#tr-date").onchange   = e => { current.date = e.target.value; render() };
   root.querySelector("#tr-name").oninput    = e => { ex().name = e.target.value; keep() };
   root.querySelectorAll("[data-note]").forEach(a => a.oninput = e => { current.notes[e.target.dataset.note] = e.target.value; keep() });
-  root.querySelectorAll("[data-meta]").forEach(a => a.onchange = e => { current[e.target.dataset.meta] = e.target.value; keep() });
+  root.querySelectorAll("[data-meta]").forEach(a => a.onchange = e => {
+    current[e.target.dataset.meta] = e.target.value;
+    keep();
+    const summary = root.querySelector(".tr-memo summary i");
+    if(summary) summary.textContent = metaSummary();
+  });
 }

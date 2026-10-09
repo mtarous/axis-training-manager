@@ -9,7 +9,7 @@ import * as clients from "./screens/clients.js?v=24";
 import * as report from "./screens/report.js?v=21";
 import * as schedule from "./screens/schedule.js?v=24";
 import * as history from "./screens/history.js?v=21";
-import * as train from "./screens/train.js?v=24";
+import * as train from "./screens/train.js?v=25";
 import * as settings from "./screens/settings.js?v=21";
 import * as calendar from "./features/calendar.js?v=21";
 
