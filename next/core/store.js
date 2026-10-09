@@ -1,11 +1,59 @@
 /* AXIS v2 データの置き場。
    状態を変える道はここだけ。画面は読むだけで、直接 localStorage に触らない。 */
 
-import { newId, normalizeSession, nowISO, today } from "./model.js?v=14";
+import { newId, normalizeSession, nowISO, today } from "./model.js?v=18";
 
 const KEY_STATE = "axis_v2_state";
 const KEY_DRAFT = "axis_v2_draft";
 const TRASH_DAYS = 30;
+
+/* 峰岡夫婦は予約上は1枠だが、実績は2人別々に持つ。
+   旧「峰岡夫婦」の記録は判別不能なので移動せず、その利用者だけ非表示にして保存する。 */
+const PAIR_MIGRATIONS = [
+  { label: "峰岡夫婦", legacy: ["峰岡夫婦", "峰岡夫妻"], members: ["峰岡 宏晃", "峰岡 多江"] }
+];
+const compactName = v => String(v || "").replace(/[\s　]+/g, "");
+
+function ensurePairMigrations(){
+  let changed = false;
+  const all = () => Object.values(state.clients);
+
+  PAIR_MIGRATIONS.forEach(spec => {
+    const legacyNames = new Set(spec.legacy.map(compactName));
+    const old = all().find(c => legacyNames.has(compactName(c.name)));
+    const existing = spec.members.map(name => all().find(c => compactName(c.name) === compactName(name)) || null);
+
+    /* 関係するデータが無い端末には勝手に利用者を増やさない。 */
+    if(!old && !existing.some(Boolean)) return;
+
+    const members = spec.members.map((name, i) => {
+      if(existing[i]) return existing[i];
+      const id = newId("c");
+      state.clients[id] = {
+        id, name, goal: "", attention: "", partnerId: "", pairLabel: spec.label, active: true,
+        createdAt: nowISO(), updatedAt: nowISO()
+      };
+      changed = true;
+      return state.clients[id];
+    });
+
+    const [a, b] = members;
+    if(a.partnerId !== b.id || a.pairLabel !== spec.label || a.active === false){
+      Object.assign(a, { partnerId: b.id, pairLabel: spec.label, active: true, updatedAt: nowISO() });
+      changed = true;
+    }
+    if(b.partnerId !== a.id || b.pairLabel !== spec.label || b.active === false){
+      Object.assign(b, { partnerId: a.id, pairLabel: spec.label, active: true, updatedAt: nowISO() });
+      changed = true;
+    }
+
+    if(old && (old.active !== false || old.legacyPairLabel !== spec.label)){
+      Object.assign(old, { active: false, legacyPairLabel: spec.label, updatedAt: nowISO() });
+      changed = true;
+    }
+  });
+  return changed;
+}
 
 let state = { version: 2, clients: {}, sessions: {}, updatedAt: nowISO() };
 const listeners = new Set();
@@ -36,6 +84,7 @@ export function load(){
         updatedAt: saved.updatedAt || nowISO()
       }
     : { version: 2, clients: {}, sessions: {}, updatedAt: nowISO() };
+  if(ensurePairMigrations()) persist();
   purgeTrash();
   return state;
 }
@@ -151,6 +200,7 @@ export function mergeImported({ clients: cs = {}, sessions: ss = [] } = {}){
     state.sessions[raw.id] = normalizeSession(raw);
     added += 1;
   });
+  ensurePairMigrations();
   persist();
   return added;
 }

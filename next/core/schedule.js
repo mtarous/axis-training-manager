@@ -1,8 +1,8 @@
 /* 予定。Googleカレンダーの取り込み済みスナップショットと、data.enc の手入力予定を1つに並べる。
    AXIS上で非表示にした予定はこの端末にだけ覚える。 */
 
-import { getMeta } from "./meta.js?v=14";
-import * as store from "./store.js?v=14";
+import { getMeta } from "./meta.js?v=18";
+import * as store from "./store.js?v=18";
 
 const HIDE_KEY = "axis_v2_hidden_schedule";
 
@@ -24,12 +24,26 @@ export function restore(key){ writeHidden(readHidden().filter(x => x !== key)) }
 export function restoreAll(){ writeHidden([]) }
 export function hiddenCount(){ return readHidden().length }
 
-/* 予定の題名から利用者と種類を読み取る */
+/* 予定の題名から利用者と種類を読み取る。
+   pairLabel が入っている2人は、カレンダー上は1枠でも両方の予定として扱う。 */
+function resolveClients(text){
+  const label = String(text || "").trim();
+  const clients = store.clients();
+  const direct = clients.find(c => c.name && label.includes(c.name));
+  if(direct) return { clientId: direct.id, clientIds: [direct.id] };
+
+  const pair = clients.filter(c => c.pairLabel && label.includes(c.pairLabel));
+  if(pair.length){
+    const ids = [...new Set(pair.map(c => c.id))];
+    return { clientId: ids[0] || "", clientIds: ids };
+  }
+  return { clientId: "", clientIds: [] };
+}
+
 function fromCalendar(){
-  const names = store.clients().map(c => c.name);
   return (getMeta().calendarEvents || []).map(e => {
     const label = String(e.summary || "予定").trim();
-    const hit = names.find(n => n && label.includes(n)) || "";
+    const match = resolveClients(label);
     let type = "予定";
     if(label.includes("パーソナル")) type = "パーソナル";
     else if(/ケア|整体|施術/.test(label)) type = "ケア";
@@ -38,20 +52,24 @@ function fromCalendar(){
       date: String(e.start || "").slice(0, 10),
       time: String(e.start || "").slice(11, 16),
       label, type, calendar: true,
-      clientId: hit ? (store.clientByName(hit)?.id || "") : ""
+      clientId: match.clientId, clientIds: match.clientIds
     };
   }).filter(x => x.date && x.time);
 }
 
 function fromMeta(){
-  return (getMeta().schedule || []).map(s => ({
-    date: String(s.date || "").slice(0, 10),
-    time: String(s.time || ""),
-    label: String(s.label || s.client || "予定"),
-    type: String(s.type || "予定"),
-    calendar: false,
-    clientId: s.client ? (store.clientByName(s.client)?.id || "") : ""
-  })).filter(x => x.date);
+  return (getMeta().schedule || []).map(s => {
+    const label = String(s.label || s.client || "予定");
+    const match = resolveClients(String(s.client || label));
+    return {
+      date: String(s.date || "").slice(0, 10),
+      time: String(s.time || ""),
+      label,
+      type: String(s.type || "予定"),
+      calendar: false,
+      clientId: match.clientId, clientIds: match.clientIds
+    };
+  }).filter(x => x.date);
 }
 
 export function all({ includeHidden = false } = {}){

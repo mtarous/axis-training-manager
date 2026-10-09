@@ -2,13 +2,13 @@
    旧アプリの professionalAdvice / professionalLine を v2 のデータで作り直したもの。
    文面はそのまま送る前提ではなく、直して使うたたき台。 */
 
-import { lineAdvice, safetyLevel } from "./coaching.js?v=14";
-import { musclesOfSession } from "../core/muscles.js?v=14";
-import * as sched from "../core/schedule.js?v=14";
-import * as store from "../core/store.js?v=14";
-import { clientSummary, nextTargets } from "../core/stats.js?v=14";
-import { today } from "../core/model.js?v=14";
-import { professionalFeedback } from "./professional-feedback.js?v=1";
+import { lineAdvice, safetyLevel } from "./coaching.js?v=18";
+import { musclesOfSession } from "../core/muscles.js?v=18";
+import * as sched from "../core/schedule.js?v=18";
+import * as store from "../core/store.js?v=18";
+import { clientSummary, nextTargets } from "../core/stats.js?v=18";
+import { today } from "../core/model.js?v=18";
+import { professionalFeedback } from "./professional-feedback.js?v=18";
 
 const jp = d => {
   const x = new Date(String(d).slice(0, 10) + "T00:00:00+09:00");
@@ -27,7 +27,7 @@ function callName(name){
 /* 次の予定。無ければ null */
 export function nextAppointment(clientId){
   const t = today();
-  return sched.all().find(x => x.clientId === clientId && x.date >= t) || null;
+  return sched.all().find(x => (x.clientId === clientId || x.clientIds?.includes(clientId)) && x.date >= t) || null;
 }
 
 /* 今日のポイントは coaching.js が記録から組み立てる。

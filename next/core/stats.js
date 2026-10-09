@@ -1,7 +1,7 @@
 /* 画面に出す数字をまとめる。表示の都合はここで吸収し、画面側では計算しない。 */
 
-import { sessionSetCount, sessionVolume } from "./model.js?v=14";
-import * as store from "./store.js?v=14";
+import { sessionSetCount, sessionVolume } from "./model.js?v=18";
+import * as store from "./store.js?v=18";
 
 export function clientSummary(clientId){
   const list = store.sessions({ clientId });

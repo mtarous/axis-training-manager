@@ -1,12 +1,12 @@
 /* 利用者。一覧と、1人ぶんの詳細。 */
 
-import * as store from "../core/store.js?v=14";
-import { clientSummary, deltaText, nextTargets, volumeTrend } from "../core/stats.js?v=14";
-import { musclesOfSession } from "../core/muscles.js?v=14";
-import { clientAdvice } from "../features/coaching.js?v=14";
-import { lineMessage } from "../features/line-text.js?v=16";
-import { el, esc } from "../ui/dom.js?v=14";
-import { muscleMap } from "../ui/muscle-map.js?v=1";
+import * as store from "../core/store.js?v=18";
+import { clientSummary, deltaText, nextTargets, volumeTrend } from "../core/stats.js?v=18";
+import { musclesOfSession } from "../core/muscles.js?v=18";
+import { clientAdvice } from "../features/coaching.js?v=18";
+import { lineMessage } from "../features/line-text.js?v=18";
+import { el, esc } from "../ui/dom.js?v=18";
+import { muscleMap } from "../ui/muscle-map.js?v=18";
 
 let query = "";
 let currentId = "";
@@ -86,11 +86,10 @@ export function renderDetail(){
 
     (c.attention ? '<div class="cd-attention"><b>注意点</b>' + esc(c.attention) + '</div>' : "") +
 
-    '<div class="cd-pair">' +
-      '<div><b>ペアトレ　一緒に記録する相手</b><span>' +
-        (partner ? esc(partner.name) : '設定なし') + '</span></div>' +
-      '<button type="button" class="ax-btn ghost" data-act="pair">' + (partner ? "変える" : "設定") + '</button>' +
-    '</div>' +
+    (partner ? '<div class="cd-pair">' +
+      '<div><b>ペアトレ' + (c.pairLabel ? '　' + esc(c.pairLabel) : '') + '</b><span>相手：' + esc(partner.name) + '</span></div>' +
+      (c.pairLabel ? '' : '<button type="button" class="ax-btn ghost" data-act="pair">変える</button>') +
+    '</div>' : '') +
 
     '<div class="cd-kpis">' +
       '<div><b>' + s.count + '</b><span>回</span></div>' +

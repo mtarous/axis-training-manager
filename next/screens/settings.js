@@ -1,18 +1,18 @@
 /* 設定。書き出しと、カレンダーの接続先。 */
 
-import * as store from "../core/store.js?v=14";
-import { expandToRows } from "../core/model.js?v=14";
-import * as archive from "../core/archive.js?v=15";
-import * as calendar from "../features/calendar.js?v=14";
-import { countEmpty, fillEmptyNotes } from "../features/notes-fill.js?v=15";
-import { buildPlainWorkbook, buildSubmitWorkbook, saveWorkbook } from "../features/excel.js?v=14";
-import { el, esc, toast } from "../ui/dom.js?v=14";
+import * as store from "../core/store.js?v=18";
+import { expandToRows } from "../core/model.js?v=18";
+import * as archive from "../core/archive.js?v=18";
+import * as calendar from "../features/calendar.js?v=18";
+import { countEmpty, fillEmptyNotes } from "../features/notes-fill.js?v=18";
+import { buildPlainWorkbook, buildSubmitWorkbook, saveWorkbook } from "../features/excel.js?v=18";
+import { el, esc, toast } from "../ui/dom.js?v=18";
 
 let go = () => {};
 export function setRouter(fn){ go = fn }
 
 /* 以前のアプリはリポジトリの一番上にある。どの階層から開かれても届くようにする。 */
-const legacyURL = () => new URL("../../legacy.html", import.meta.url).href;
+const legacyURL = () => new URL("../../legacy.html?legacy=1", import.meta.url).href;
 
 /* v2の記録を「1行=1種目」の表に開く */
 function rows(){
