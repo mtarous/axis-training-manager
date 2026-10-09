@@ -29,13 +29,14 @@
 .ho-item{
   width:100%;display:flex;align-items:center;gap:11px;text-align:left;margin-bottom:7px;
   background:var(--ax-panel);border:1px solid var(--ax-line2);color:var(--ax-ink);
-  border-radius:var(--ax-r-sm);padding:11px 13px
+  border-radius:var(--ax-r-sm);padding:4px 6px 4px 13px
 }
+.ho-itemmain{flex:1;min-width:0;display:flex;align-items:center;gap:11px;text-align:left;border:0;background:none;color:var(--ax-ink);padding:7px 3px 7px 0}
+.ho-quick{height:44px;min-width:52px;border:1px solid rgba(24,205,255,.34);border-radius:10px;background:rgba(11,140,255,.12);color:var(--ax-cyan);font-size:12px;font-weight:800;flex:none}
 .ho-time{font-size:15px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--ax-cyan);flex:none}
 .ho-label{flex:1;min-width:0}
 .ho-label b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .ho-label i{font-style:normal;font-size:11px;color:var(--ax-mut)}
-.ho-go{color:var(--ax-dim);font-size:17px;flex:none}
 .ho-synced{font-size:11px;color:var(--ax-dim);margin:14px 2px 0}
 
 /* 記録がないときの案内 */

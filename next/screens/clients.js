@@ -3,8 +3,8 @@
 import * as store from "../core/store.js?v=21";
 import { clientSummary, deltaText, volumeTrend } from "../core/stats.js?v=21";
 import { musclesOfSession } from "../core/muscles.js?v=21";
-import { clientAdvice } from "../features/coaching.js?v=21";
-import { lineMessage } from "../features/line-text.js?v=23";
+import { clientAdvice } from "../features/coaching.js?v=24";
+import { lineMessage } from "../features/line-text.js?v=24";
 import { el, esc } from "../ui/dom.js?v=21";
 import { muscleMap } from "../ui/muscle-map.js?v=21";
 
@@ -92,34 +92,34 @@ export function renderDetail(){
 
     '<div class="cd-kpis">' +
       '<div><b>' + s.count + '</b><span>トレーニング回数</span></div>' +
-      '<div><b>' + s.volume.toLocaleString() + '</b><span>直近の総負荷 kg</span></div>' +
-      '<div><b>' + esc(deltaText(s.delta)) + '</b><span>前回比</span></div>' +
+      '<div><b>' + s.volume.toLocaleString() + '</b><span>外部負荷量（参考）</span></div>' +
+      '<div><b>' + esc(deltaText(s.delta)) + '</b><span>前回比（参考）</span></div>' +
     '</div>' +
-
-    '<section class="ax-panel cd-panel-trend"><div class="cd-h">総負荷の推移</div>' + bars(volumeTrend(c.id)) + '</section>' +
-
-    (muscles.length
-      ? '<section class="ax-panel cd-panel-muscle"><div class="cd-h">直近で鍛えた部位</div>' + muscleMap(s.last) + '</section>'
-      : "") +
 
     (s.last
       ? '<section class="ax-panel cd-line cd-panel-line">' +
-          '<div class="cd-h">LINE文面</div>' +
-          '<p class="cd-linenote">直して使えます。コピーしてLINEに貼ってください。</p>' +
+          '<div class="cd-h cd-h-split"><span>LINE文面</span><small>トレ後の送信用</small></div>' +
+          '<p class="cd-linenote">内容は編集できます。コピー前に確認してください。</p>' +
           '<textarea id="cd-linetext" class="ax-area cd-linebox">' + esc(lineMessage(c.id)) + '</textarea>' +
           '<div class="cd-lineacts">' +
             '<button class="ax-btn pri" data-act="copy-line">コピー</button>' +
-            '<button class="ax-btn" data-act="redo-line">作り直す</button>' +
+            '<button class="ax-btn" data-act="reset-line">自動文に戻す</button>' +
           '</div>' +
         '</section>' +
 
-        '<section class="ax-panel"><div class="cd-h">今日のポイント</div>' +
+        '<section class="ax-panel cd-panel-advice"><div class="cd-h">今日のポイント</div>' +
           '<ul class="cd-advice">' +
             clientAdvice(c.id).map(a =>
               '<li class="lv-' + esc(a.level) + '"><i>' + esc(label(a.level)) + '</i>' + esc(a.text) + '</li>'
             ).join("") +
           '</ul>' +
         '</section>'
+      : "") +
+
+    '<section class="ax-panel cd-panel-trend"><div class="cd-h">外部負荷量の推移（参考）</div>' + bars(volumeTrend(c.id)) + '</section>' +
+
+    (muscles.length
+      ? '<section class="ax-panel cd-panel-muscle"><div class="cd-h">直近で鍛えた部位</div>' + muscleMap(s.last) + '</section>'
       : "") +
 
     '<div class="cd-h cd-listh">これまでの記録<span>' + list.length + '件</span></div>' +
@@ -142,7 +142,7 @@ export function renderDetail(){
       case "pair":    choosePartner(c); break;
       case "edit-session": go("train-session", t.dataset.id); break;
       case "copy-line":  copyLine(); break;
-      case "redo-line":  renderDetail(); break;
+      case "reset-line": resetLine(c.id); break;
     }
   };
 }
@@ -187,6 +187,12 @@ function link(c, mate){
   if(!mate){ store.upsertClient({ ...c, partnerId: "" }); return }
   store.upsertClient({ ...c, partnerId: mate.id });
   store.upsertClient({ ...mate, partnerId: c.id });
+}
+
+function resetLine(clientId){
+  const box = el("#cd-linetext");
+  if(!box) return;
+  box.value = lineMessage(clientId);
 }
 
 async function copyLine(){

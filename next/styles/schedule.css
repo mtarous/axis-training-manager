@@ -15,7 +15,8 @@
 .sc-main{flex:1;min-width:0;border:0;background:none;color:var(--ax-ink);text-align:left;padding:9px 0}
 .sc-main b{display:block;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sc-main i{font-style:normal;font-size:11px;color:var(--ax-mut)}
-.sc-hide{width:36px;height:36px;border:0;background:none;color:var(--ax-dim);font-size:16px;flex:none}
+.sc-start{height:44px;min-width:50px;border:1px solid rgba(24,205,255,.28);border-radius:9px;background:rgba(11,140,255,.10);color:var(--ax-cyan);font-size:11.5px;font-weight:800;flex:none}
+.sc-hide{width:40px;height:44px;border:0;background:none;color:var(--ax-dim);font-size:16px;flex:none}
 
 .sc-hidden>summary{font-size:13px;font-weight:800;cursor:pointer;list-style:none}
 .sc-hidden>summary b{color:var(--ax-cyan);margin-left:4px}

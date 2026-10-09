@@ -52,6 +52,7 @@ export function render(){
           '<button type="button" class="sc-main" data-act="open" data-id="' + esc(x.clientId) + '">' +
             '<b>' + esc(x.label) + '</b><i>' + esc(x.type) + (x.calendar ? " · カレンダー" : "") + '</i>' +
           '</button>' +
+          (x.clientId ? '<button type="button" class="sc-start" data-act="start" data-id="' + esc(x.clientId) + '">記録</button>' : '') +
           '<button type="button" class="sc-hide" data-act="hide" data-k="' + esc(sched.keyOf(x)) + '" aria-label="この予定を隠す">×</button>' +
         '</div>').join("")
     ).join("") : '<div class="ax-empty">これからの予定はありません</div>');
@@ -70,6 +71,7 @@ export function render(){
       });
     }
     if(b.dataset.act === "open" && b.dataset.id) go("client", b.dataset.id);
+    if(b.dataset.act === "start" && b.dataset.id) go("train-from", b.dataset.id);
     if(b.dataset.act === "hide"){ sched.hide(b.dataset.k); render() }
     if(b.dataset.act === "restore"){ sched.restore(b.dataset.k); render() }
     if(b.dataset.act === "restoreall"){ sched.restoreAll(); render() }

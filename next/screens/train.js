@@ -374,7 +374,7 @@ export function render(){
       memoField("next",    "次回やること") +
       '<div class="tr-selects">' +
         selectField("status", "状態", ["完了","良好","要確認","変更"]) +
-        selectField("rpe",    "RPE",  ["", 1,2,3,4,5,6,7,8,9,10]) +
+        effortField() +
         selectField("pain",   "痛み",  ["", 0,1,2,3,4,5,6,7,8,9,10]) +
       '</div>' +
     '</div>' +
@@ -415,6 +415,15 @@ function memoField(key, label){
 function selectField(key, label, options){
   return '<label class="ax-field"><span>' + esc(label) + '</span><select class="ax-select" data-meta="' + key + '">' +
     options.map(o => '<option value="' + esc(o) + '"' + (String(current[key]) === String(o) ? " selected" : "") + '>' + (o === "" ? "-" : esc(o)) + '</option>').join("") +
+    '</select></label>';
+}
+function effortField(){
+  const options = [
+    ["", "-"], [1,"かなり余裕"], [2,"かなり余裕"], [3,"かなり余裕"], [4,"かなり余裕"],
+    [5,"余裕あり"], [6,"あと4回以上"], [7,"あと3回ほど"], [8,"あと2回ほど"], [9,"あと1回ほど"], [10,"ほぼ限界"]
+  ];
+  return '<label class="ax-field"><span>きつさ・余力</span><select class="ax-select" data-meta="rpe">' +
+    options.map(([value,text]) => '<option value="' + esc(value) + '"' + (String(current.rpe) === String(value) ? " selected" : "") + '>' + esc(text) + '</option>').join("") +
     '</select></label>';
 }
 

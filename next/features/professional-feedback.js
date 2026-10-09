@@ -4,7 +4,7 @@
 import * as store from "../core/store.js?v=21";
 import { clientSummary } from "../core/stats.js?v=21";
 import { musclesOfSession } from "../core/muscles.js?v=21";
-import { assess, safetyLevel } from "./coaching.js?v=21";
+import { assess, safetyLevel } from "./coaching.js?v=24";
 
 const has=(s,re)=>re.test((s?.exercises||[]).map(e=>e.name).join(" "));
 const avgReps=s=>{const a=(s?.exercises||[]).flatMap(e=>e.sets||[]).map(x=>Number(x.reps)||0).filter(Boolean);return a.length?a.reduce((x,y)=>x+y,0)/a.length:0};
@@ -53,10 +53,10 @@ function biomechanics(s){
 
 function physiology(s,a){
   const reps=avgReps(s);const rpe=Number(a?.rpe)||0;
-  if(rpe>=9) return "主観的運動強度が高い回です。神経系と筋の疲労が残りやすいため、次回までの回復を優先し、同じ部位への高強度負荷は連日重ねない方針が適します。";
-  if(reps>=15) return "高回数帯で、局所の筋持久力と代謝ストレスが大きくなりやすい構成です。フォームが崩れる前にセットを終了することが重要です。";
-  if(reps>0&&reps<=6) return "低回数・高強度寄りで、筋力発揮と神経系への刺激が大きい構成です。回数を増やすより、1回ごとの動作再現性を優先します。";
-  return "中程度の反復回数で、筋力と筋肥大の両方を狙いやすい構成です。限界まで毎回行かず、少し余力を残して総量を積み上げる方が継続しやすくなります。";
+  if(rpe>=9) return "入力された運動のきつさは高めです。高い努力度は有効な刺激になり得ますが、毎セット限界まで追い込む必要があるわけではありません。次回は回復状態とフォームの再現性も合わせて負荷を判断します。";
+  if(reps>=15) return "高回数帯の構成です。局所疲労や筋持久力の要素が大きくなりやすい一方、筋肥大は高回数でも十分な努力度があれば狙えます。最大筋力を主目標にする場合は、より高い負荷を扱う練習との組み合わせを検討します。";
+  if(reps>0&&reps<=6) return "低回数帯の構成です。筋力向上には高い負荷を扱う練習が有効ですが、回数だけでは実際の強度は判断できないため、重量・本人のきつさ・フォームを合わせて評価します。";
+  return "中程度の反復回数で実施しています。この回数帯は扱いやすい範囲ですが、筋肥大や筋力の効果は回数だけで決まらないため、重量・セット数・本人のきつさ・フォームを合わせて評価します。";
 }
 
 function nutrition(client){

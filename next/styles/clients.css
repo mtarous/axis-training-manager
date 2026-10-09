@@ -71,6 +71,7 @@
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
 /* LINE文面 */
+.cd-panel-line{border-color:rgba(24,205,255,.28)!important;background:linear-gradient(155deg,rgba(11,140,255,.10),rgba(7,15,27,.98))!important}
 .cd-linenote{margin:0 0 10px;font-size:11.5px;color:var(--ax-dim)}
 .cd-linebox{min-height:188px;font-size:13px;line-height:1.75}
 .cd-lineacts{display:grid;grid-template-columns:2fr 1fr;gap:8px;margin-top:9px}

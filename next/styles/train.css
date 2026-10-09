@@ -94,7 +94,8 @@
 
 .tr-memo summary{font-size:13px;font-weight:800;cursor:pointer;list-style:none}
 .tr-memobody{display:grid;gap:10px;margin-top:12px}
-.tr-selects{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.tr-selects{display:grid;grid-template-columns:.9fr 1.25fr .9fr;gap:7px}
+.tr-selects .ax-select{font-size:12px;padding-left:8px;padding-right:8px}
 
 /* ペアトレの切り替え */
 .tr-pair-bar{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}

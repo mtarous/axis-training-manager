@@ -37,12 +37,14 @@ function emptyGuide(){
 }
 
 function item(s){
-  return '<button type="button" class="ho-item" data-act="open" data-id="' + esc(s.clientId) + '">' +
-    '<span class="ho-time">' + esc(s.time || "--:--") + '</span>' +
-    '<span class="ho-label"><b>' + esc(s.label) + '</b>' +
-      '<i>' + esc(s.type) + (s.calendar ? " · カレンダー" : "") + '</i></span>' +
-    (s.clientId ? '<span class="ho-go">›</span>' : "") +
-  '</button>';
+  return '<div class="ho-item">' +
+    '<button type="button" class="ho-itemmain" data-act="open" data-id="' + esc(s.clientId) + '">' +
+      '<span class="ho-time">' + esc(s.time || "--:--") + '</span>' +
+      '<span class="ho-label"><b>' + esc(s.label) + '</b>' +
+        '<i>' + esc(s.type) + (s.calendar ? " · カレンダー" : "") + '</i></span>' +
+    '</button>' +
+    (s.clientId ? '<button type="button" class="ho-quick" data-act="start" data-id="' + esc(s.clientId) + '">記録</button>' : "") +
+  '</div>';
 }
 
 export function render(){
@@ -94,5 +96,6 @@ export function render(){
     if(t2.dataset.act === "schedule") go("schedule");
     if(t2.dataset.act === "settings") go("settings");
     if(t2.dataset.act === "open" && t2.dataset.id) go("client", t2.dataset.id);
+    if(t2.dataset.act === "start" && t2.dataset.id) go("train-from", t2.dataset.id);
   };
 }

@@ -1,13 +1,13 @@
 /* 利用者へそのまま送れるLINE文面。
    専門知識は一般論ではなく、その日の記録・前回比較・本人メモに結び付けて返す。 */
 
-import { assess, lineAdvice, safetyLevel } from "./coaching.js?v=21";
+import { assess, lineAdvice, safetyLevel } from "./coaching.js?v=24";
 import { musclesOfSession } from "../core/muscles.js?v=21";
 import * as sched from "../core/schedule.js?v=21";
 import * as store from "../core/store.js?v=21";
 import { clientSummary } from "../core/stats.js?v=21";
 import { summarizeSets, today } from "../core/model.js?v=21";
-import { professionalFeedback } from "./professional-feedback.js?v=22";
+import { professionalFeedback } from "./professional-feedback.js?v=24";
 
 const jp = d => {
   const x = new Date(String(d).slice(0, 10) + "T00:00:00+09:00");
@@ -56,7 +56,7 @@ function trendLines(a, limit = 3){
       }else if(t.now.w > t.prev.w){
         const repDiff = t.now.r - t.prev.r;
         if(repDiff >= 0){
-          out.push(`${t.name}は前回${t.prev.w}kg×${t.prev.r}回 → 今回${t.now.w}kg×${t.now.r}回です。前回より高い重量を同じ回数扱えています。フォーム・可動域・RPEも同程度であれば、筋力発揮が向上している可能性があります。`);
+          out.push(`${t.name}は前回${t.prev.w}kg×${t.prev.r}回 → 今回${t.now.w}kg×${t.now.r}回です。前回より高い重量を同じ回数扱えています。フォーム・可動域・きつさも同程度であれば、筋力発揮が向上している可能性があります。`);
         }else if(repDiff >= -2){
           out.push(`${t.name}は前回${t.prev.w}kg×${t.prev.r}回 → 今回${t.now.w}kg×${t.now.r}回です。重量を上げた分だけ回数は少し落ちていますが、負荷設定としては自然な範囲なので、今回の負荷でフォーム・可動域・余力を安定して再現できるかを確認します。`);
         }else{
@@ -80,10 +80,14 @@ function trendLines(a, limit = 3){
 
 function volumeLine(s){
   if(s.delta === null) return "";
-  if(s.delta >= 15) return `重量種目ベースの総負荷量（重量×回数）は前回比＋${s.delta}%です。伸びは大きい一方で増加幅も大きいため、次回はさらに上げるより、同程度の負荷でフォームと可動域をそろえられるかを確認します。`;
-  if(s.delta >= 5) return `重量種目ベースの総負荷量（重量×回数）は前回比＋${s.delta}%です。前回より仕事量を増やせており、段階的に負荷を積み上げられています。`;
-  if(s.delta <= -15) return `重量種目ベースの総負荷量（重量×回数）は前回比${s.delta}%です。今回は数値を戻すことより、体調と動作の質を優先した内容になっています。`;
-  return `重量種目ベースの総負荷量（重量×回数）は前回比${s.delta > 0 ? "＋" : ""}${s.delta}%で、前回に近いトレーニング量を維持できています。`;
+  const names = x => (x?.exercises || []).map(e => String(e.name || "").trim()).filter(Boolean).sort().join("|");
+  const comparable = s.prev && names(s.last) === names(s.prev);
+  const label = `重量種目の外部負荷量（重量×回数の参考値）は前回比${s.delta > 0 ? "＋" : ""}${s.delta}%です。`;
+  if(!comparable) return label + "今回は種目構成が前回と異なるため、この数値だけでトレーニング量の増減は判断しません。";
+  if(s.delta >= 15) return label + "同じ種目構成で増加幅が大きいため、次回はさらに上げるよりフォーム・可動域・きつさの再現性を確認します。";
+  if(s.delta >= 5) return label + "同じ種目構成で前回より外部負荷量を増やせています。フォームや本人のきつさも同程度かを合わせて評価します。";
+  if(s.delta <= -15) return label + "同じ種目構成でも低下幅が大きいため、体調・疲労・可動域・フォームの違いを確認します。";
+  return label + "同じ種目構成で前回に近い外部負荷量です。数値だけでなくフォーム・可動域・本人のきつさも合わせて見ます。";
 }
 
 function intervalLine(a){
@@ -93,15 +97,26 @@ function intervalLine(a){
   return "";
 }
 
+function effortText(rpe){
+  const n = Number(rpe) || 0;
+  if(n >= 10) return "ほぼ限界まで出し切る強度";
+  if(n >= 9) return "あと1回できる程度の高めの強度";
+  if(n >= 8) return "あと2回ほどできそうな余力を残した強度";
+  if(n >= 7) return "あと3回ほどできそうな余裕のある強度";
+  if(n >= 6) return "まだ余裕を残せる強度";
+  return n > 0 ? "無理のない強度" : "";
+}
+
 function responseLine(a, last){
   if(!a || !last) return "";
   const bits = [];
-  if(String(last.rpe ?? "").trim() !== "") bits.push(`RPE ${a.rpe}/10`);
+  const effort = String(last.rpe ?? "").trim() !== "" ? effortText(a.rpe) : "";
+  if(effort) bits.push(effort);
   if(String(last.pain ?? "").trim() !== "") bits.push(`痛み ${a.pain}/10`);
   if(!bits.length) return "";
-  if(a.rpe >= 9) return `今回の身体反応は${bits.join("、")}です。運動強度がかなり高いため、次回はさらに負荷を上げるより回復とフォームの再現性を優先します。`;
-  if(a.pain >= 4) return `今回の身体反応は${bits.join("、")}です。痛みが出ているため、負荷量より症状が増えない範囲と動作の安定を優先します。`;
-  return `今回の身体反応は${bits.join("、")}です。この反応も次回の運動内容の調整に反映します。`;
+  if(a.rpe >= 9) return `今回は${bits.join("、")}でした。かなり高い強度なので、次回はさらに負荷を上げるより回復とフォームの再現性を優先します。`;
+  if(a.pain >= 4) return `今回は${bits.join("、")}でした。痛みが出ているため、負荷量より症状が増えない範囲と動作の安定を優先します。`;
+  return `今回は${bits.join("、")}でした。この反応も次回の運動内容の調整に反映します。`;
 }
 
 function nextBlock(last, level, a){
@@ -112,15 +127,11 @@ function nextBlock(last, level, a){
     return "次回は痛みや違和感、フォーム、可動域を確認しながら、その日の状態に合わせて内容を調整します。";
   }
   if(last.notes?.next) return clean(last.notes.next);
-  const stalled = a?.trends?.some(t => t.state === "stall");
-  const rising = a?.trends?.some(t => t.state === "up");
-  if(stalled){
-    return "次回は重量を追うより、可動域・テンポ・フォーム・狙った部位への入り方を確認し、動作の質を整えます。";
-  }
-  if(rising){
-    return "次回は今回の良い動きを再現できるかを確認し、フォーム・可動域・余力を見ながら当日の負荷を調整します。";
-  }
-  return "次回は今回の反応を基準に、フォーム・可動域・RPE・痛みの有無を確認しながら当日の内容を調整します。";
+  if(a?.rpe >= 9) return "次回は負荷を上げることより、疲労の残り方とフォームの再現性を優先して調整します。";
+  if(a?.trends?.some(t => t.state === "down")) return "次回は数値を戻すことを急がず、体調と動作の安定を見ながら調整します。";
+  if(a?.trends?.some(t => t.state === "stall")) return "次回は重量を追うより、可動域・テンポ・フォーム・狙った部位への入り方を確認します。";
+  if(a?.trends?.some(t => t.state === "up")) return "次回は今回の良い動きを再現できるかを確認し、フォーム・可動域・余力を見ながら当日の負荷を調整します。";
+  return "次回は今回の反応を基準に、フォーム・可動域・きつさ・痛みの有無を確認しながら当日の内容を調整します。";
 }
 
 export function lineMessage(clientId){
