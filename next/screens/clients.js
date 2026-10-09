@@ -3,8 +3,8 @@
 import * as store from "../core/store.js?v=21";
 import { clientSummary, deltaText, volumeTrend } from "../core/stats.js?v=21";
 import { musclesOfSession } from "../core/muscles.js?v=21";
-import { clientAdvice } from "../features/coaching.js?v=24";
-import { lineMessage } from "../features/line-text.js?v=24";
+import { clientAdvice } from "../features/coaching.js?v=26";
+import { lineMessage } from "../features/line-text.js?v=26";
 import { el, esc } from "../ui/dom.js?v=21";
 import { muscleMap } from "../ui/muscle-map.js?v=21";
 

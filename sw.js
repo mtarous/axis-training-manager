@@ -2,7 +2,7 @@
    まずネットワーク、ダメならキャッシュ。オンラインなら必ず最新が出る。
    いまの本体（next/ の中身）と、以前のアプリ（legacy.html）の両方をまかなう。 */
 
-const CACHE = "axis-root-029";
+const CACHE = "axis-root-030";
 
 /* いまの本体 */
 const APP = [
@@ -28,6 +28,7 @@ const APP = [
   "next/app.js?v=23",
   "next/app.js?v=24",
   "next/app.js?v=25",
+  "next/app.js?v=26",
   "next/core/archive.js",
   "next/core/archive.js?v=15",
   "next/core/crypto.js",
@@ -54,6 +55,7 @@ const APP = [
   "next/screens/clients.js?v=22",
   "next/screens/clients.js?v=23",
   "next/screens/clients.js?v=24",
+  "next/screens/clients.js?v=26",
   "next/screens/history.js",
   "next/screens/history.js?v=15",
   "next/screens/home.js",
@@ -75,6 +77,7 @@ const APP = [
   "next/features/calendar.js?v=14",
   "next/features/coaching.js",
   "next/features/coaching.js?v=24",
+  "next/features/coaching.js?v=26",
   "next/features/notes-fill.js",
   "next/features/notes-fill.js?v=15",
   "next/features/line-text.js",
@@ -83,10 +86,12 @@ const APP = [
   "next/features/line-text.js?v=22",
   "next/features/line-text.js?v=23",
   "next/features/line-text.js?v=24",
+  "next/features/line-text.js?v=26",
   "next/features/professional-feedback.js",
   "next/features/professional-feedback.js?v=1",
   "next/features/professional-feedback.js?v=22",
   "next/features/professional-feedback.js?v=24",
+  "next/features/professional-feedback.js?v=26",
   "next/features/excel.js",
   "next/styles/tokens.css",
   "next/styles/app.css",
