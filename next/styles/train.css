@@ -47,7 +47,7 @@
 .tr-erow .tr-val small{font-size:12px;font-weight:700;color:var(--ax-mut);margin-left:2px}
 .tr-sub{
   height:48px;border:1px solid var(--ax-line2);background:none;color:var(--ax-mut);
-  border-radius:10px;font-size:11.5px;font-weight:700
+  border-radius:10px;font-size:11.5px;font-weight:700;white-space:nowrap;padding:0 3px
 }
 .tr-sub.on{border-color:var(--ax-cyan);color:var(--ax-cyan);background:rgba(24,205,255,.10)}
 .tr-spacer{display:block}
