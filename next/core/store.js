@@ -217,12 +217,34 @@ export function repair(fn){
    既に v2 側にあるものは触らない（v2での編集が勝つ）。 */
 export function mergeImported({ clients: cs = {}, sessions: ss = [] } = {}){
   let added = 0;
+  const clientIdMap = {};
+
+  /* 旧データ側と新アプリ側でIDが違っても、同名の既存利用者が1人だけならその人へ統合する。
+     同姓同名が複数いる場合は誤結合を避け、自動では統合しない。 */
   Object.values(cs).forEach(c => {
-    if(!state.clients[c.id]) state.clients[c.id] = c;
+    if(!c?.id) return;
+    if(state.clients[c.id]){
+      clientIdMap[c.id] = c.id;
+      return;
+    }
+    const key = compactName(c.name);
+    const matches = key ? Object.values(state.clients).filter(x => compactName(x.name) === key) : [];
+    if(matches.length === 1){
+      const target = matches[0];
+      clientIdMap[c.id] = target.id;
+      /* 新アプリ側で未入力の補足だけ、旧データから補う。既存編集は上書きしない。 */
+      if(!target.goal && c.goal) target.goal = c.goal;
+      if(!target.attention && c.attention) target.attention = c.attention;
+      return;
+    }
+    state.clients[c.id] = c;
+    clientIdMap[c.id] = c.id;
   });
+
   ss.forEach(raw => {
     if(state.sessions[raw.id]) return;
-    state.sessions[raw.id] = normalizeSession(raw);
+    const mapped = { ...raw, clientId: clientIdMap[raw.clientId] || raw.clientId };
+    state.sessions[raw.id] = normalizeSession(mapped);
     added += 1;
   });
   ensurePairMigrations();
