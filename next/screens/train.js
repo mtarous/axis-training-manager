@@ -1,10 +1,10 @@
 /* トレ中入力。
    画面はこの1ファイルだけが描く。描き直しは render() の1本道。 */
 
-import * as store from "../core/store.js?v=19";
-import { BODYWEIGHT, makeExercise, makeSession, makeSet, num, round1, summarizeSets, today } from "../core/model.js?v=19";
-import { el, esc, inlineEdit, toast } from "../ui/dom.js?v=19";
-import * as rest from "../ui/rest-timer.js?v=19";
+import * as store from "../core/store.js?v=20";
+import { BODYWEIGHT, makeExercise, makeSession, makeSet, num, round1, summarizeSets, today } from "../core/model.js?v=20";
+import { el, esc, inlineEdit, toast } from "../ui/dom.js?v=20";
+import * as rest from "../ui/rest-timer.js?v=20";
 
 const STEPS = [1, 2.5, 5, 10];
 
@@ -390,15 +390,18 @@ function pairBar(){
   const partner = partnerOf(current.clientId);
   if(!partner) return "";
   const me = store.client(current.clientId);
-  /* 切り替えても並び順が入れ替わらないようにする（押す場所が動くと間違えるため） */
+  /* ?????????????????????????????????????? */
   const people = [me, partner].sort((a, b) => a.id.localeCompare(b.id));
-  return '<div class="tr-pair-bar">' +
-    people.map(p => {
-      const s = pool[p.id];
-      const done = s ? s.exercises.filter(e => e.name.trim()).length : 0;
-      return '<button type="button" class="' + (p.id === current.clientId ? "on" : "") + '" data-act="who" data-id="' + esc(p.id) + '">' +
-        '<b>' + esc(p.name) + '</b><i>' + (done ? done + "種目" : "未入力") + '</i></button>';
-    }).join("") +
+  return '<div class="tr-pair-wrap">' +
+    '<div class="tr-pair-label"><b>????</b><span>??????????</span></div>' +
+    '<div class="tr-pair-bar">' +
+      people.map(p => {
+        const s = pool[p.id];
+        const done = s ? s.exercises.filter(e => e.name.trim()).length : 0;
+        return '<button type="button" class="' + (p.id === current.clientId ? "on" : "") + '" data-act="who" data-id="' + esc(p.id) + '">' +
+          '<b>' + esc(p.name) + '</b><i>' + (done ? done + "????" : "???") + '</i></button>';
+      }).join("") +
+    '</div>' +
   '</div>';
 }
 

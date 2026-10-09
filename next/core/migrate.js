@@ -3,8 +3,8 @@
    - セッションの id は元データから決まるので、何度取り込んでも増えない
    - 既にv2側にある記録は上書きしない（v2での編集が勝つ） */
 
-import { BODYWEIGHT, makeSet, newId, nowISO, normWeight, num, today } from "./model.js?v=19";
-import { buildLegacyNoteRepair, applyLegacyNoteRepair } from "./legacy-notes.js?v=19";
+import { BODYWEIGHT, makeSet, newId, nowISO, normWeight, num, today } from "./model.js?v=20";
+import { buildLegacyNoteRepair, applyLegacyNoteRepair } from "./legacy-notes.js?v=20";
 
 const KEY_ADDED = "axis_training_added";
 const KEY_EDITS = "axis_training_edits_v1";

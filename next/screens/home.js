@@ -1,9 +1,9 @@
 /* ホーム。今日やることと、記録への入口だけを出す。 */
 
-import * as store from "../core/store.js?v=19";
-import * as schedule from "../core/schedule.js?v=19";
-import { today } from "../core/model.js?v=19";
-import { el, esc } from "../ui/dom.js?v=19";
+import * as store from "../core/store.js?v=20";
+import * as schedule from "../core/schedule.js?v=20";
+import { today } from "../core/model.js?v=20";
+import { el, esc } from "../ui/dom.js?v=20";
 
 let go = () => {};
 export function setRouter(fn){ go = fn }
@@ -59,33 +59,33 @@ export function render(){
   const empty = !store.clients().length && !store.sessions().length;
 
   root.innerHTML =
-    '<section class="ho-hero">' +
-      '<button type="button" class="ho-gear" data-act="settings" aria-label="設定">⚙</button>' +
-      '<span class="ax-eyebrow">TODAY</span>' +
-      '<h2>' + esc(jp(t)) + '</h2>' +
-      '<p>' + (todays.length ? "今日は " + todays.length + "件の予定があります" : "今日の予定はありません") + '</p>' +
-    '</section>' +
-
-    (empty ? emptyGuide() : "") +
-
-    '<button class="ax-btn pri full ho-start" data-act="train">＋ 記録をはじめる</button>' +
-
-    '<div class="ho-kpis">' +
-      '<div><b>' + store.clients().length + '</b><span>利用者</span></div>' +
-      '<div><b>' + thisMonth + '</b><span>今月の記録</span></div>' +
-      '<div><b>' + store.sessions().length + '</b><span>記録ぜんぶ</span></div>' +
-    '</div>' +
-
-    '<div class="ho-title"><h3>今日の予定</h3>' +
-      (list.length ? '<button type="button" class="ho-more" data-act="schedule">予定をぜんぶ見る</button>' : "") +
-    '</div>' +
-    (todays.length ? todays.map(item).join("") : '<div class="ax-empty">予定はありません</div>') +
-
-    (!todays.length && upcoming.length
-      ? '<div class="ho-title"><h3>このあと</h3></div>' + upcoming.map(item).join("")
-      : "") +
-
-    (synced ? '<p class="ho-synced">カレンダー取込 ' + esc(synced) + '</p>' : "");
+    '<div class="ho-layout">' +
+      '<div class="ho-overview">' +
+        '<section class="ho-hero">' +
+          '<button type="button" class="ho-gear" data-act="settings" aria-label="??">?</button>' +
+          '<span class="ax-eyebrow">TODAY</span>' +
+          '<h2>' + esc(jp(t)) + '</h2>' +
+          '<p>' + (todays.length ? "??? " + todays.length + "?????????" : "???????????") + '</p>' +
+        '</section>' +
+        (empty ? emptyGuide() : "") +
+        '<button class="ax-btn pri full ho-start" data-act="train">? ?????????????</button>' +
+        '<div class="ho-kpis">' +
+          '<div><b>' + store.clients().length + '</b><span>???</span></div>' +
+          '<div><b>' + thisMonth + '</b><span>??</span></div>' +
+          '<div><b>' + store.sessions().length + '</b><span>???</span></div>' +
+        '</div>' +
+      '</div>' +
+      '<section class="ho-agenda">' +
+        '<div class="ho-title"><h3>?????</h3>' +
+          (list.length ? '<button type="button" class="ho-more" data-act="schedule">?????</button>' : "") +
+        '</div>' +
+        (todays.length ? todays.map(item).join("") : '<div class="ax-empty ho-agenda-empty">????????</div>') +
+        (!todays.length && upcoming.length
+          ? '<div class="ho-title ho-upcoming"><h3>????</h3></div>' + upcoming.map(item).join("")
+          : "") +
+        (synced ? '<p class="ho-synced">??????? ' + esc(synced) + '</p>' : "") +
+      '</section>' +
+    '</div>';
 
   root.onclick = ev => {
     const t2 = ev.target.closest("[data-act]");

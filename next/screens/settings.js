@@ -1,12 +1,12 @@
 /* 設定。書き出しと、カレンダーの接続先。 */
 
-import * as store from "../core/store.js?v=19";
-import { expandToRows } from "../core/model.js?v=19";
-import * as archive from "../core/archive.js?v=19";
-import * as calendar from "../features/calendar.js?v=19";
-import { countEmpty, fillEmptyNotes } from "../features/notes-fill.js?v=19";
-import { buildPlainWorkbook, buildSubmitWorkbook, saveWorkbook } from "../features/excel.js?v=19";
-import { el, esc, toast } from "../ui/dom.js?v=19";
+import * as store from "../core/store.js?v=20";
+import { expandToRows } from "../core/model.js?v=20";
+import * as archive from "../core/archive.js?v=20";
+import * as calendar from "../features/calendar.js?v=20";
+import { countEmpty, fillEmptyNotes } from "../features/notes-fill.js?v=20";
+import { buildPlainWorkbook, buildSubmitWorkbook, saveWorkbook } from "../features/excel.js?v=20";
+import { el, esc, toast } from "../ui/dom.js?v=20";
 
 let go = () => {};
 export function setRouter(fn){ go = fn }

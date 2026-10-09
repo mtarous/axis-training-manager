@@ -2,7 +2,7 @@
    Apps Script の op=calendar を JSONP で呼ぶ。
    設定していないとき・取れなかったときは、data.enc 同梱のスナップショットのまま動く。 */
 
-import { getMeta, setMeta } from "../core/meta.js?v=19";
+import { getMeta, setMeta } from "../core/meta.js?v=20";
 
 const KEY_SETTINGS = "axis_v2_calendar";
 const KEY_CACHE    = "axis_v2_calendar_cache";

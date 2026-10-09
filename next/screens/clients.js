@@ -1,12 +1,12 @@
 /* 利用者。一覧と、1人ぶんの詳細。 */
 
-import * as store from "../core/store.js?v=19";
-import { clientSummary, deltaText, nextTargets, volumeTrend } from "../core/stats.js?v=19";
-import { musclesOfSession } from "../core/muscles.js?v=19";
-import { clientAdvice } from "../features/coaching.js?v=19";
-import { lineMessage } from "../features/line-text.js?v=19";
-import { el, esc } from "../ui/dom.js?v=19";
-import { muscleMap } from "../ui/muscle-map.js?v=19";
+import * as store from "../core/store.js?v=20";
+import { clientSummary, deltaText, nextTargets, volumeTrend } from "../core/stats.js?v=20";
+import { musclesOfSession } from "../core/muscles.js?v=20";
+import { clientAdvice } from "../features/coaching.js?v=20";
+import { lineMessage } from "../features/line-text.js?v=20";
+import { el, esc } from "../ui/dom.js?v=20";
+import { muscleMap } from "../ui/muscle-map.js?v=20";
 
 let query = "";
 let currentId = "";
@@ -91,25 +91,25 @@ export function renderDetail(){
       (c.pairLabel ? '' : '<button type="button" class="ax-btn ghost" data-act="pair">変える</button>') +
     '</div>' : '') +
 
-    '<div class="cd-kpis">' +
-      '<div><b>' + s.count + '</b><span>回</span></div>' +
-      '<div><b>' + s.volume.toLocaleString() + '</b><span>直近の総負荷 kg</span></div>' +
-      '<div><b>' + esc(deltaText(s.delta)) + '</b><span>前回比</span></div>' +
-    '</div>' +
-
-    '<section class="ax-panel"><div class="cd-h">総負荷の推移</div>' + bars(volumeTrend(c.id)) + '</section>' +
-
-    (muscles.length
-      ? '<section class="ax-panel"><div class="cd-h">直近で鍛えた部位</div>' + muscleMap(s.last) + '</section>'
-      : "") +
-
     (targets.length
-      ? '<section class="ax-panel"><div class="cd-h">次回の目安</div>' +
+      ? '<section class="ax-panel cd-panel-next"><div class="cd-h cd-h-split"><span>?????</span><small>NEXT SESSION</small></div>' +
         '<ul class="cd-next">' + targets.map(t => '<li><b>' + esc(t.name) + '</b>' + esc(t.text) + '</li>').join("") + '</ul></section>'
       : "") +
 
+    '<div class="cd-kpis">' +
+      '<div><b>' + s.count + '</b><span>????????</span></div>' +
+      '<div><b>' + s.volume.toLocaleString() + '</b><span>????? kg</span></div>' +
+      '<div><b>' + esc(deltaText(s.delta)) + '</b><span>???</span></div>' +
+    '</div>' +
+
+    '<section class="ax-panel cd-panel-trend"><div class="cd-h">??????</div>' + bars(volumeTrend(c.id)) + '</section>' +
+
+    (muscles.length
+      ? '<section class="ax-panel cd-panel-muscle"><div class="cd-h">????????</div>' + muscleMap(s.last) + '</section>'
+      : "") +
+
     (s.last
-      ? '<section class="ax-panel cd-line">' +
+      ? '<section class="ax-panel cd-line cd-panel-line">' +
           '<div class="cd-h">LINE文面</div>' +
           '<p class="cd-linenote">直して使えます。コピーしてLINEに貼ってください。</p>' +
           '<textarea id="cd-linetext" class="ax-area cd-linebox">' + esc(lineMessage(c.id)) + '</textarea>' +

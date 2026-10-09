@@ -1,7 +1,7 @@
 /* AXIS v2 データの置き場。
    状態を変える道はここだけ。画面は読むだけで、直接 localStorage に触らない。 */
 
-import { newId, normalizeSession, nowISO, today } from "./model.js?v=19";
+import { newId, normalizeSession, nowISO, today } from "./model.js?v=20";
 
 const KEY_STATE = "axis_v2_state";
 const KEY_DRAFT = "axis_v2_draft";

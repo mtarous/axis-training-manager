@@ -1,6 +1,6 @@
 /* 休憩タイマー。画面下に出し、一時停止・延長・停止ができる。 */
 
-import { dock, el } from "./dom.js?v=19";
+import { dock, el } from "./dom.js?v=20";
 
 let left = 0, total = 0, tick = null, running = false;
 

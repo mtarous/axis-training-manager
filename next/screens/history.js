@@ -1,8 +1,8 @@
 /* 履歴。セッション単位で見て、直して、消す。 */
 
-import * as store from "../core/store.js?v=19";
-import { sessionSetCount, sessionVolume, summarizeSets } from "../core/model.js?v=19";
-import { el, esc, toast } from "../ui/dom.js?v=19";
+import * as store from "../core/store.js?v=20";
+import { sessionSetCount, sessionVolume, summarizeSets } from "../core/model.js?v=20";
+import { el, esc, toast } from "../ui/dom.js?v=20";
 
 const PAGE = 30;
 

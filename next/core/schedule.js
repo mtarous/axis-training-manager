@@ -1,8 +1,8 @@
 /* 予定。Googleカレンダーの取り込み済みスナップショットと、data.enc の手入力予定を1つに並べる。
    AXIS上で非表示にした予定はこの端末にだけ覚える。 */
 
-import { getMeta } from "./meta.js?v=19";
-import * as store from "./store.js?v=19";
+import { getMeta } from "./meta.js?v=20";
+import * as store from "./store.js?v=20";
 
 const HIDE_KEY = "axis_v2_hidden_schedule";
 
