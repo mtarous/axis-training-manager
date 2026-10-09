@@ -26,9 +26,14 @@
 .hi-row b{font-size:13.5px;flex:none;max-width:48%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hi-row span{font-size:12.5px;color:var(--ax-mut);flex:1;min-width:0}
 
-.hi-note{margin-top:10px;border-top:1px solid var(--ax-line2);padding-top:9px}
-.hi-note p{margin:0 0 5px;font-size:12.5px;color:var(--ax-mut);line-height:1.6}
-.hi-note i{font-style:normal;font-weight:800;color:var(--ax-dim);margin-right:7px;font-size:11px}
+.hi-note{display:grid;gap:6px;margin-top:10px;border-top:1px solid var(--ax-line2);padding-top:9px}
+.hi-note p{display:grid;grid-template-columns:58px minmax(0,1fr);gap:8px;margin:0;padding:7px 8px;border-radius:9px;background:rgba(255,255,255,.025);font-size:12.5px;color:var(--ax-mut);line-height:1.55}
+.hi-note i{font-style:normal;font-weight:800;color:var(--ax-dim);font-size:10.5px}
+.hi-note span{white-space:pre-line;min-width:0}
+.hi-note .insight{border-left:2px solid var(--ax-cyan)}
+.hi-note .caution{border-left:2px solid #f59e0b}
+.hi-note .share{border-left:2px solid var(--ax-blue)}
+.hi-note .next{border-left:2px solid var(--ax-green)}
 
 .hi-trash>summary{font-size:13px;font-weight:800;cursor:pointer;list-style:none}
 .hi-trash>summary b{color:var(--ax-cyan);margin-left:4px}

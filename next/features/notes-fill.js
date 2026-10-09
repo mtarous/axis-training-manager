@@ -199,7 +199,7 @@ export function fillEmptyNotes(sessions){
     const auto = new Set(Array.isArray(s.notesAuto) ? s.notesAuto : []);
     let touched = false;
 
-    const addInsight = insightFor(s);
+    const addInsight = s.source === "legacy" ? "" : insightFor(s);
     if(addInsight && !String(s.notes.insight || "").includes(addInsight.split("\n")[0])){
       s.notes.insight = [String(s.notes.insight || "").trim(), addInsight].filter(Boolean).join("\n");
       auto.add("insight");
@@ -229,6 +229,6 @@ export function countEmpty(sessions){
       !String(s.notes.caution || "").trim() ||
       !String(s.notes.share || "").trim() ||
       !String(s.notes.next || "").trim() ||
-      (insightFor(s) && !String(s.notes.insight || "").includes(insightFor(s).split("\n")[0]))
+      (s.source !== "legacy" && insightFor(s) && !String(s.notes.insight || "").includes(insightFor(s).split("\n")[0]))
     )).length;
 }

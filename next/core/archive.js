@@ -4,7 +4,7 @@
 
 import { decryptBlob } from "./crypto.js?v=14";
 import { getMeta, setMeta } from "./meta.js?v=14";
-import { importLegacy, resplitLegacyNotes } from "./migrate.js?v=14";
+import { importLegacy, resplitLegacyNotes, repairLegacyNotes } from "./migrate.js?v=15";
 import * as store from "./store.js?v=14";
 
 const KEY_CODE = "axis_training_key";
@@ -27,7 +27,9 @@ export async function load(code, { remember = true } = {}){
     setMeta({ ...getMeta(), calendarEvents: cal.events || [], calendarSyncedAt: cal.syncedAt || "" });
   }catch(e){ /* カレンダーが読めなくても記録は使える */ }
 
-  const added = store.mergeImported(importLegacy({ base: data.history || [], meta: data }));
+  const imported = importLegacy({ base: data.history || [], meta: data });
+  const added = store.mergeImported(imported);
+  store.repair(sessions => repairLegacyNotes(sessions, imported.noteRepair));
   store.repair(resplitLegacyNotes);
   if(remember) localStorage.setItem(KEY_CODE, code);
   loaded = true;

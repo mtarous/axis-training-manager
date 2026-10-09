@@ -4,6 +4,7 @@
    - 既にv2側にある記録は上書きしない（v2での編集が勝つ） */
 
 import { BODYWEIGHT, makeSet, newId, nowISO, normWeight, num, today } from "./model.js?v=14";
+import { buildLegacyNoteRepair, applyLegacyNoteRepair } from "./legacy-notes.js?v=1";
 
 const KEY_ADDED = "axis_training_added";
 const KEY_EDITS = "axis_training_edits_v1";
@@ -249,8 +250,14 @@ export function resplitLegacyNotes(sessions){
 export function importLegacy({ base = [], meta = {} } = {}){
   const added = readJSON(KEY_ADDED, []) || [];
   const { clients, nameToId } = buildClients(base, added, meta);
+  const noteRepair = buildLegacyNoteRepair(base, nameToId, splitMemo);
   let sessions = [...legacySessions(base, nameToId), ...appSessions(added, nameToId)];
   sessions = applyOldEdits(sessions, nameToId);
   sessions = applyOldDeletes(sessions, nameToId);
-  return { clients, sessions };
+  sessions.forEach(s => { if(s.source === "legacy") applyLegacyNoteRepair({ [s.id]: s }, noteRepair) });
+  return { clients, sessions, noteRepair };
+}
+
+export function repairLegacyNotes(sessions, noteRepair){
+  return applyLegacyNoteRepair(sessions, noteRepair);
 }

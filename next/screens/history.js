@@ -36,10 +36,12 @@ function card(s){
         '<div class="hi-row"><b>' + esc(e.name || "（種目名なし）") + '</b><span>' + esc(summarizeSets(e.sets)) + '</span></div>'
       ).join("") +
     '</div>' +
-    (s.notes.insight || s.notes.next
+    (s.notes.insight || s.notes.caution || s.notes.share || s.notes.next
       ? '<div class="hi-note">' +
-          (s.notes.insight ? '<p><i>気づき</i>' + esc(s.notes.insight) + '</p>' : "") +
-          (s.notes.next ? '<p><i>次回</i>' + esc(s.notes.next) + '</p>' : "") +
+          (s.notes.insight ? '<p class="insight"><i>気づき</i><span>' + esc(s.notes.insight) + '</span></p>' : "") +
+          (s.notes.caution ? '<p class="caution"><i>注意点</i><span>' + esc(s.notes.caution) + '</span></p>' : "") +
+          (s.notes.share ? '<p class="share"><i>共有事項</i><span>' + esc(s.notes.share) + '</span></p>' : "") +
+          (s.notes.next ? '<p class="next"><i>次回</i><span>' + esc(s.notes.next) + '</span></p>' : "") +
         '</div>'
       : "") +
   '</section>';

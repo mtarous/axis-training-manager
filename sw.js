@@ -2,7 +2,7 @@
    まずネットワーク、ダメならキャッシュ。オンラインなら必ず最新が出る。
    いまの本体（next/ の中身）と、以前のアプリ（legacy.html）の両方をまかなう。 */
 
-const CACHE = "axis-root-017";
+const CACHE = "axis-root-019";
 
 /* いまの本体 */
 const APP = [
@@ -17,10 +17,15 @@ const APP = [
   "icon-512.png",
   "next/app.js",
   "next/app.js?v=14",
+  "next/app.js?v=15",
   "next/core/archive.js",
+  "next/core/archive.js?v=15",
   "next/core/crypto.js",
   "next/core/meta.js",
   "next/core/migrate.js",
+  "next/core/migrate.js?v=15",
+  "next/core/legacy-notes.js",
+  "next/core/legacy-notes.js?v=1",
   "next/core/model.js",
   "next/core/model.js?v=14",
   "next/core/muscles.js",
@@ -31,18 +36,21 @@ const APP = [
   "next/ui/rest-timer.js",
   "next/screens/clients.js",
   "next/screens/history.js",
+  "next/screens/history.js?v=15",
   "next/screens/home.js",
   "next/screens/report.js",
   "next/screens/schedule.js",
   "next/screens/schedule.js?v=14",
   "next/screens/settings.js",
   "next/screens/settings.js?v=14",
+  "next/screens/settings.js?v=15",
   "next/screens/train.js",
   "next/screens/train.js?v=14",
   "next/features/calendar.js",
   "next/features/calendar.js?v=14",
   "next/features/coaching.js",
   "next/features/notes-fill.js",
+  "next/features/notes-fill.js?v=15",
   "next/features/line-text.js",
   "next/features/excel.js",
   "next/styles/tokens.css",
@@ -54,7 +62,8 @@ const APP = [
   "next/styles/settings.css",
   "next/styles/train.css",
   "next/styles/train.css?v=14",
-  "next/styles/history.css"
+  "next/styles/history.css",
+  "next/styles/history.css?v=4"
 ];
 
 /* 以前のアプリ。legacy.html から今まで通り開ける */

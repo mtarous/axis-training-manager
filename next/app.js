@@ -1,16 +1,16 @@
 /* AXIS v2 起動と画面の切り替え。
    ここは繋ぐだけ。画面の中身は screens/ が持つ。 */
 
-import * as archive from "./core/archive.js?v=14";
+import * as archive from "./core/archive.js?v=15";
 import * as store from "./core/store.js?v=14";
 import { el } from "./ui/dom.js?v=14";
 import * as home from "./screens/home.js?v=14";
 import * as clients from "./screens/clients.js?v=14";
 import * as report from "./screens/report.js?v=14";
 import * as schedule from "./screens/schedule.js?v=14";
-import * as history from "./screens/history.js?v=14";
+import * as history from "./screens/history.js?v=15";
 import * as train from "./screens/train.js?v=14";
-import * as settings from "./screens/settings.js?v=14";
+import * as settings from "./screens/settings.js?v=15";
 import * as calendar from "./features/calendar.js?v=14";
 
 const TABS = ["home", "schedule", "clients", "history", "train"];
