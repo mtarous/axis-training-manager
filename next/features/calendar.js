@@ -40,6 +40,12 @@ export function isConfigured(){
   const s = settings();
   return !!(s.endpoint && s.token);
 }
+export function hasCalendarSelection(){
+  return !!settings().calendarId;
+}
+export function isReady(){
+  return isConfigured() && hasCalendarSelection();
+}
 
 function cache(){
   try{
@@ -69,38 +75,48 @@ function jsonp(endpoint, params, timeoutMs = 15000){
   });
 }
 
-function apply(events, syncedAt){
-  setMeta({ ...getMeta(), calendarEvents: events, calendarSyncedAt: syncedAt, calendarLive: true, calendarLoadError: "" });
+function apply(events, syncedAt, calendarName = ""){
+  setMeta({
+    ...getMeta(),
+    calendarEvents: events,
+    calendarSyncedAt: syncedAt,
+    calendarName: String(calendarName || ""),
+    calendarLive: true,
+    calendarLoadError: ""
+  });
 }
 
 /* 前回取れた分をすぐ出す。通信を待たせない。 */
 export function applyCached(){
+  /* 接続済みなのに対象カレンダー未選択なら、既定カレンダーの古いキャッシュを誤表示しない。 */
+  if(isConfigured() && !hasCalendarSelection()) return false;
   const c = cache();
-  if(c){ apply(c.events, c.syncedAt); return true }
+  if(c){ apply(c.events, c.syncedAt, c.calendarName || c.calendar || ""); return true }
   return false;
 }
 
 export async function refresh({ back = 14, days = 90 } = {}){
   const s = settings();
   if(!s.endpoint || !s.token) throw new Error("設定でカレンダーの接続先を入れてください。");
+  if(!s.calendarId) throw new Error("読み込むGoogleカレンダーを選んでください。");
   if(inFlight) return inFlight;
   inFlight = (async () => {
-    const params = { op: "calendar", token: s.token, back: String(back), days: String(days) };
-    if(s.calendarId) params.calendarId = s.calendarId;
+    const params = { op: "calendar", token: s.token, back: String(back), days: String(days), calendarId: s.calendarId };
     const r = await jsonp(s.endpoint, params);
     if(!r || r.ok === false) throw new Error(String(r && r.error || "カレンダーを取得できませんでした"));
     const events = Array.isArray(r.events) ? r.events : [];
     const syncedAt = String(r.syncedAt || new Date().toISOString());
-    writeCache({ events, syncedAt, at: Date.now() });
-    apply(events, syncedAt);
-    return { count: events.length, syncedAt };
+    const calendarName = String(r.calendar || "");
+    writeCache({ events, syncedAt, calendarName, at: Date.now() });
+    apply(events, syncedAt, calendarName);
+    return { count: events.length, syncedAt, calendarName };
   })();
   try{ return await inFlight } finally { inFlight = null }
 }
 
 /* 直近1分以内でなければ裏で取り直す。失敗しても元の予定は残す。 */
 export async function refreshIfStale(){
-  if(!isConfigured()) return;
+  if(!isReady()) return;
   const c = cache();
   if(c && Date.now() - Number(c.at || 0) < FRESH_MS) return;
   try{ await refresh() }catch(e){ setMeta({ ...getMeta(), calendarLoadError: String(e.message || e) }) }

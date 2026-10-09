@@ -3,7 +3,7 @@
 import * as store from "../core/store.js?v=21";
 import { expandToRows } from "../core/model.js?v=21";
 import * as archive from "../core/archive.js?v=21";
-import * as calendar from "../features/calendar.js?v=21";
+import * as calendar from "../features/calendar.js?v=28";
 import { countEmpty, fillEmptyNotes } from "../features/notes-fill.js?v=21";
 import { buildPlainWorkbook, buildSubmitWorkbook, saveWorkbook } from "../features/excel.js?v=21";
 import { el, esc, toast } from "../ui/dom.js?v=21";
@@ -87,10 +87,12 @@ export function render(){
         '<input id="se-endpoint" class="ax-input" placeholder="https://script.google.com/macros/s/.../exec" value="' + esc(cal.endpoint) + '"></label>' +
       '<label class="ax-field se-mt"><span>トークン</span>' +
         '<input id="se-token" class="ax-input" type="password" placeholder="Apps Scriptで決めた合い言葉" value="' + esc(cal.token) + '"></label>' +
-      (cal.calendarId ? '<p class="se-note se-mt">読み込むカレンダー：' + esc(cal.calendarId) + '</p>' : "") +
+      (cal.calendarId
+        ? '<p class="se-note se-mt">読み込むカレンダー：選択済み</p>'
+        : (calendar.isConfigured() ? '<p class="se-note se-mt" role="alert">読み込むカレンダーが未選択です。下の「カレンダーを選ぶ」から選択してください。</p>' : "")) +
       '<div class="se-grid se-mt">' +
         '<button class="ax-btn pri full" data-act="cal-save">接続先を保存</button>' +
-        '<button class="ax-btn" data-act="cal-refresh"' + (calendar.isConfigured() ? "" : " disabled") + '>いま取り込む</button>' +
+        '<button class="ax-btn" data-act="cal-refresh"' + (calendar.isReady() ? "" : " disabled") + '>いま取り込む</button>' +
         '<button class="ax-btn" data-act="cal-choose"' + (calendar.isConfigured() ? "" : " disabled") + '>カレンダーを選ぶ</button>' +
       '</div>' +
     '</section>' +
@@ -202,7 +204,7 @@ function saveCalendar(){
   });
   calendar.clearCache();
   render();
-  toast("接続先を保存しました", { seconds: 5 });
+  toast(calendar.hasCalendarSelection() ? "接続先を保存しました" : "接続先を保存しました。続けてカレンダーを選んでください", { seconds: 6 });
 }
 async function refreshCalendar(btn){
   const label = btn.textContent;
@@ -237,6 +239,12 @@ async function connectLink(btn){
   try{
     calendar.importSetupLink(el("#se-setup-link").value);
     el("#se-setup-link").value = "";
+    render();
+    /* 設定リンクはURL/トークンだけの場合がある。既定カレンダーを勝手に使わず、明示的に選ぶ。 */
+    if(!calendar.hasCalendarSelection()){
+      await chooseCalendar();
+      return;
+    }
     await refreshCalendar(btn);
     render();
   }catch(e){ alert(e.message) }

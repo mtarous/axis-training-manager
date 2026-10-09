@@ -2,7 +2,7 @@
    まずネットワーク、ダメならキャッシュ。オンラインなら必ず最新が出る。
    いまの本体（next/ の中身）と、以前のアプリ（legacy.html）の両方をまかなう。 */
 
-const CACHE = "axis-root-031";
+const CACHE = "axis-root-032";
 
 /* いまの本体 */
 const APP = [
@@ -30,6 +30,7 @@ const APP = [
   "next/app.js?v=25",
   "next/app.js?v=26",
   "next/app.js?v=27",
+  "next/app.js?v=28",
   "next/core/archive.js",
   "next/core/archive.js?v=15",
   "next/core/crypto.js",
@@ -43,6 +44,7 @@ const APP = [
   "next/core/muscles.js",
   "next/core/schedule.js",
   "next/core/schedule.js?v=15",
+  "next/core/schedule.js?v=28",
   "next/core/stats.js",
   "next/core/store.js",
   "next/core/store.js?v=15",
@@ -57,19 +59,23 @@ const APP = [
   "next/screens/clients.js?v=23",
   "next/screens/clients.js?v=24",
   "next/screens/clients.js?v=26",
+  "next/screens/clients.js?v=28",
   "next/screens/history.js",
   "next/screens/history.js?v=15",
   "next/screens/home.js",
   "next/screens/home.js?v=24",
+  "next/screens/home.js?v=28",
   "next/screens/report.js",
   "next/screens/report.js?v=16",
   "next/screens/schedule.js",
   "next/screens/schedule.js?v=14",
   "next/screens/schedule.js?v=24",
+  "next/screens/schedule.js?v=28",
   "next/screens/settings.js",
   "next/screens/settings.js?v=14",
   "next/screens/settings.js?v=15",
   "next/screens/settings.js?v=16",
+  "next/screens/settings.js?v=28",
   "next/screens/train.js",
   "next/screens/train.js?v=14",
   "next/screens/train.js?v=24",
@@ -77,6 +83,7 @@ const APP = [
   "next/screens/train.js?v=27",
   "next/features/calendar.js",
   "next/features/calendar.js?v=14",
+  "next/features/calendar.js?v=28",
   "next/features/coaching.js",
   "next/features/coaching.js?v=24",
   "next/features/coaching.js?v=26",
@@ -89,6 +96,7 @@ const APP = [
   "next/features/line-text.js?v=23",
   "next/features/line-text.js?v=24",
   "next/features/line-text.js?v=26",
+  "next/features/line-text.js?v=28",
   "next/features/professional-feedback.js",
   "next/features/professional-feedback.js?v=1",
   "next/features/professional-feedback.js?v=22",

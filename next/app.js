@@ -4,14 +4,14 @@
 import * as archive from "./core/archive.js?v=21";
 import * as store from "./core/store.js?v=21";
 import { el } from "./ui/dom.js?v=21";
-import * as home from "./screens/home.js?v=24";
-import * as clients from "./screens/clients.js?v=26";
+import * as home from "./screens/home.js?v=28";
+import * as clients from "./screens/clients.js?v=28";
 import * as report from "./screens/report.js?v=21";
-import * as schedule from "./screens/schedule.js?v=24";
+import * as schedule from "./screens/schedule.js?v=28";
 import * as history from "./screens/history.js?v=21";
 import * as train from "./screens/train.js?v=27";
-import * as settings from "./screens/settings.js?v=21";
-import * as calendar from "./features/calendar.js?v=21";
+import * as settings from "./screens/settings.js?v=28";
+import * as calendar from "./features/calendar.js?v=28";
 
 const TABS = ["home", "schedule", "clients", "history", "train"];
 /* 下のタブに出さない画面は、どのタブを光らせるかだけ決める */
@@ -77,8 +77,12 @@ function openWithoutCode(){
 
 function afterOpen(){
   calendar.applyCached();
-  calendar.refreshIfStale().then(() => { if(view === "home" || view === "schedule") draw() });
   startApp();
+  if(calendar.isConfigured() && !calendar.hasCalendarSelection()){
+    go("settings");
+    return;
+  }
+  calendar.refreshIfStale().then(() => { if(view === "home" || view === "schedule") draw() });
 }
 
 /* データを持たずに動かす（確認用）。本番の入口からは使わない。 */

@@ -29,14 +29,28 @@ export function hiddenCount(){ return readHidden().length }
 function resolveClients(text){
   const label = String(text || "").trim();
   const clients = store.clients();
-  const direct = clients.find(c => c.name && label.includes(c.name));
+  const compact = s => String(s || "").replace(/[\s　]+/g, "").trim();
+  const labelCompact = compact(label);
+
+  /* まずフルネームで照合する。空白の有無は無視する。 */
+  const direct = clients.find(c => c.name && labelCompact.includes(compact(c.name)));
   if(direct) return { clientId: direct.id, clientIds: [direct.id] };
 
-  const pair = clients.filter(c => c.pairLabel && label.includes(c.pairLabel));
+  /* 夫婦などのペア名は1枠から両方へ紐づける。 */
+  const pair = clients.filter(c => c.pairLabel && labelCompact.includes(compact(c.pairLabel)));
   if(pair.length){
     const ids = [...new Set(pair.map(c => c.id))];
     return { clientId: ids[0] || "", clientIds: ids };
   }
+
+  /* カレンダーが「井上さん」のように姓/名だけの場合。
+     2文字以上の名前パーツが一致し、候補が1人だけのときだけ紐づける。同姓は自動判定しない。 */
+  const partial = clients.filter(c => {
+    const parts = String(c.name || "").split(/[\s　]+/).map(compact).filter(x => x.length >= 2);
+    return parts.some(x => labelCompact.includes(x));
+  });
+  if(partial.length === 1) return { clientId: partial[0].id, clientIds: [partial[0].id] };
+
   return { clientId: "", clientIds: [] };
 }
 
@@ -50,7 +64,7 @@ function fromCalendar(){
     else if(label.includes("体験")) type = "体験";
     return {
       date: String(e.start || "").slice(0, 10),
-      time: String(e.start || "").slice(11, 16),
+      time: e.allDay ? "終日" : String(e.start || "").slice(11, 16),
       label, type, calendar: true,
       clientId: match.clientId, clientIds: match.clientIds
     };

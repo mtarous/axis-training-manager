@@ -1,8 +1,8 @@
 /* 予定。カレンダーの取り込み済みスナップショットを並べ、不要な予定は端末ごとに隠せる。 */
 
-import * as calendar from "../features/calendar.js?v=21";
+import * as calendar from "../features/calendar.js?v=28";
 import { getMeta } from "../core/meta.js?v=21";
-import * as sched from "../core/schedule.js?v=21";
+import * as sched from "../core/schedule.js?v=28";
 import { today } from "../core/model.js?v=21";
 import { el, esc } from "../ui/dom.js?v=21";
 
@@ -23,17 +23,20 @@ export function render(){
   const list = sched.all().filter(x => x.date >= t);
   const days = [...new Set(list.map(x => x.date))];
   const hidden = sched.hiddenItems();
+  const meta = getMeta();
+  const calendarName = String(meta.calendarName || "");
 
   root.innerHTML =
     '<div class="sc-title"><span class="ax-eyebrow">SCHEDULE</span><h2>予定</h2>' +
-      (sched.syncedAt() ? '<p>カレンダー取込 ' + esc(sched.syncedAt()) + '</p>' : '<p>カレンダーの取り込みはまだありません</p>') +
+      (sched.syncedAt() ? '<p>カレンダー取込 ' + esc(sched.syncedAt()) + (calendarName ? ' · ' + esc(calendarName) : '') + '</p>' : '<p>カレンダーの取り込みはまだありません</p>') +
     '</div>' +
     '<div class="se-grid" style="margin-bottom:12px">' +
       '<button class="ax-btn" data-act="refresh">予定を更新</button>' +
       '<button class="ax-btn" data-act="settings">カレンダー設定</button>' +
     '</div>' +
     (!calendar.isConfigured() ? '<p class="se-note">Googleカレンダーは未接続です。「カレンダー設定」から接続してください。</p>' : '') +
-    (getMeta().calendarLoadError ? '<p class="se-note" role="alert">更新できませんでした：' + esc(getMeta().calendarLoadError) + '</p>' : '') +
+    (calendar.isConfigured() && !calendar.hasCalendarSelection() ? '<p class="se-note" role="alert">読み込むGoogleカレンダーが未選択です。「カレンダー設定」から選んでください。</p>' : '') +
+    (meta.calendarLoadError ? '<p class="se-note" role="alert">更新できませんでした：' + esc(meta.calendarLoadError) + '</p>' : '') +
 
     (hidden.length
       ? '<details class="ax-panel sc-hidden"><summary>非表示にした予定 <b>' + hidden.length + '件</b></summary>' +

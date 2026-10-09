@@ -3,7 +3,7 @@
 
 import { assess, lineAdvice, safetyLevel } from "./coaching.js?v=26";
 import { musclesOfSession } from "../core/muscles.js?v=21";
-import * as sched from "../core/schedule.js?v=21";
+import * as sched from "../core/schedule.js?v=28";
 import * as store from "../core/store.js?v=21";
 import { clientSummary } from "../core/stats.js?v=21";
 import { summarizeSets, today } from "../core/model.js?v=21";

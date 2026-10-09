@@ -1,7 +1,7 @@
 /* ホーム。今日やることと、記録への入口だけを出す。 */
 
 import * as store from "../core/store.js?v=21";
-import * as schedule from "../core/schedule.js?v=21";
+import * as schedule from "../core/schedule.js?v=28";
 import { today } from "../core/model.js?v=21";
 import { el, esc } from "../ui/dom.js?v=21";
 
