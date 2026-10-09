@@ -5,7 +5,7 @@ import { assess, lineAdvice, safetyLevel } from "./coaching.js?v=21";
 import { musclesOfSession } from "../core/muscles.js?v=21";
 import * as sched from "../core/schedule.js?v=21";
 import * as store from "../core/store.js?v=21";
-import { clientSummary, nextTargets } from "../core/stats.js?v=21";
+import { clientSummary } from "../core/stats.js?v=21";
 import { summarizeSets, today } from "../core/model.js?v=21";
 import { professionalFeedback } from "./professional-feedback.js?v=22";
 
@@ -52,18 +52,18 @@ function trendLines(a, limit = 3){
     if(out.length >= limit) break;
     if(t.state === "up" && t.now && t.prev){
       if(t.body){
-        out.push(`${t.name}は前回${t.prev.r}回 → 今回${t.now.r}回まで伸びています。同じ動作で反復回数が増えており、動作への適応が進んでいます。`);
+        out.push(`${t.name}は前回${t.prev.r}回 → 今回${t.now.r}回まで伸びています。同じ動作で反復回数が増えています。動作の質も保てていれば、今回の条件への適応が進んでいると考えられます。`);
       }else if(t.now.w > t.prev.w){
         const repDiff = t.now.r - t.prev.r;
         if(repDiff >= 0){
-          out.push(`${t.name}は前回${t.prev.w}kg×${t.prev.r}回 → 今回${t.now.w}kg×${t.now.r}回まで伸びています。重量を上げても回数を維持できており、筋力発揮が明確に向上しています。`);
+          out.push(`${t.name}は前回${t.prev.w}kg×${t.prev.r}回 → 今回${t.now.w}kg×${t.now.r}回です。前回より高い重量を同じ回数扱えています。フォーム・可動域・RPEも同程度であれば、筋力発揮が向上している可能性があります。`);
         }else if(repDiff >= -2){
-          out.push(`${t.name}は前回${t.prev.w}kg×${t.prev.r}回 → 今回${t.now.w}kg×${t.now.r}回です。重量を上げた分だけ回数は少し落ちていますが、負荷設定としては自然な範囲なので、次回は同重量で回数をそろえるのが目安です。`);
+          out.push(`${t.name}は前回${t.prev.w}kg×${t.prev.r}回 → 今回${t.now.w}kg×${t.now.r}回です。重量を上げた分だけ回数は少し落ちていますが、負荷設定としては自然な範囲なので、今回の負荷でフォーム・可動域・余力を安定して再現できるかを確認します。`);
         }else{
-          out.push(`${t.name}は${t.prev.w}kg → ${t.now.w}kgへ重量を上げていますが、回数は${t.prev.r}回 → ${t.now.r}回まで低下しています。次回は重量をさらに上げず、今回の重量で反復回数とフォームを安定させます。`);
+          out.push(`${t.name}は${t.prev.w}kg → ${t.now.w}kgへ重量を上げていますが、回数は${t.prev.r}回 → ${t.now.r}回まで低下しています。今回の負荷で反復回数とフォームが安定して再現できるかを確認します。`);
         }
       }else{
-        out.push(`${t.name}は${t.now.w}kgのまま前回${t.prev.r}回 → 今回${t.now.r}回まで伸びています。同じ重量で反復回数が増えているため、次の重量アップにつなげやすい状態です。`);
+        out.push(`${t.name}は${t.now.w}kgのまま前回${t.prev.r}回 → 今回${t.now.r}回まで伸びています。同じ重量で反復回数が増えています。フォームや可動域も保てていれば、今回の条件への適応が進んでいると考えられます。`);
       }
     }else if(t.state === "stall"){
       out.push(`${t.name}は同じ負荷が${t.same}回続いています。すぐ重量を上げるより、可動域・テンポ・フォームをそろえてから次の段階へ進む方が伸びやすい状態です。`);
@@ -101,20 +101,26 @@ function responseLine(a, last){
   if(!bits.length) return "";
   if(a.rpe >= 9) return `今回の身体反応は${bits.join("、")}です。運動強度がかなり高いため、次回はさらに負荷を上げるより回復とフォームの再現性を優先します。`;
   if(a.pain >= 4) return `今回の身体反応は${bits.join("、")}です。痛みが出ているため、負荷量より症状が増えない範囲と動作の安定を優先します。`;
-  return `今回の身体反応は${bits.join("、")}です。この反応も次回の重量・回数設定に反映します。`;
+  return `今回の身体反応は${bits.join("、")}です。この反応も次回の運動内容の調整に反映します。`;
 }
 
-function nextBlock(clientId, last, level){
+function nextBlock(last, level, a){
   if(level === "stop"){
-    return "次回は負荷を上げず、症状の確認を優先します。症状が続く・強くなる場合は医療機関への相談を優先してください。";
+    return "次回は症状の確認を最優先にし、運動の可否から判断します。症状が続く・強くなる場合は医療機関への相談を優先してください。";
   }
   if(level === "careful"){
-    return "次回は重量を据え置き、痛みや違和感が出ない可動域でフォームの再現性を確認します。";
+    return "次回は痛みや違和感、フォーム、可動域を確認しながら、その日の状態に合わせて内容を調整します。";
   }
   if(last.notes?.next) return clean(last.notes.next);
-  const list = nextTargets(clientId, 4);
-  if(!list.length) return "今回の内容を基準に、フォームと体調を見ながら負荷を調整します。";
-  return list.map(t => "・" + t.name + "：" + String(t.text).replace(/を試す$/, "を目安に進めます")).join("\n");
+  const stalled = a?.trends?.some(t => t.state === "stall");
+  const rising = a?.trends?.some(t => t.state === "up");
+  if(stalled){
+    return "次回は重量を追うより、可動域・テンポ・フォーム・狙った部位への入り方を確認し、動作の質を整えます。";
+  }
+  if(rising){
+    return "次回は今回の良い動きを再現できるかを確認し、フォーム・可動域・余力を見ながら当日の負荷を調整します。";
+  }
+  return "次回は今回の反応を基準に、フォーム・可動域・RPE・痛みの有無を確認しながら当日の内容を調整します。";
 }
 
 export function lineMessage(clientId){
@@ -148,7 +154,7 @@ export function lineMessage(clientId){
   const nutrition = oneLine(pro?.nutrition) || "運動後はたんぱく質を含む食事と水分を確保し、次回までの回復につなげてください。";
   const care = oneLine(pro?.care) || "強い張りが残る場合は追い込まず、軽い歩行や関節運動で身体を動かす程度で十分です。";
   const self = oneLine(pro?.self) || "痛みのない範囲で、今回使った部位を軽く動かしてください。";
-  const next = nextBlock(clientId, last, level);
+  const next = nextBlock(last, level, a);
 
   const safety = level !== "ok"
     ? "\n\n【体調面】\n" + (lineAdvice(clientId)[0] || "痛みや違和感を確認しながら進めます。")
@@ -180,7 +186,7 @@ ${care}
 【自宅でできること】
 ${self}
 
-【次回】
+【次回の方針】
 ${next}
 
 ${dateLine}

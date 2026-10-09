@@ -1,10 +1,10 @@
 /* 利用者。一覧と、1人ぶんの詳細。 */
 
 import * as store from "../core/store.js?v=21";
-import { clientSummary, deltaText, nextTargets, volumeTrend } from "../core/stats.js?v=21";
+import { clientSummary, deltaText, volumeTrend } from "../core/stats.js?v=21";
 import { musclesOfSession } from "../core/muscles.js?v=21";
 import { clientAdvice } from "../features/coaching.js?v=21";
-import { lineMessage } from "../features/line-text.js?v=22";
+import { lineMessage } from "../features/line-text.js?v=23";
 import { el, esc } from "../ui/dom.js?v=21";
 import { muscleMap } from "../ui/muscle-map.js?v=21";
 
@@ -68,7 +68,6 @@ export function renderDetail(){
   const s = clientSummary(c.id);
   const list = store.sessions({ clientId: c.id });
   const muscles = s.last ? musclesOfSession(s.last) : [];
-  const targets = nextTargets(c.id);
   const partner = c.partnerId ? store.client(c.partnerId) : null;
 
   root.innerHTML =
@@ -90,11 +89,6 @@ export function renderDetail(){
       '<div><b>ペアトレ' + (c.pairLabel ? '　' + esc(c.pairLabel) : '') + '</b><span>相手：' + esc(partner.name) + '</span></div>' +
       (c.pairLabel ? '' : '<button type="button" class="ax-btn ghost" data-act="pair">変える</button>') +
     '</div>' : '') +
-
-    (targets.length
-      ? '<section class="ax-panel cd-panel-next"><div class="cd-h cd-h-split"><span>次回の目安</span><small>NEXT SESSION</small></div>' +
-        '<ul class="cd-next">' + targets.map(t => '<li><b>' + esc(t.name) + '</b>' + esc(t.text) + '</li>').join("") + '</ul></section>'
-      : "") +
 
     '<div class="cd-kpis">' +
       '<div><b>' + s.count + '</b><span>トレーニング回数</span></div>' +
