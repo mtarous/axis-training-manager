@@ -107,7 +107,18 @@ function boot(){
   /* オフラインでも開けるようにする。失敗しても普通に使える。 */
   if("serviceWorker" in navigator){
     /* 置き場所ごとに受け持ちが変わるよう、HTMLから見た位置で登録する */
-    navigator.serviceWorker.register("sw.js").catch(() => {});
+    const hadController = !!navigator.serviceWorker.controller;
+    let swReloading = false;
+    if(hadController){
+      navigator.serviceWorker.addEventListener("controllerchange", () => {
+        if(swReloading) return;
+        swReloading = true;
+        location.reload();
+      });
+    }
+    navigator.serviceWorker.register("sw.js", { updateViaCache: "none" })
+      .then(reg => reg.update().catch(() => {}))
+      .catch(() => {});
   }
 
   const saved = archive.savedCode();
