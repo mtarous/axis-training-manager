@@ -33,7 +33,10 @@
 .tr-record.full{background:none;border:1px solid var(--ax-line);color:var(--ax-mut);box-shadow:none}
 
 /* いま記録するセット */
-.tr-editor{display:grid;gap:7px;margin-bottom:11px}
+.tr-editor{display:grid;gap:7px;margin-bottom:8px}
+.tr-sidebar{display:grid;grid-template-columns:40px minmax(0,1fr);gap:6px;align-items:center}
+.tr-sidebar>span{font-size:11.5px;font-weight:700;color:var(--ax-mut)}
+.tr-sidebar .ax-select{height:38px;font-size:12px;padding-top:0;padding-bottom:0}
 .tr-erow{display:grid;grid-template-columns:40px 46px 1fr 46px 52px;gap:6px;align-items:center}
 .tr-erow>span{font-size:11.5px;font-weight:700;color:var(--ax-mut)}
 .tr-erow>button{
@@ -74,9 +77,9 @@
 .tr-lidel{height:38px;border:0;background:none;color:var(--ax-dim);font-size:15px}
 .tr-lidel:disabled{opacity:.25}
 
-.tr-steprow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:12px 0 2px;
-  padding-top:11px;border-top:1px solid var(--ax-line2)}
-.tr-steprow>span{font-size:12px;font-weight:700;color:var(--ax-mut)}
+.tr-steprow{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin:8px 0;
+  padding:8px 0;border-top:1px solid var(--ax-line2);border-bottom:1px solid var(--ax-line2)}
+.tr-steprow>span{font-size:11.5px;font-weight:700;color:var(--ax-mut);white-space:nowrap}
 .tr-steprow button{
   border:1px solid var(--ax-line);background:rgba(11,140,255,.08);color:var(--ax-ink);
   border-radius:999px;padding:8px 13px;font-size:13px;font-weight:700
@@ -127,13 +130,15 @@
   .tr-prev .ax-btn{height:32px;padding:0 9px}
   .tr-record{padding:10px 8px;margin-bottom:8px;font-size:15px}
   .tr-record small{font-size:11px;margin-top:1px}
-  .tr-editor{gap:5px;margin-bottom:8px}
+  .tr-editor{gap:5px;margin-bottom:6px}
+  .tr-sidebar{grid-template-columns:34px minmax(0,1fr);gap:4px}
+  .tr-sidebar .ax-select{height:34px;font-size:11.5px}
   .tr-erow{grid-template-columns:34px 42px minmax(64px,1fr) 42px 46px;gap:4px}
   .tr-erow>button,.tr-sub{height:44px}
   .tr-erow .tr-val{font-size:20px;padding:4px 0}
   .tr-list{gap:4px}
   .tr-licheck,.tr-libody,.tr-lidel{height:34px}
-  .tr-steprow{gap:4px;margin:8px 0 0;padding-top:8px}
+  .tr-steprow{gap:4px;margin:6px 0;padding:6px 0}
   .tr-steprow button{padding:7px 9px;font-size:12px}
   .tr-steprow>small{display:none}
   .tr-add{gap:5px;margin-top:8px}

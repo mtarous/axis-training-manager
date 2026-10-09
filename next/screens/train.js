@@ -261,7 +261,8 @@ function editor(){
   const j = clampEdit();
   const s = e.sets[j];
   const body = String(s.weight) === BODYWEIGHT;
-  return '<label class="ax-field"><span>左右</span><select class="ax-select" id="tr-side">' + ['','左','右'].map(side => '<option value="' + side + '"' + ((s.side || '') === side ? ' selected' : '') + '>' + (side || '左右なし') + '</option>').join('') + '</select></label>' + '<div class="tr-editor">' +
+  return '<div class="tr-editor">' +
+    '<div class="tr-sidebar"><span>左右</span><select class="ax-select" id="tr-side">' + ['','左','右'].map(side => '<option value="' + side + '"' + ((s.side || '') === side ? ' selected' : '') + '>' + (side || '左右なし') + '</option>').join('') + '</select></div>' +
     '<div class="tr-erow">' +
       '<span>重量</span>' +
       '<button type="button" data-act="w-" data-j="' + j + '">−</button>' +
@@ -345,13 +346,14 @@ export function render(){
     '</button>' +
 
     editor() +
-    setList(doneList) +
 
     '<div class="tr-steprow">' +
-      '<span>刻み</span>' +
+      '<span>重量刻み</span>' +
       STEPS.map(s => '<button type="button" class="' + (s === step ? "on" : "") + '" data-act="step" data-s="' + s + '">' + s + 'kg</button>').join("") +
-      '<small>数字をタップすると直接入力</small>' +
+      '<small>− / ＋ に反映</small>' +
     '</div>' +
+
+    setList(doneList) +
 
     '<div class="tr-add">' +
       '<button type="button" class="ax-btn full" data-act="addset">＋ もう1セット</button>' +
