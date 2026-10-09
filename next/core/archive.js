@@ -2,10 +2,10 @@
    アクセスコードが要るのはここだけ。
    アプリで入力した記録はこの端末の中にあるので、コードが無くても使える。 */
 
-import { decryptBlob } from "./crypto.js?v=20";
-import { getMeta, setMeta } from "./meta.js?v=20";
-import { importLegacy, resplitLegacyNotes, repairLegacyNotes } from "./migrate.js?v=20";
-import * as store from "./store.js?v=20";
+import { decryptBlob } from "./crypto.js?v=21";
+import { getMeta, setMeta } from "./meta.js?v=21";
+import { importLegacy, resplitLegacyNotes, repairLegacyNotes } from "./migrate.js?v=21";
+import * as store from "./store.js?v=21";
 
 const KEY_CODE = "axis_training_key";
 

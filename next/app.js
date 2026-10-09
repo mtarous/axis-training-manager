@@ -1,17 +1,17 @@
 /* AXIS v2 起動と画面の切り替え。
    ここは繋ぐだけ。画面の中身は screens/ が持つ。 */
 
-import * as archive from "./core/archive.js?v=20";
-import * as store from "./core/store.js?v=20";
-import { el } from "./ui/dom.js?v=20";
-import * as home from "./screens/home.js?v=20";
-import * as clients from "./screens/clients.js?v=20";
-import * as report from "./screens/report.js?v=20";
-import * as schedule from "./screens/schedule.js?v=20";
-import * as history from "./screens/history.js?v=20";
-import * as train from "./screens/train.js?v=20";
-import * as settings from "./screens/settings.js?v=20";
-import * as calendar from "./features/calendar.js?v=20";
+import * as archive from "./core/archive.js?v=21";
+import * as store from "./core/store.js?v=21";
+import { el } from "./ui/dom.js?v=21";
+import * as home from "./screens/home.js?v=21";
+import * as clients from "./screens/clients.js?v=21";
+import * as report from "./screens/report.js?v=21";
+import * as schedule from "./screens/schedule.js?v=21";
+import * as history from "./screens/history.js?v=21";
+import * as train from "./screens/train.js?v=21";
+import * as settings from "./screens/settings.js?v=21";
+import * as calendar from "./features/calendar.js?v=21";
 
 const TABS = ["home", "schedule", "clients", "history", "train"];
 /* 下のタブに出さない画面は、どのタブを光らせるかだけ決める */

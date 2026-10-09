@@ -1,11 +1,11 @@
 /* 本人向けのまとめ。画面を見せる前提なので、トレーナー用の注意点は出さない。 */
 
-import * as store from "../core/store.js?v=20";
-import { clientSummary, deltaText } from "../core/stats.js?v=20";
-import { musclesOfSession } from "../core/muscles.js?v=20";
-import { summarizeSets } from "../core/model.js?v=20";
-import { el, esc } from "../ui/dom.js?v=20";
-import { muscleMap } from "../ui/muscle-map.js?v=20";
+import * as store from "../core/store.js?v=21";
+import { clientSummary, deltaText } from "../core/stats.js?v=21";
+import { musclesOfSession } from "../core/muscles.js?v=21";
+import { summarizeSets } from "../core/model.js?v=21";
+import { el, esc } from "../ui/dom.js?v=21";
+import { muscleMap } from "../ui/muscle-map.js?v=21";
 
 /* 名前にすでに敬称が付いていれば足さない */
 const honorific = name => /(さん|様|さま|氏)\s*$/.test(String(name)) ? "" : " さま";
