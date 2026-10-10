@@ -103,9 +103,31 @@ function intervalLine(a){
 }
 
 function evidenceLine(last){
-  const notes = [last?.notes?.insight, last?.notes?.caution, last?.notes?.share].filter(Boolean).join(" ").trim();
-  if(notes) return "";
+  const observations = [last?.notes?.insight, last?.notes?.caution].filter(Boolean).join(" ").trim();
+  if(observations) return "";
   return "フォーム・可動域については今回の記録だけでは判断できないため、数値とは分けて次回確認します。";
+}
+
+function goalLine(client){
+  const raw = oneLine(client?.goal);
+  if(!raw) return "";
+  const label = raw.length > 36 ? raw.slice(0, 36) + "…" : raw;
+  const lead = `目標「${label}」に対して、`;
+  if(/筋力|BIG3|重量|強く/.test(raw)) return lead + "今回の重量・回数は経過として記録し、同じ条件で再現できるかを見ながら評価します。1回の数値だけで次回重量は決めません。";
+  if(/筋肥大|筋量|大きく|ボディメイク/.test(raw)) return lead + "1回の重量だけでなく、セット数・本人のきつさ・フォームをそろえて継続できているかを重視します。";
+  if(/減量|ダイエット|引き締め|体脂肪|体重/.test(raw)) return lead + "筋トレの数値だけで体重や体脂肪の変化は判断せず、筋力を保てているかを経過として見ます。食事と日常活動も合わせて考えます。";
+  if(/痛み|腰|肩|膝|首|頸|リハビリ|改善|動作|機能/.test(raw)) return lead + "重量を伸ばすことより、痛みの有無・運動中から翌日の反応・動作の安定を優先して経過を見ます。";
+  if(/競技|サッカー|野球|バレー|ゴルフ|パフォーマンス/.test(raw)) return lead + "トレーニング記録だけで競技力を断定せず、安定して力を出せるかと競技動作へのつながりを見ながら評価します。";
+  return lead + "今回の記録を単発で判断せず、同じ条件での経過と本人の感覚を合わせて見ていきます。";
+}
+
+function shareLine(last){
+  return oneLine(last?.notes?.share);
+}
+
+function hasProfileCaution(client){
+  const text = oneLine(client?.attention);
+  return /痛|しびれ|痺れ|手術|術後|めまい|血圧|脱力|腰|膝|肩|首|頸|心臓|持病|既往/.test(text);
 }
 
 function responseLine(a, last){
@@ -119,7 +141,7 @@ function responseLine(a, last){
   return `今回の記録は${bits.join("、")}でした。次回の判断材料として経過を比較します。`;
 }
 
-function nextBlock(last, level, a){
+function nextBlock(client, last, level, a){
   if(level === "stop"){
     return "次回は症状の確認を最優先にし、運動の可否から判断します。症状が続く・強くなる場合は医療機関への相談を優先してください。";
   }
@@ -127,7 +149,14 @@ function nextBlock(last, level, a){
     return "次回は痛みや違和感、フォーム、可動域を確認しながら、その日の状態に合わせて内容を調整します。";
   }
   if(last.notes?.next) return clean(last.notes.next);
+  if(last.notes?.caution) return "次回は今回の注意点を最初に確認し、症状・フォーム・可動域の変化を見てから内容を調整します。";
+  if(hasProfileCaution(client)) return "次回は当日の体調・痛み・動作を確認してから内容を調整し、数値だけを理由に負荷を進めません。";
   if(a?.rpe >= 9) return "次回は負荷を上げることより、疲労の残り方とフォームの再現性を優先して調整します。";
+  const goal = oneLine(client?.goal);
+  if(/痛み|腰|肩|膝|首|頸|リハビリ|改善|動作|機能/.test(goal)) return "次回も痛みの有無と運動後から翌日の反応を確認し、動作が安定する範囲で内容を調整します。";
+  if(/筋肥大|筋量|大きく|ボディメイク/.test(goal)) return "次回は重量だけを追わず、フォーム・可動域・本人のきつさを確認しながら、回数やセット数も含めて調整します。";
+  if(/減量|ダイエット|引き締め|体脂肪|体重/.test(goal)) return "次回は無理に重量を上げず、継続できる強度と総運動量を優先して内容を調整します。";
+  if(/競技|サッカー|野球|バレー|ゴルフ|パフォーマンス/.test(goal)) return "次回は数値だけでなく、反動に頼らず安定して力を出せるかを確認しながら内容を調整します。";
   if(a?.trends?.some(t => t.state === "down")) return "次回は数値を戻すことを急がず、体調と動作の安定を見ながら調整します。";
   if(a?.trends?.some(t => t.state === "stall")) return "次回は重量を追うより、可動域・テンポ・フォーム・狙った部位への入り方を確認します。";
   if(a?.trends?.some(t => t.state === "up")) return "次回は今回の良い動きを再現できるかを確認し、フォーム・可動域・余力を見ながら当日の負荷を調整します。";
@@ -166,7 +195,9 @@ export function lineMessage(clientId){
   const nutrition = oneLine(pro?.nutrition) || "運動後はたんぱく質を含む食事と水分を確保し、次回までの回復につなげてください。";
   const care = oneLine(pro?.care) || "強い張りが残る場合は追い込まず、軽い歩行や関節運動で身体を動かす程度で十分です。";
   const self = oneLine(pro?.self) || "痛みのない範囲で、今回使った部位を軽く動かしてください。";
-  const next = nextBlock(last, level, a);
+  const goal = level === "stop" ? "" : goalLine(client);
+  const share = shareLine(last);
+  const next = nextBlock(client, last, level, a);
 
   const safety = level !== "ok"
     ? "\n\n【体調面】\n" + (lineAdvice(clientId)[0] || "痛みや違和感を確認しながら進めます。")
@@ -181,6 +212,7 @@ export function lineMessage(clientId){
 【今日の記録】
 ${record}
 ${changes.length ? "\n【今回の変化】\n" + changes.map(x => "・" + x).join("\n") : ""}
+${goal ? "\n\n【目標とのつながり】\n" + goal : ""}
 
 【解剖学・運動学】
 ${anatomy}
@@ -196,7 +228,7 @@ ${nutrition}
 ${care}
 
 【自宅でできること】
-${self}
+${self}${share ? "\n\n【今日の共有】\n" + share : ""}
 
 【次回の方針】
 ${next}
