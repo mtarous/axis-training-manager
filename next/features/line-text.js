@@ -7,7 +7,7 @@ import * as sched from "../core/schedule.js?v=28";
 import * as store from "../core/store.js?v=21";
 import { clientSummary } from "../core/stats.js?v=21";
 import { summarizeSets, today } from "../core/model.js?v=21";
-import { professionalFeedback } from "./professional-feedback.js?v=26";
+import { professionalFeedback } from "./professional-feedback.js?v=29";
 
 const jp = d => {
   const x = new Date(String(d).slice(0, 10) + "T00:00:00+09:00");
@@ -52,18 +52,18 @@ function trendLines(a, limit = 3){
     if(out.length >= limit) break;
     if(t.state === "up" && t.now && t.prev){
       if(t.body){
-        out.push(`${t.name}は前回${t.prev.r}回 → 今回${t.now.r}回まで伸びています。同じ動作で反復回数が増えています。動作の質も保てていれば、今回の条件への適応が進んでいると考えられます。`);
+        out.push(`${t.name}は前回${t.prev.r}回 → 今回${t.now.r}回まで伸びています。同じ動作で反復回数が増えています。動作の質も同程度だったことを確認できている場合に限り、今回の条件への適応が進んでいると考えられます。`);
       }else if(t.now.w > t.prev.w){
         const repDiff = t.now.r - t.prev.r;
         if(repDiff >= 0){
-          out.push(`${t.name}は前回${t.prev.w}kg×${t.prev.r}回 → 今回${t.now.w}kg×${t.now.r}回です。前回より高い重量を同じ回数扱えています。フォーム・可動域・きつさも同程度であれば、筋力発揮が向上している可能性があります。`);
+          out.push(`${t.name}は前回${t.prev.w}kg×${t.prev.r}回 → 今回${t.now.w}kg×${t.now.r}回です。前回より高い重量を同じ回数扱えています。フォーム・可動域・本人のきつさも同程度だったことを確認できている場合に限り、筋力発揮が向上している可能性があります。`);
         }else if(repDiff >= -2){
           out.push(`${t.name}は前回${t.prev.w}kg×${t.prev.r}回 → 今回${t.now.w}kg×${t.now.r}回です。重量を上げた一方で回数は少し低下しています。良し悪しはこの数値だけで決めず、フォーム・可動域・本人のきつさを含めて評価します。`);
         }else{
           out.push(`${t.name}は${t.prev.w}kg → ${t.now.w}kgへ重量を上げていますが、回数は${t.prev.r}回 → ${t.now.r}回まで低下しています。今回の負荷で反復回数とフォームが安定して再現できるかを確認します。`);
         }
       }else{
-        out.push(`${t.name}は${t.now.w}kgのまま前回${t.prev.r}回 → 今回${t.now.r}回まで伸びています。同じ重量で反復回数が増えています。フォームや可動域も保てていれば、今回の条件への適応が進んでいると考えられます。`);
+        out.push(`${t.name}は${t.now.w}kgのまま前回${t.prev.r}回 → 今回${t.now.r}回まで伸びています。同じ重量で反復回数が増えています。フォームや可動域も同程度だったことを確認できている場合に限り、今回の条件への適応が進んでいると考えられます。`);
       }
     }else if(t.state === "stall"){
       out.push(`${t.name}は記録上、同じ重量・回数が${t.same}回続いています。これだけで停滞とは断定せず、可動域・フォーム・本人のきつさ・休憩時間などの条件も合わせて確認します。`);
@@ -87,7 +87,7 @@ function volumeLine(s){
     .join("|");
   const comparable = signature(s.last) === signature(s.prev);
   if(!comparable){
-    return "前回と種目またはセット構成が異なるため、重量×回数の前回比は参考扱いとし、この数値だけで増減は判断しません。";
+    return "前回と種目またはセット構成が異なるため、重量×回数の前回比は表示せず、単純比較しません。";
   }
   const label = `同じ種目・セット構成で、重量種目の外部負荷量（重量×回数の参考値）は前回比${s.delta > 0 ? "＋" : ""}${s.delta}%です。`;
   if(Math.abs(s.delta) < 5) return label + "前回に近い範囲ですが、フォーム・可動域・本人のきつさも合わせて評価します。";
@@ -98,8 +98,14 @@ function volumeLine(s){
 function intervalLine(a){
   if(a?.gap === null || a?.gap === undefined) return "";
   if(a.gap >= 14) return `前回から${a.gap}日空いているため、数値だけを追わず動作感覚を戻しながら進める回として評価します。`;
-  if(a.gap <= 2) return `前回から${a.gap}日と間隔が短いため、筋疲労が残っていないかを見ながら次回の負荷を決めます。`;
+  if(a.gap <= 2) return `前回から${a.gap}日と間隔が短いため、回復状況・本人のきつさ・痛みの有無を確認して次回の内容を調整します。`;
   return "";
+}
+
+function evidenceLine(last){
+  const notes = [last?.notes?.insight, last?.notes?.caution, last?.notes?.share].filter(Boolean).join(" ").trim();
+  if(notes) return "";
+  return "フォーム・可動域については今回の記録だけでは判断できないため、数値とは分けて次回確認します。";
 }
 
 function responseLine(a, last){
@@ -147,7 +153,8 @@ export function lineMessage(clientId){
     ...trendLines(a),
     volumeLine(s),
     intervalLine(a),
-    last.notes?.insight ? clean(last.notes.insight) : ""
+    last.notes?.insight ? clean(last.notes.insight) : "",
+    evidenceLine(last)
   ] : [
     intervalLine(a),
     last.notes?.insight ? clean(last.notes.insight) : ""
