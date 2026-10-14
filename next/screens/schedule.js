@@ -1,6 +1,6 @@
 /* 予定。カレンダーの取り込み済みスナップショットを並べ、不要な予定は端末ごとに隠せる。 */
 
-import * as calendar from "../features/calendar.js?v=28";
+import * as calendar from "../features/calendar.js?v=29";
 import { getMeta } from "../core/meta.js?v=21";
 import * as sched from "../core/schedule.js?v=28";
 import { today } from "../core/model.js?v=21";

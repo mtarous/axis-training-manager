@@ -2,7 +2,7 @@
    まずネットワーク、ダメならキャッシュ。オンラインなら必ず最新が出る。
    いまの本体（next/ の中身）と、以前のアプリ（legacy.html）の両方をまかなう。 */
 
-const CACHE = "axis-root-036";
+const CACHE = "axis-root-037";
 
 /* いまの本体 */
 const APP = [
@@ -33,7 +33,7 @@ const APP = [
   "next/app.js?v=28",
   "next/app.js?v=29",
   "next/app.js?v=30",
-  "next/app.js?v=31",
+  "next/app.js?v=32",
   "next/core/archive.js",
   "next/core/archive.js?v=15",
   "next/core/crypto.js",
@@ -76,12 +76,12 @@ const APP = [
   "next/screens/schedule.js",
   "next/screens/schedule.js?v=14",
   "next/screens/schedule.js?v=24",
-  "next/screens/schedule.js?v=28",
+  "next/screens/schedule.js?v=29",
   "next/screens/settings.js",
   "next/screens/settings.js?v=14",
   "next/screens/settings.js?v=15",
   "next/screens/settings.js?v=16",
-  "next/screens/settings.js?v=28",
+  "next/screens/settings.js?v=29",
   "next/screens/train.js",
   "next/screens/train.js?v=14",
   "next/screens/train.js?v=24",
@@ -89,7 +89,7 @@ const APP = [
   "next/screens/train.js?v=27",
   "next/features/calendar.js",
   "next/features/calendar.js?v=14",
-  "next/features/calendar.js?v=28",
+  "next/features/calendar.js?v=29",
   "next/features/coaching.js",
   "next/features/coaching.js?v=24",
   "next/features/coaching.js?v=26",

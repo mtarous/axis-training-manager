@@ -130,7 +130,11 @@ export async function listCalendars(){
   return { list: Array.isArray(r.calendars) ? r.calendars : [], defaultId: String(r.defaultId || "") };
 }
 
-export function clearCache(){ localStorage.removeItem(KEY_CACHE) }
+export function clearCache(){
+  localStorage.removeItem(KEY_CACHE);
+  /* cache() は旧版も読むため、設定変更後に旧カレンダーが復活しないよう両方を消す。 */
+  localStorage.removeItem("axis_calendar_live_v1");
+}
 /* メールの設定リンクを、Safariとホーム画面のどちらでも受け取る。 */
 export function importSetupLink(text){
   const match = String(text || "").match(/(?:[#&]|^)axissync=([A-Za-z0-9_-]+)/);
