@@ -6,6 +6,7 @@ import { musclesOfSession } from "../core/muscles.js?v=21";
 import { clientAdvice } from "../features/coaching.js?v=26";
 import { lineMessage } from "../features/line-text.js?v=31";
 import { buildNextMenu } from "../features/next-menu.js?v=1";
+import { isLoaded } from "../core/archive.js?v=21";
 import { summarizeSets } from "../core/model.js?v=21";
 import { el, esc } from "../ui/dom.js?v=21";
 import { muscleMap } from "../ui/muscle-map.js?v=21";
@@ -157,7 +158,13 @@ const CHANGE = { weight:"重さ↑", reps:"回数↑", hold:"据え置き", down
 function nextMenuPanel(clientId){
   let p = null;
   try{ p = buildNextMenu(clientId) }catch(e){ console.error(e) }
-  if(!p) return "";
+  if(!p){
+    return '<section class="ax-panel cd-panel-next"><div class="cd-h">次回メニュー案</div>' +
+      '<p class="cd-next-warn">' + (isLoaded()
+        ? 'このお客様はまだ記録がないため、案を作れません。1回記録すると次から出ます。'
+        : 'この端末に記録がないため、案を作れません。過去の記録はアクセスコードを入れると読み込まれ、案が出るようになります（設定 → アクセスコード）。') +
+      '</p></section>';
+  }
   const head = '<div class="cd-h cd-h-split"><span>次回メニュー案</span><small>' + esc(p.profile.label) + '</small></div>';
   if(p.level === "stop"){
     return '<section class="ax-panel cd-panel-next cd-next-stop">' + head +
