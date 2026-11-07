@@ -5,6 +5,7 @@ import * as store from "../core/store.js?v=21";
 import { BODYWEIGHT, makeExercise, makeSession, makeSet, num, round1, summarizeSets, today } from "../core/model.js?v=21";
 import { el, esc, inlineEdit, toast } from "../ui/dom.js?v=21";
 import * as rest from "../ui/rest-timer.js?v=21";
+import { buildNextMenu, planToExercises } from "../features/next-menu.js?v=1";
 
 const STEPS = [1, 2.5, 5, 10];
 
@@ -90,6 +91,24 @@ export function openFromPrevious(clientId){
     s.exercises = last.exercises.map(e =>
       makeExercise(e.name, e.sets.map(x => ({ weight: x.weight, reps: x.reps, side: x.side }))));
   }
+  pool[clientId] = s;
+  current = s;
+  includePartner(clientId);
+  active = 0;
+  editSet = 0;
+  stepByEx = {};
+  render();
+}
+
+/* 次回メニュー案をそのまま今日の記録として開く。案が作れないときは直近メニュー。 */
+export function openFromPlan(clientId){
+  let plan = null;
+  try{ plan = buildNextMenu(clientId) }catch(e){ console.error(e) }
+  const list = planToExercises(plan);
+  if(!list.length){ openFromPrevious(clientId); return }
+  pool = {};
+  const s = makeSession(clientId, today());
+  s.exercises = list.map(e => makeExercise(e.name, e.sets));
   pool[clientId] = s;
   current = s;
   includePartner(clientId);

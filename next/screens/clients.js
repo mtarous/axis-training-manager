@@ -5,6 +5,8 @@ import { clientSummary, deltaText, volumeTrend } from "../core/stats.js?v=21";
 import { musclesOfSession } from "../core/muscles.js?v=21";
 import { clientAdvice } from "../features/coaching.js?v=26";
 import { lineMessage } from "../features/line-text.js?v=31";
+import { buildNextMenu } from "../features/next-menu.js?v=1";
+import { summarizeSets } from "../core/model.js?v=21";
 import { el, esc } from "../ui/dom.js?v=21";
 import { muscleMap } from "../ui/muscle-map.js?v=21";
 
@@ -96,6 +98,8 @@ export function renderDetail(){
       '<div><b>' + esc(deltaText(s.delta)) + '</b><span>前回比（参考）</span></div>' +
     '</div>' +
 
+    nextMenuPanel(c.id) +
+
     (s.last
       ? '<section class="ax-panel cd-line cd-panel-line">' +
           '<div class="cd-h cd-h-split"><span>LINE文面</span><small>トレ後の送信用</small></div>' +
@@ -137,6 +141,7 @@ export function renderDetail(){
     switch(t.dataset.act){
       case "back":    go("clients"); break;
       case "start":   go("train-from", c.id); break;
+      case "start-plan": go("train-plan", c.id); break;
       case "report":  go("report", c.id); break;
       case "edit":    editClient(c); break;
       case "pair":    choosePartner(c); break;
@@ -145,6 +150,32 @@ export function renderDetail(){
       case "reset-line": resetLine(c.id); break;
     }
   };
+}
+
+/* 次回メニュー案。記録と予定から作った「案」を見せ、そのまま今日の記録として開ける。 */
+const CHANGE = { weight:"重さ↑", reps:"回数↑", hold:"据え置き", down:"重さ↓", blank:"ブランク明け", swap:"変更", add:"追加" };
+function nextMenuPanel(clientId){
+  let p = null;
+  try{ p = buildNextMenu(clientId) }catch(e){ console.error(e) }
+  if(!p) return "";
+  const head = '<div class="cd-h cd-h-split"><span>次回メニュー案</span><small>' + esc(p.profile.label) + '</small></div>';
+  if(p.level === "stop"){
+    return '<section class="ax-panel cd-panel-next cd-next-stop">' + head +
+      '<p class="cd-next-warn">' + esc(p.reasons[0]) + '</p></section>';
+  }
+  return '<section class="ax-panel cd-panel-next">' + head +
+    (p.level === "careful" ? '<p class="cd-next-warn">痛み・きつさ・体調の記載があるため、重さを上げない案です。</p>' : '') +
+    '<ol class="cd-next-list">' + p.exercises.map(o =>
+      '<li><div class="cd-next-row"><b>' + esc(o.name) + '</b><i class="ch-' + esc(o.change) + '">' + esc(CHANGE[o.change] || "") + '</i></div>' +
+        '<span class="cd-next-sets">' + esc(summarizeSets(o.sets)) + '</span>' +
+        '<small>' + esc(o.why) + (o.notes?.length ? '。' + esc(o.notes.join("。")) : '') + '</small></li>'
+    ).join("") + '</ol>' +
+    '<button class="ax-btn pri full" data-act="start-plan">この案で開始</button>' +
+    '<details class="cd-next-why"><summary>作成の理由</summary><ul>' +
+      p.reasons.map(r => '<li>' + esc(r) + '</li>').join("") + '</ul>' +
+      (p.home?.length ? '<div class="cd-h">自宅メニュー（案内用）</div><ul>' + p.home.map(r => '<li>' + esc(r) + '</li>').join("") + '</ul>' : '') +
+    '</details>' +
+  '</section>';
 }
 
 const LEVELS = { safety:"安全", load:"負荷", progress:"伸ばし方", balance:"バランス", goal:"目標", habit:"頻度" };

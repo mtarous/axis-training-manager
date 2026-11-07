@@ -2,7 +2,7 @@
    まずネットワーク、ダメならキャッシュ。オンラインなら必ず最新が出る。
    いまの本体（next/ の中身）と、以前のアプリ（legacy.html）の両方をまかなう。 */
 
-const CACHE = "axis-root-037";
+const CACHE = "axis-root-038";
 
 /* いまの本体 */
 const APP = [
@@ -34,6 +34,7 @@ const APP = [
   "next/app.js?v=29",
   "next/app.js?v=30",
   "next/app.js?v=32",
+  "next/app.js?v=33",
   "next/core/archive.js",
   "next/core/archive.js?v=15",
   "next/core/crypto.js",
@@ -66,6 +67,7 @@ const APP = [
   "next/screens/clients.js?v=29",
   "next/screens/clients.js?v=30",
   "next/screens/clients.js?v=31",
+  "next/screens/clients.js?v=32",
   "next/screens/history.js",
   "next/screens/history.js?v=15",
   "next/screens/home.js",
@@ -87,6 +89,7 @@ const APP = [
   "next/screens/train.js?v=24",
   "next/screens/train.js?v=25",
   "next/screens/train.js?v=27",
+  "next/screens/train.js?v=28",
   "next/features/calendar.js",
   "next/features/calendar.js?v=14",
   "next/features/calendar.js?v=29",
@@ -113,6 +116,8 @@ const APP = [
   "next/features/professional-feedback.js?v=26",
   "next/features/professional-feedback.js?v=29",
   "next/features/excel.js",
+  "next/features/next-menu.js",
+  "next/features/next-menu.js?v=1",
   "next/styles/tokens.css",
   "next/styles/app.css",
   "next/styles/home.css",
@@ -121,6 +126,7 @@ const APP = [
   "next/styles/clients.css",
   "next/styles/clients.css?v=4",
   "next/styles/clients.css?v=5",
+  "next/styles/clients.css?v=6",
   "next/styles/report.css",
   "next/styles/schedule.css",
   "next/styles/schedule.css?v=2",
@@ -135,7 +141,8 @@ const APP = [
   "next/styles/muscle-map.css",
   "next/styles/muscle-map.css?v=1",
   "next/styles/layout-v2.css",
-  "next/styles/layout-v2.css?v=1"
+  "next/styles/layout-v2.css?v=1",
+  "next/styles/layout-v2.css?v=2"
 ];
 
 /* 以前のアプリ。legacy.html から今まで通り開ける */

@@ -47,7 +47,7 @@ body{
   .ho-agenda{min-height:300px;padding:18px}.ho-title h3{font-size:15px}
   #view-clients{max-width:960px;margin:0 auto}.cl-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.cl-card{min-height:82px;padding:15px}
   #view-client.ax-view.on{max-width:1040px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:12px;align-items:start}
-  #view-client>.cd-head,#view-client>.cd-actions,#view-client>.cd-attention,#view-client>.cd-pair,#view-client>.cd-panel-line,#view-client>.cd-panel-advice,#view-client>.cd-listh,#view-client>.cd-rec{grid-column:1/-1}
+  #view-client>.cd-head,#view-client>.cd-actions,#view-client>.cd-attention,#view-client>.cd-pair,#view-client>.cd-panel-line,#view-client>.cd-panel-next,#view-client>.cd-panel-advice,#view-client>.cd-listh,#view-client>.cd-rec{grid-column:1/-1}
   #view-client>.cd-panel-next{grid-column:1}#view-client>.cd-kpis{grid-column:2}#view-client>.cd-panel-trend{grid-column:1}#view-client>.cd-panel-muscle{grid-column:2}
   #view-client>.cd-head{padding:18px 16px}#view-client>.cd-actions{margin-bottom:0}#view-client>.cd-attention,#view-client>.cd-pair,#view-client>.cd-kpis,#view-client>.ax-panel{margin-bottom:0}
   #view-client>.cd-kpis{grid-template-columns:1fr;align-self:stretch}#view-client>.cd-kpis>div{min-height:58px}

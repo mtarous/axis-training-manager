@@ -5,11 +5,11 @@ import * as archive from "./core/archive.js?v=21";
 import * as store from "./core/store.js?v=21";
 import { el } from "./ui/dom.js?v=21";
 import * as home from "./screens/home.js?v=28";
-import * as clients from "./screens/clients.js?v=31";
+import * as clients from "./screens/clients.js?v=32";
 import * as report from "./screens/report.js?v=21";
 import * as schedule from "./screens/schedule.js?v=29";
 import * as history from "./screens/history.js?v=21";
-import * as train from "./screens/train.js?v=27";
+import * as train from "./screens/train.js?v=28";
 import * as settings from "./screens/settings.js?v=29";
 import * as calendar from "./features/calendar.js?v=29";
 
@@ -21,6 +21,7 @@ let view = "home";
 
 export function go(name, arg){
   if(name === "train-from"){ train.openFromPrevious(arg); return go("train") }
+  if(name === "train-plan"){ train.openFromPlan(arg); return go("train") }
   if(name === "train-session"){ train.openSession(arg); return go("train") }
   if(name === "client"){ clients.setCurrent(arg); }
   if(name === "report"){ report.setCurrent(arg); }
