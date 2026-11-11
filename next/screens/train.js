@@ -5,7 +5,7 @@ import * as store from "../core/store.js?v=21";
 import { BODYWEIGHT, makeExercise, makeSession, makeSet, num, round1, summarizeSets, today } from "../core/model.js?v=21";
 import { el, esc, inlineEdit, toast } from "../ui/dom.js?v=21";
 import * as rest from "../ui/rest-timer.js?v=21";
-import { buildNextMenu, planToExercises } from "../features/next-menu.js?v=1";
+import { buildNextMenu, planToExercises } from "../features/next-menu.js?v=2";
 
 const STEPS = [1, 2.5, 5, 10];
 
@@ -245,6 +245,7 @@ function save(){
     return;
   }
 
+  ready.forEach(x => { if(x.source === "schedule") x.source = "app" });   // 直して保存したら実際の記録として扱う
   const saved = ready.map(x => store.saveSession(x));
   saved.forEach(x => store.clearDraft(x.clientId));
 

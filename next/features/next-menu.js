@@ -124,7 +124,7 @@ export function estimatedSessions(clientId, real, until = today()){
   let items = [];
   try{ items = schedule.all() }catch(e){ items = [] }
   const recorded = new Set(real.map(s => s.date));
-  const asc = [...real].sort((a, b) => a.date.localeCompare(b.date));
+  const asc = real.filter(s => s.source !== "schedule").sort((a, b) => a.date.localeCompare(b.date));
   const seen = new Set();
   return items
     .filter(x => x.date < until && (x.clientIds || []).includes(clientId) && !/ケア|体験/.test(x.type))
@@ -253,11 +253,13 @@ const volOf = list => list.reduce((a, x) => a + x.sets.reduce((b, y) => b + (Str
 /* ---- 本体 ---- */
 export function buildNextMenu(clientId, { until = today() } = {}){
   const client = store.client(clientId);
-  const real = store.sessions({ clientId });
+  const every = store.sessions({ clientId });
+  const real = every.filter(s => s.source !== "schedule");   // 重さの判断は実際の記録だけ
   if(!client || !real.length) return null;
 
   const last = real[0];
-  const est = estimatedSessions(clientId, real, until);
+  const filled = every.filter(s => s.source === "schedule").map(s => ({ date: s.date, exercises: s.exercises, estimated: true }));
+  const est = [...estimatedSessions(clientId, every, until), ...filled].sort((a, b) => b.date.localeCompare(a.date));
   const all = [...real, ...est].sort((a, b) => b.date.localeCompare(a.date));
   const lastActive = all[0].date;
   const gap = daysBetween(lastActive, until);

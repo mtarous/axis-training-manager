@@ -103,3 +103,23 @@ test('plateau (same setting x3, latest missed) -> swap to same-pattern variant, 
   const v = find(p,'インクラインダンベルプレス');
   assert.ok(v); assert.equal(v.sets[0].weight, 0); assert.equal(v.change, 'swap');
 });
+
+test('schedule fill: pending -> apply -> marked, excluded from loads, undo to trash', async () => {
+  const fill = await import('../next/features/schedule-fill.js');
+  const events = ['2026-10-15','2026-10-22','2026-11-12'].map(d => ({ summary:'山田 花子 パーソナル', start:d+'T10:00:00' }))
+    .concat([{ summary:'山田 花子 ケア', start:'2026-10-29T10:00:00' }]);
+  seed({ sessions:[{ date:'2026-10-08', exercises:[ex('スクワット',40,12)] }], events });
+  const pend = fill.pendingFills('2026-11-07');
+  assert.deepEqual(pend.map(p=>p.date), ['2026-10-15','2026-10-22']);   // future and ケア excluded
+  assert.equal(fill.applyFills(pend), 2);
+  assert.equal(fill.pendingFills('2026-11-07').length, 0);
+  const saved = store.sessions({ clientId:'c1' });
+  assert.equal(saved.length, 3);
+  assert.equal(saved.filter(s=>s.source==='schedule').length, 2);
+  assert.equal(saved[0].exercises[0].sets[0].weight, 40);
+  const p = buildNextMenu('c1', { until:'2026-11-07' });
+  assert.equal(p.gap, 16); assert.equal(p.estimated, 2);
+  assert.equal(fill.undoFills(), 2);
+  assert.equal(store.sessions({ clientId:'c1' }).length, 1);
+  assert.equal(fill.pendingFills('2026-11-07').length, 2);
+});

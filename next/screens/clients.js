@@ -5,7 +5,7 @@ import { clientSummary, deltaText, volumeTrend } from "../core/stats.js?v=21";
 import { musclesOfSession } from "../core/muscles.js?v=21";
 import { clientAdvice } from "../features/coaching.js?v=26";
 import { lineMessage } from "../features/line-text.js?v=31";
-import { buildNextMenu } from "../features/next-menu.js?v=1";
+import { buildNextMenu } from "../features/next-menu.js?v=2";
 import { isLoaded } from "../core/archive.js?v=21";
 import { summarizeSets } from "../core/model.js?v=21";
 import { el, esc } from "../ui/dom.js?v=21";
@@ -131,7 +131,7 @@ export function renderDetail(){
     (list.length
       ? list.slice(0, 6).map(x =>
           '<button type="button" class="cd-rec" data-act="edit-session" data-id="' + esc(x.id) + '">' +
-            '<b>' + esc(x.date) + '</b>' +
+            '<b>' + esc(x.date) + (x.source === "schedule" ? '<small>補完</small>' : '') + '</b>' +
             '<span>' + x.exercises.map(e => esc(e.name)).slice(0, 3).join("、") + (x.exercises.length > 3 ? " ほか" : "") + '</span>' +
           '</button>').join("")
       : '<div class="ax-empty">記録がありません</div>');

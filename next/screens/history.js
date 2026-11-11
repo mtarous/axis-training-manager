@@ -28,6 +28,7 @@ function card(s){
       '<span>' + sessionSetCount(s) + 'セット</span>' +
       '<span>総負荷 ' + Math.round(sessionVolume(s)).toLocaleString() + 'kg</span>' +
       (s.source === "legacy" ? '<span class="hi-legacy">既存記録</span>' : "") +
+      (s.source === "schedule" ? '<span class="hi-legacy">予定から補完</span>' : "") +
       (Array.isArray(s.notesAuto) && s.notesAuto.length
         ? '<span class="hi-auto">メモ自動記入</span>' : "") +
     '</div>' +

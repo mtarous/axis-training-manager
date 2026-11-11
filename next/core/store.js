@@ -161,6 +161,12 @@ export function saveSession(s){
   persist();
   return norm;
 }
+/* まとめて保存（予定からの補完など）。書き込みは1回だけ。 */
+export function saveSessions(list){
+  const out = list.map(s => { const n = normalizeSession(s); n.updatedAt = nowISO(); state.sessions[n.id] = n; return n });
+  if(out.length) persist();
+  return out;
+}
 export function deleteSession(id){
   const s = state.sessions[id];
   if(!s) return null;

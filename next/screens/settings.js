@@ -7,6 +7,7 @@ import * as calendar from "../features/calendar.js?v=29";
 import { countEmpty, fillEmptyNotes } from "../features/notes-fill.js?v=21";
 import { buildPlainWorkbook, buildSubmitWorkbook, saveWorkbook } from "../features/excel.js?v=21";
 import { el, esc, toast } from "../ui/dom.js?v=21";
+import * as fill from "../features/schedule-fill.js?v=1";
 
 let go = () => {};
 export function setRouter(fn){ go = fn }
@@ -28,6 +29,8 @@ export function render(){
   const cal = calendar.settings();
   const trash = store.trash().length;
   const empty = countEmpty(store.getState().sessions);
+  const pending = fill.pendingFills();
+  const filled = fill.filledSessions().length;
 
   root.innerHTML =
     '<div class="se-head">' +
@@ -46,6 +49,21 @@ export function render(){
           '<button class="ax-btn pri full se-mt" data-act="load-archive">読み込む</button>' +
           '<div id="se-codemsg" class="se-note se-mt"></div>' +
         '</section>') +
+
+    (pending.length || filled
+      ? '<section class="ax-panel">' +
+          '<div class="se-h">過去の予定を記録にする</div>' +
+          '<p class="se-note">予定（パーソナル）にあるのに記録がない過去の回を、直前の記録と同じ種目・重さ・回数で記録にします。' +
+            'ケア・体験は入れません。入れた記録には「予定から補完」と付き、次回メニュー案の重さの判断には使いません。</p>' +
+          (pending.length
+            ? '<ul class="se-note">' + fill.summarize(pending).map(x => '<li>' + esc(x) + '</li>').join("") + '</ul>' +
+              '<button class="ax-btn pri full" data-act="fill-schedule">' + pending.length + '件を記録にする</button>'
+            : '<p class="se-note">入れる回はもうありません。</p>') +
+          (filled
+            ? '<button class="ax-btn full se-mt" data-act="undo-fill">補完した' + filled + '件をゴミ箱へ（取り消し）</button>'
+            : '') +
+        '</section>'
+      : "") +
 
     (empty
       ? '<section class="ax-panel">' +
@@ -127,6 +145,8 @@ export function render(){
       case "cal-choose":    chooseCalendar(); break;
       case "load-archive":  loadArchive(); break;
       case "fill-notes":    busy(t, fillNotes); break;
+      case "fill-schedule": fillSchedule(); break;
+      case "undo-fill":     undoFill(); break;
     }
   };
   el("#se-file").onchange = backupLoad;
@@ -144,6 +164,24 @@ async function loadArchive(){
   }catch(e){
     msg.textContent = "アクセスコードが違うか、データを読み込めません。";
   }
+}
+
+function fillSchedule(){
+  const list = fill.pendingFills();
+  if(!list.length) return;
+  const head = list[0].date + " 〜 " + list[list.length - 1].date;
+  const msg = [list.length + "件を記録にします（" + head + "）。", "", ...fill.summarize(list), "", "直前の記録と同じ内容で入ります。あとで「取り消し」でゴミ箱へ送れます。"].join(String.fromCharCode(10));
+  if(!confirm(msg)) return;
+  const n = fill.applyFills(list);
+  render();
+  toast(n + "件を記録にしました", { detail: "予定から補完", seconds: 6 });
+}
+function undoFill(){
+  const n = fill.filledSessions().length;
+  if(!n || !confirm("予定から補完した" + n + "件をゴミ箱へ送ります。30日以内なら戻せます。")) return;
+  fill.undoFills();
+  render();
+  toast(n + "件をゴミ箱へ送りました", { seconds: 6 });
 }
 
 function fillNotes(){

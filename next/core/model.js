@@ -102,7 +102,7 @@ export function normalizeSession(s){
       }))
       .filter(e => e.name || e.sets.some(x => num(x.weight) || x.reps)),
     done: s.done && typeof s.done === "object" ? s.done : {},
-    source: s.source === "legacy" ? "legacy" : "app",
+    source: ["legacy", "schedule"].includes(s.source) ? s.source : "app",   // schedule = 予定から補完した記録
     createdAt: s.createdAt || nowISO(),
     updatedAt: s.updatedAt || nowISO(),
     deletedAt: s.deletedAt || null
